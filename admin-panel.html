@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orange Rewards - Painel Administrativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           CSS VARIABLES & RESET
+           ============================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #E8610A;
+            --primary-dark: #B84D08;
+            --primary-light: #FFF3EC;
+            --bg-dark: #121218;
+            --bg-card: #1c1c24;
+            --bg-card-hover: #24242e;
+            --bg-sidebar: #16161e;
+            --bg-input: #2a2a36;
+            --border: #2e2e3a;
+            --border-light: #3a3a48;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6a6a7a;
+            --accent-blue: #3B82F6;
+            --accent-blue-bg: rgba(59, 130, 246, 0.15);
+            --success: #10B981;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --warning: #F59E0B;
+            --warning-bg: rgba(245, 158, 11, 0.15);
+            --danger: #EF4444;
+            --danger-bg: rgba(239, 68, 68, 0.15);
+            --info: #6366F1;
+            --info-bg: rgba(99, 102, 241, 0.15);
+            --sidebar-width: 250px;
+            --topnav-height: 52px;
+            --modulenav-height: 48px;
+        }
+
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100%;
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           LOGIN PAGE
+           ============================================ */
+        .login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1020 100%);
+        }
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-box img { height: 48px; margin-bottom: 1.5rem; }
+        .login-box h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+        .login-box p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 2rem; }
+        .login-box .form-group { margin-bottom: 1rem; text-align: left; }
+        .login-box .form-group label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .login-box .form-group input {
+            width: 100%; padding: 0.7rem 1rem; background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 6px; color: var(--text-primary); font-size: 0.9rem; outline: none; transition: border 0.2s;
+        }
+        .login-box .form-group input:focus { border-color: var(--primary); }
+        .login-error { color: var(--danger); font-size: 0.8rem; margin-bottom: 1rem; display: none; }
+
+        /* ============================================
+           TOP NAVIGATION (Purple bar like Donuz)
+           ============================================ */
+        .top-bar {
+            background: linear-gradient(90deg, #2d1b69 0%, #1e1145 100%);
+            height: var(--topnav-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+        .top-bar-left { display: flex; align-items: center; gap: 1rem; }
+        .top-bar-left img { height: 28px; }
+        .top-bar-left .program-name { font-weight: 600; font-size: 0.95rem; color: #fff; }
+        .top-bar-right { display: flex; align-items: center; gap: 1.2rem; }
+        .top-bar-right a, .top-bar-right button {
+            color: #c0c0d0; font-size: 0.8rem; text-decoration: none; background: none; border: none; cursor: pointer;
+            display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s;
+        }
+        .top-bar-right a:hover, .top-bar-right button:hover { color: #fff; }
+        .top-bar-right .user-badge {
+            background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; color: #fff;
+        }
+        .mode-toggle { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #c0c0d0; }
+        .mode-toggle .toggle {
+            width: 36px; height: 20px; background: rgba(255,255,255,0.2); border-radius: 10px; position: relative; cursor: pointer;
+        }
+        .mode-toggle .toggle::after {
+            content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+            background: #fff; border-radius: 50%; transition: left 0.2s;
+        }
+        .mode-toggle .toggle.active { background: var(--success); }
+        .mode-toggle .toggle.active::after { left: 18px; }
+
+        /* ============================================
+           MODULE NAVIGATION (Second row)
+           ============================================ */
+        .module-nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            height: var(--modulenav-height);
+            display: flex;
+            align-items: stretch;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: var(--topnav-height);
+            z-index: 190;
+            overflow-x: auto;
+        }
+        .module-nav button {
+            padding: 0 1.25rem; background: none; border: none; border-bottom: 3px solid transparent;
+            color: var(--text-secondary); font-size: 0.85rem; font-family: inherit; cursor: pointer;
+            white-space: nowrap; transition: all 0.2s;
+        }
+        .module-nav button:hover { color: var(--text-primary); }
+        .module-nav button.active {
+            color: var(--accent-blue); border-bottom-color: var(--accent-blue); font-weight: 500;
+        }
+
+        /* ============================================
+           LAYOUT: SIDEBAR + MAIN CONTENT
+           ============================================ */
+        .app-layout {
+            display: flex;
+            min-height: calc(100vh - var(--topnav-height) - var(--modulenav-height));
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        .sidebar-title {
+            font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
+            padding: 0 1.5rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .sidebar-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.65rem 1.5rem; cursor: pointer; transition: all 0.15s;
+            color: var(--text-secondary); font-size: 0.85rem; border-left: 3px solid transparent;
+        }
+        .sidebar-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .sidebar-item.active {
+            background: var(--accent-blue-bg); color: var(--accent-blue);
+            border-left-color: var(--accent-blue); font-weight: 500;
+        }
+        .sidebar-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .sidebar-item .icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+
+        /* ============================================
+           PAGE HEADER
+           ============================================ */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            font-size: 1.4rem; font-weight: 600; color: var(--accent-blue);
+            margin-bottom: 0.25rem;
+        }
+        .page-header h1::after {
+            content: ''; display: block; width: 50px; height: 3px;
+            background: var(--accent-blue); border-radius: 2px; margin-top: 0.5rem;
+        }
+        .page-header .subtitle { color: var(--text-secondary); font-size: 0.85rem; }
+        .page-header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            padding: 0.55rem 1.25rem; border-radius: 6px; font-size: 0.85rem; font-family: inherit;
+            font-weight: 500; cursor: pointer; border: none; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .btn-primary { background: var(--accent-blue); color: #fff; }
+        .btn-primary:hover { background: #2563EB; }
+        .btn-orange { background: var(--primary); color: #fff; }
+        .btn-orange:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #DC2626; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-success:hover { background: #059669; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+        .btn-outline:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+        .btn-sm { padding: 0.35rem 0.8rem; font-size: 0.78rem; }
+        .btn-icon { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; }
+        .btn-icon.edit { background: var(--accent-blue); color: #fff; }
+        .btn-icon.delete { background: var(--danger); color: #fff; }
+
+        /* ============================================
+           FORM ELEMENTS
+           ============================================ */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 0.6rem 0.9rem; background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; font-family: inherit;
+            outline: none; transition: border 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-blue); }
+        .form-select { cursor: pointer; }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .form-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; }
+        .form-file-input { padding: 0.5rem; }
+
+        /* ============================================
+           CARDS
+           ============================================ */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+        }
+        .card-header {
+            padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-header h3 { font-size: 0.95rem; font-weight: 600; }
+        .card-body { padding: 1.25rem; }
+
+        /* Stat cards for dashboard */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+            padding: 1.25rem; position: relative; overflow: hidden;
+        }
+        .stat-card.blue { border-left: 4px solid var(--accent-blue); }
+        .stat-card.green { border-left: 4px solid var(--success); }
+        .stat-card.orange { border-left: 4px solid var(--warning); }
+        .stat-card.red { border-left: 4px solid var(--danger); }
+        .stat-card .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem; }
+        .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; }
+        .stat-card .stat-change { font-size: 0.75rem; color: var(--success); margin-top: 0.3rem; }
+        .stat-card .stat-icon { position: absolute; top: 1rem; right: 1rem; opacity: 0.2; font-size: 2rem; }
+
+        /* KPI row */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .kpi-item {
+            display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+        }
+        .kpi-item .kpi-icon {
+            width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .kpi-item .kpi-icon.blue { background: var(--accent-blue-bg); color: var(--accent-blue); }
+        .kpi-item .kpi-icon.green { background: var(--success-bg); color: var(--success); }
+        .kpi-item .kpi-icon.orange { background: var(--warning-bg); color: var(--warning); }
+        .kpi-item .kpi-icon.purple { background: var(--info-bg); color: var(--info); }
+        .kpi-item .kpi-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .kpi-item .kpi-value { font-size: 1.1rem; font-weight: 700; }
+
+        /* ============================================
+           TABLE
+           ============================================ */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 600;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.75rem 1rem; font-size: 0.85rem; color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        tr:hover td { background: var(--bg-card-hover); }
+        .table-actions { display: flex; gap: 0.4rem; }
+
+        /* Pagination */
+        .table-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 0; font-size: 0.8rem; color: var(--text-muted);
+        }
+        .pagination { display: flex; gap: 0.3rem; }
+        .pagination button {
+            padding: 0.3rem 0.6rem; background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem;
+        }
+        .pagination button.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+
+        /* ============================================
+           BADGES & TAGS
+           ============================================ */
+        .badge {
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .badge-success { background: var(--success-bg); color: var(--success); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        .badge-danger { background: var(--danger-bg); color: var(--danger); }
+        .badge-info { background: var(--accent-blue-bg); color: var(--accent-blue); }
+        .badge-muted { background: rgba(100,100,120,0.2); color: var(--text-muted); }
+
+        /* ============================================
+           SEARCH BAR
+           ============================================ */
+        .search-bar {
+            display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: flex-end;
+        }
+        .search-bar .form-group { margin-bottom: 0; flex: 1; min-width: 180px; }
+
+        /* ============================================
+           TABS (sub-tabs within modules)
+           ============================================ */
+        .sub-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .sub-tabs button {
+            padding: 0.6rem 1.25rem; background: none; border: none; border-bottom: 2px solid transparent;
+            color: var(--text-secondary); font-size: 0.85rem; font-family: inherit; cursor: pointer;
+        }
+        .sub-tabs button.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); font-weight: 500; }
+
+        /* ============================================
+           ALERT / NOTICE
+           ============================================ */
+        .alert {
+            padding: 0.85rem 1.25rem; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .alert-info { background: var(--accent-blue-bg); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.3); }
+        .alert-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+        .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+
+        /* ============================================
+           MODAL
+           ============================================ */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+            width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .modal-header h3 { font-size: 1.1rem; }
+        .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+        /* ============================================
+           TOAST NOTIFICATION
+           ============================================ */
+        .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 600; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toast {
+            padding: 0.85rem 1.25rem; border-radius: 8px; font-size: 0.85rem; color: #fff;
+            min-width: 280px; animation: slideIn 0.3s ease;
+        }
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--accent-blue); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ============================================
+           DICA BOX (like Donuz tips)
+           ============================================ */
+        .dica-box {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+            padding: 1.25rem; margin-bottom: 1.5rem;
+        }
+        .dica-box h4 { font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .dica-box p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ============================================
+           UTILITY CLASSES
+           ============================================ */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-muted { color: var(--text-muted); }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .gap-1 { gap: 0.5rem; }
+        .flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        .mobile-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
+        @media (max-width: 1024px) {
+            .sidebar { position: fixed; left: -260px; top: calc(var(--topnav-height) + var(--modulenav-height)); bottom: 0; z-index: 150; transition: left 0.3s; }
+            .sidebar.open { left: 0; }
+            .main-content { max-width: 100%; }
+            .mobile-hamburger { display: block; }
+        }
+        @media (max-width: 768px) {
+            .module-nav { padding: 0 0.75rem; }
+            .module-nav button { padding: 0 0.75rem; font-size: 0.78rem; }
+            .main-content { padding: 1.25rem; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row { grid-template-columns: 1fr; }
+            .top-bar-right .hide-mobile { display: none; }
+        }
+        @media (max-width: 480px) {
+            .stat-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================
+     LOGIN PAGE
+     ============================================ -->
+<div id="loginPage" class="login-page">
+    <div class="login-box">
+        <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/logotipo/357587179122b4b517a85358b491435cb2a49logo.png" alt="Orange Rewards">
+        <h2>Painel Administrativo</h2>
+        <p>Acesse o back-office do Orange Rewards</p>
+        <div class="login-error" id="loginError">Usuário ou senha inválidos</div>
+        <div class="form-group">
+            <label>Usuário</label>
+            <input type="text" id="loginUser" placeholder="Digite seu usuário" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="loginPass" placeholder="Digite sua senha">
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:0.5rem; justify-content:center;" onclick="doLogin()">Entrar</button>
+        <p style="margin-top:1.5rem; font-size:0.75rem; color:var(--text-muted);">Admin: admin / admin123<br>Operador: operador / oper123</p>
+    </div>
+</div>
+
+<!-- ============================================
+     ADMIN PANEL (hidden until login)
+     ============================================ -->
+<div id="adminPanel" class="hidden">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="mobile-hamburger" onclick="toggleSidebar()">☰</button>
+            <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/logotipo/357587179122b4b517a85358b491435cb2a49logo.png" alt="Orange Rewards">
+            <span class="program-name">Orange Rewards</span>
+        </div>
+        <div class="top-bar-right">
+            <a href="#" onclick="goToLP()" class="hide-mobile">👁 Site fidelidade</a>
+            <span class="user-badge" id="userBadge">Admin</span>
+            <span class="hide-mobile" style="color:#c0c0d0; font-size:0.8rem;" id="userName">admin</span>
+            <button onclick="doLogout()">Sair</button>
+        </div>
+    </div>
+
+    <!-- MODULE NAVIGATION -->
+    <div class="module-nav" id="moduleNav">
+        <button class="active" onclick="switchModule('dashboard', this)">Dashboard</button>
+        <button onclick="switchModule('clientes', this)">Clientes</button>
+        <button onclick="switchModule('pontos', this)">Pontos</button>
+        <button onclick="switchModule('premios', this)">Prêmios</button>
+        <button onclick="switchModule('resgates', this)">Resgates</button>
+        <button onclick="switchModule('feedback', this)">Feedback</button>
+        <button onclick="switchModule('marketing', this)">Marketing</button>
+        <button onclick="switchModule('config', this)" data-role="admin">Configurações</button>
+    </div>
+
+    <!-- APP LAYOUT -->
+    <div class="app-layout">
+
+        <!-- SIDEBAR (changes per module) -->
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content" id="mainContent"></div>
+
+    </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+/* ============================================
+   DATA SERVICE - Abstraction layer for future CRM
+   ============================================ */
+class DataService {
+    constructor() {
+        this.initMockData();
+    }
+
+    initMockData() {
+        // Client categories (tiers)
+        this.categories = [
+            { id: 1, title: 'Basic', range: 'Padrão', min: 0, max: 2999, multiplier: 1.00 },
+            { id: 2, title: 'Gold', range: 'A partir de 3.000,00 até 9.999,00', min: 3000, max: 9999, multiplier: 1.00 },
+            { id: 3, title: 'Platinum', range: 'A partir de 10.000,00 até 24.999,00', min: 10000, max: 24999, multiplier: 1.00 },
+            { id: 4, title: 'Prime', range: 'A partir de 25.000,00 até 49.999,00', min: 25000, max: 49999, multiplier: 1.00 },
+            { id: 5, title: 'Select', range: 'Após 50.000,00', min: 50000, max: Infinity, multiplier: 1.00 },
+        ];
+
+        // Point rules (from Donuz data)
+        this.pointRules = [
+            { id: 22945, name: 'Ingresso', multiplier: 0.5, code: 'Ingresso' },
+            { id: 22946, name: 'Hotel', multiplier: 1, code: 'Hotel' },
+            { id: 22947, name: 'Casa', multiplier: 1, code: 'Casa' },
+            { id: 22948, name: 'Carro', multiplier: 1, code: 'Carro' },
+            { id: 22949, name: 'Seguro', multiplier: 3, code: 'Seguro' },
+            { id: 23022, name: 'Cruzeiro', multiplier: 1, code: 'Cruzeiro' },
+            { id: 23024, name: 'Pacote de Viagem', multiplier: 1, code: 'Pacote' },
+            { id: 23062, name: 'Passagem Aérea', multiplier: 0.5, code: 'Passagem' },
+            { id: 23210, name: 'Guia Virtual', multiplier: 3, code: 'Guia Virtual' },
+            { id: 23245, name: 'Visto', multiplier: 3, code: 'Visto' },
+        ];
+
+        // Prize categories
+        this.prizeCategories = [
+            { id: 1, name: 'Brindes', type: 'Categoria', parent: null },
+            { id: 2, name: 'Cupons de Desconto', type: 'Categoria', parent: null },
+            { id: 3, name: 'Gift Cards', type: 'Categoria', parent: null },
+            { id: 4, name: 'Meu Kit de Viagem', type: 'Subcategoria', parent: 3 },
+            { id: 5, name: 'Orange Viagens', type: 'Subcategoria', parent: 3 },
+            { id: 6, name: 'Produtos', type: 'Categoria', parent: null },
+        ];
+
+        // Sample prizes
+        this.prizes = [
+            { id: 1, name: 'Sacochila Orange Viagens', points: 150, category: 1, status: 'Ativo', visible: true },
+            { id: 2, name: 'Nécessaire Viagem', points: 200, category: 1, status: 'Ativo', visible: true },
+            { id: 3, name: 'Copo Stanley Orange', points: 350, category: 1, status: 'Ativo', visible: true },
+            { id: 4, name: 'Kit Amenities Premium', points: 500, category: 1, status: 'Ativo', visible: true },
+            { id: 5, name: 'Gift Card R$50', points: 800, category: 3, status: 'Ativo', visible: true },
+            { id: 6, name: 'Gift Card R$100', points: 1500, category: 3, status: 'Ativo', visible: true },
+            { id: 7, name: 'Gift Card R$200', points: 2800, category: 3, status: 'Ativo', visible: true },
+            { id: 8, name: 'Gift Card R$500', points: 6500, category: 3, status: 'Ativo', visible: true },
+            { id: 9, name: 'Mala de Viagem P', points: 3200, category: 6, status: 'Ativo', visible: true },
+            { id: 10, name: 'Mala de Viagem G', points: 5000, category: 6, status: 'Ativo', visible: true },
+        ];
+
+        // Sample clients
+        this.clients = this._generateMockClients();
+
+        // Point transactions
+        this.pointTransactions = this._generateMockTransactions();
+
+        // Redemptions
+        this.redemptions = this._generateMockRedemptions();
+
+        // Transactional emails
+        this.emailTemplates = [
+            { id: 1, name: 'Inserção de pontos', desc: 'Usuário recebe ao ganhar pontos' },
+            { id: 2, name: 'Boas vindas', desc: 'Usuário recebe ao se cadastrar no programa' },
+            { id: 3, name: 'Lembrete de senha', desc: 'Solicitação de lembrete de senha do usuário' },
+            { id: 4, name: 'Confirmação de resgate de prêmio', desc: 'Usuário recebe quando efetuar um resgate de prêmio' },
+            { id: 5, name: 'Confirmação de recebimento de mimo', desc: 'Usuário recebe ao ganhar um mimo' },
+            { id: 6, name: 'Indique amigos', desc: 'Usuário recebe ao ser indicado por um amigo' },
+            { id: 7, name: 'Categoria atualizada', desc: 'Usuário recebe ao mudar categoria' },
+            { id: 8, name: 'Cliente bloqueado', desc: 'Usuário recebe ao ganhar pontos quando está bloqueado' },
+            { id: 9, name: 'Desbloquear cliente', desc: 'Usuário recebe ao indicar alguém e desbloquear' },
+            { id: 10, name: 'Antes de excluir um cliente', desc: 'Usuário recebe ao solicitar que seus dados sejam apagados' },
+            { id: 11, name: 'Excluir um cliente', desc: 'Usuário recebe ao ser excluído do programa' },
+            { id: 12, name: 'Ao cancelar a exclusão do cliente', desc: 'Usuário recebe ao cancelar a exclusão' },
+        ];
+
+        // Marketing automations
+        this.automations = [
+            { id: 1, title: 'Aniversário', executes: 'Dia', active: true },
+            { id: 2, title: 'Atualização de cadastro', executes: 'Dia 31/10/2024', active: true },
+            { id: 3, title: 'Bem-vindo ao Orange Rewards', executes: 'Dia', active: true },
+            { id: 4, title: 'Cliente inativo', executes: 'Dia 31/12/2024', active: true },
+            { id: 5, title: 'Clientes que nunca compraram', executes: 'Dia 31/12/2024', active: true },
+            { id: 6, title: 'Indique e ganhe', executes: 'Dia', active: true },
+            { id: 7, title: 'Mimo Vouchers de Restaurante', executes: 'Diariamente', active: true },
+            { id: 8, title: 'Pontos vencendo', executes: 'Mensalmente no dia primeiro', active: true },
+            { id: 9, title: 'Saldo de pontos', executes: 'Dia 31/12/2023', active: true },
+        ];
+
+        // Surveys
+        this.surveys = [
+            { id: 1, title: 'Pesquisa de satisfação', link: 'http://pts.vc/pesquisa/dnz8os' },
+        ];
+
+        // Dashboard stats
+        this.dashboardStats = {
+            totalClients: 8308, activeClients: 3574, inactiveClients: 4302, neverPurchased: 432,
+            retentionRate: 58, repeatedSales: 20737, influencedSales: 184646818,
+            revenuePerClient: 23531, avgTicket: 7764, salesPerClient: 3,
+            totalRedemptions: 1023, totalReferrals: 32, satisfaction: 'Ótimo',
+            lastUpdate: '30/03/2026 às 08:38:13',
+        };
+    }
+
+    _generateMockClients() {
+        const names = ['Magno Pereira', 'Adriana Duarte Veronese', 'Fernanda Nogueira', 'Lucas Oliveira', 'Ana Clara Santos',
+            'Roberto Lima', 'Carolina Menezes', 'Pedro Souza', 'Juliana Costa', 'Thiago Almeida',
+            'Patricia Rodrigues', 'Marcelo Ferreira', 'Camila Barbosa', 'Diego Martins', 'Larissa Gomes'];
+        const statuses = ['Ativo', 'Ativo', 'Ativo', 'Inativo', 'Inativo'];
+        const cats = ['Basic', 'Gold', 'Platinum', 'Prime', 'Select'];
+        return names.map((name, i) => ({
+            id: i + 1,
+            name,
+            cpf: `${String(35758270000 + i * 1111).padStart(11, '0')}`,
+            email: name.toLowerCase().replace(/ /g, '.').normalize('NFD').replace(/[\u0300-\u036f]/g, '') + '@email.com',
+            phone: `(${11 + i % 5}${i}) 9${String(9000 + i * 111).slice(0,4)}-${String(1000 + i * 222).slice(0,4)}`,
+            category: cats[i % 5],
+            totalPoints: [1200, 5400, 18000, 28500, 65000][i % 5],
+            status: statuses[i % 5],
+            joinDate: `2024-${String(1 + i % 12).padStart(2, '0')}-15`,
+            birthday: `${1985 + i % 15}-${String(1 + i % 12).padStart(2, '0')}-${String(1 + i * 2 % 28).padStart(2, '0')}`,
+            gender: i % 3 === 0 ? 'M' : 'F',
+            totalSpent: [5000, 15000, 45000, 80000, 150000][i % 5],
+        }));
+    }
+
+    _generateMockTransactions() {
+        const types = ['Inserção', 'Inserção', 'Inserção', 'Resgate', 'Estorno'];
+        const rules = ['Hotel', 'Passagem Aérea', 'Pacote de Viagem', 'Seguro', 'Cruzeiro'];
+        const txns = [];
+        for (let i = 0; i < 30; i++) {
+            txns.push({
+                id: i + 1,
+                clientId: (i % 15) + 1,
+                clientName: this._generateMockClients()[i % 15]?.name || 'Cliente',
+                type: types[i % 5],
+                points: [500, 1200, 800, -1500, -300][i % 5],
+                rule: rules[i % 5],
+                description: `${types[i % 5]} - ${rules[i % 5]}`,
+                date: `2026-${String(1 + i % 3).padStart(2, '0')}-${String(1 + i * 3 % 28).padStart(2, '0')}`,
+            });
+        }
+        return txns;
+    }
+
+    _generateMockRedemptions() {
+        const statuses = ['Aprovado', 'Pendente', 'Entregue', 'Cancelado'];
+        const reds = [];
+        for (let i = 0; i < 15; i++) {
+            reds.push({
+                id: i + 1,
+                voucher: `VCH-${String(100000 + i * 7777).slice(0, 6)}`,
+                clientId: (i % 10) + 1,
+                clientName: this._generateMockClients()[i % 10]?.name || 'Cliente',
+                prizeId: (i % 10) + 1,
+                prizeName: this.prizes[i % 10]?.name || 'Prêmio',
+                points: this.prizes[i % 10]?.points || 500,
+                status: statuses[i % 4],
+                date: `2026-${String(1 + i % 3).padStart(2, '0')}-${String(5 + i * 2 % 25).padStart(2, '0')}`,
+            });
+        }
+        return reds;
+    }
+
+    // ---- CLIENT METHODS ----
+    async getClients(filters = {}) {
+        let result = [...this.clients];
+        if (filters.search) {
+            const s = filters.search.toLowerCase();
+            result = result.filter(c => c.name.toLowerCase().includes(s) || c.cpf.includes(s) || c.email.toLowerCase().includes(s));
+        }
+        if (filters.status) result = result.filter(c => c.status === filters.status);
+        if (filters.category) result = result.filter(c => c.category === filters.category);
+        return result;
+    }
+    async getClientById(id) { return this.clients.find(c => c.id === id); }
+    async createClient(data) {
+        const newClient = { id: this.clients.length + 1, ...data, status: 'Ativo', totalPoints: 0, totalSpent: 0, joinDate: new Date().toISOString().slice(0,10) };
+        this.clients.unshift(newClient);
+        return newClient;
+    }
+    async updateClient(id, data) {
+        const idx = this.clients.findIndex(c => c.id === id);
+        if (idx >= 0) { this.clients[idx] = { ...this.clients[idx], ...data }; return this.clients[idx]; }
+        return null;
+    }
+    async importClients(rows) {
+        let imported = 0;
+        rows.forEach(row => {
+            if (row.name) { this.clients.push({ id: this.clients.length + 1, ...row, status: 'Ativo', totalPoints: 0, totalSpent: 0, joinDate: new Date().toISOString().slice(0,10) }); imported++; }
+        });
+        return { imported, total: rows.length };
+    }
+    async getClientCategories() { return [...this.categories]; }
+    async getClientsByBirthday(month) { return this.clients.filter(c => c.birthday && parseInt(c.birthday.split('-')[1]) === month); }
+
+    // ---- POINT METHODS ----
+    async getPointRules() { return [...this.pointRules]; }
+    async insertPoints(clientId, amount, ruleId, description = '') {
+        const rule = this.pointRules.find(r => r.id === ruleId);
+        const points = amount * (rule ? rule.multiplier : 1);
+        const txn = { id: this.pointTransactions.length + 1, clientId, type: 'Inserção', points, rule: rule?.name || '', description: description || `Inserção - ${rule?.name}`, date: new Date().toISOString().slice(0,10), clientName: (this.clients.find(c => c.id === clientId))?.name || '' };
+        this.pointTransactions.unshift(txn);
+        const client = this.clients.find(c => c.id === clientId);
+        if (client) { client.totalPoints += points; this._updateCategory(client); }
+        return txn;
+    }
+    async reversePoints(clientId, amount, reason) {
+        const txn = { id: this.pointTransactions.length + 1, clientId, type: 'Estorno', points: -amount, rule: '', description: `Estorno - ${reason}`, date: new Date().toISOString().slice(0,10), clientName: (this.clients.find(c => c.id === clientId))?.name || '' };
+        this.pointTransactions.unshift(txn);
+        const client = this.clients.find(c => c.id === clientId);
+        if (client) { client.totalPoints = Math.max(0, client.totalPoints - amount); this._updateCategory(client); }
+        return txn;
+    }
+    async getPointTransactions(filters = {}) {
+        let result = [...this.pointTransactions];
+        if (filters.clientId) result = result.filter(t => t.clientId === filters.clientId);
+        if (filters.type) result = result.filter(t => t.type === filters.type);
+        return result;
+    }
+    async createPointRule(data) {
+        const rule = { id: Math.max(...this.pointRules.map(r => r.id)) + 1, ...data };
+        this.pointRules.push(rule);
+        return rule;
+    }
+    _updateCategory(client) {
+        const pts = client.totalPoints;
+        for (const cat of [...this.categories].reverse()) { if (pts >= cat.min) { client.category = cat.title; break; } }
+    }
+
+    // ---- PRIZE METHODS ----
+    async getPrizes(filters = {}) {
+        let result = [...this.prizes];
+        if (filters.category) result = result.filter(p => p.category === filters.category);
+        if (filters.search) { const s = filters.search.toLowerCase(); result = result.filter(p => p.name.toLowerCase().includes(s)); }
+        return result;
+    }
+    async createPrize(data) {
+        const prize = { id: this.prizes.length + 1, ...data, status: 'Ativo', visible: true };
+        this.prizes.push(prize);
+        return prize;
+    }
+    async updatePrize(id, data) {
+        const idx = this.prizes.findIndex(p => p.id === id);
+        if (idx >= 0) { this.prizes[idx] = { ...this.prizes[idx], ...data }; return this.prizes[idx]; }
+        return null;
+    }
+    async getPrizeCategories() { return [...this.prizeCategories]; }
+    async createPrizeCategory(data) {
+        const cat = { id: this.prizeCategories.length + 1, ...data };
+        this.prizeCategories.push(cat);
+        return cat;
+    }
+
+    // ---- REDEMPTION METHODS ----
+    async getRedemptions(filters = {}) {
+        let result = [...this.redemptions];
+        if (filters.status) result = result.filter(r => r.status === filters.status);
+        if (filters.search) { const s = filters.search.toLowerCase(); result = result.filter(r => r.voucher.toLowerCase().includes(s) || r.clientName.toLowerCase().includes(s)); }
+        return result;
+    }
+    async redeemPrize(clientId, prizeId) {
+        const client = this.clients.find(c => c.id === clientId);
+        const prize = this.prizes.find(p => p.id === prizeId);
+        if (!client || !prize) return { error: 'Cliente ou prêmio não encontrado' };
+        if (client.totalPoints < prize.points) return { error: 'Pontos insuficientes' };
+        client.totalPoints -= prize.points;
+        this._updateCategory(client);
+        const redemption = { id: this.redemptions.length + 1, voucher: `VCH-${Date.now().toString().slice(-6)}`, clientId, clientName: client.name, prizeId, prizeName: prize.name, points: prize.points, status: 'Pendente', date: new Date().toISOString().slice(0,10) };
+        this.redemptions.unshift(redemption);
+        this.pointTransactions.unshift({ id: this.pointTransactions.length + 1, clientId, clientName: client.name, type: 'Resgate', points: -prize.points, rule: '', description: `Resgate - ${prize.name}`, date: new Date().toISOString().slice(0,10) });
+        return redemption;
+    }
+
+    // ---- MARKETING / FEEDBACK ----
+    async getAutomations() { return [...this.automations]; }
+    async getSurveys() { return [...this.surveys]; }
+    async getEmailTemplates() { return [...this.emailTemplates]; }
+
+    // ---- DASHBOARD ----
+    async getDashboardStats() { return { ...this.dashboardStats }; }
+}
+
+/* ============================================
+   APP STATE & INITIALIZATION
+   ============================================ */
+let ds;
+let currentUser = null;
+let currentModule = 'dashboard';
+let currentSubPage = null;
+
+const SIDEBAR_CONFIG = {
+    dashboard: [],
+    clientes: [
+        { id: 'clientes-list', label: 'Clientes', icon: '👥' },
+        { id: 'clientes-cadastrar', label: 'Cadastrar cliente', icon: '➕' },
+        { id: 'clientes-importar', label: 'Importar clientes', icon: '📤' },
+        { id: 'clientes-aniversariantes', label: 'Aniversariantes', icon: '🎂' },
+        { id: 'clientes-relatorio', label: 'Relatório de clientes', icon: '📊' },
+        { id: 'clientes-categorias', label: 'Categorias de clientes', icon: '🏷' },
+        { id: 'clientes-config', label: 'Configurações de clientes', icon: '⚙', role: 'admin' },
+    ],
+    pontos: [
+        { id: 'pontos-inserir', label: 'Inserir Pontos', icon: '🪙' },
+        { id: 'pontos-estornar', label: 'Estornar Pontos', icon: '↩' },
+        { id: 'pontos-importar', label: 'Importar Pontos', icon: '📤' },
+        { id: 'pontos-validar', label: 'Validar Pontos', icon: '✓' },
+        { id: 'pontos-codigos', label: 'Códigos Pontuáveis', icon: '📱' },
+        { id: 'pontos-qrcode', label: 'QR Code', icon: '📷' },
+        { id: 'pontos-regras', label: 'Regras de Pontos', icon: '📐' },
+        { id: 'pontos-relatorio', label: 'Relatório de Pontos', icon: '📊' },
+    ],
+    premios: [
+        { id: 'premios-list', label: 'Meus prêmios', icon: '🎁' },
+        { id: 'premios-cadastrar', label: 'Cadastrar Prêmio', icon: '➕' },
+        { id: 'premios-categorias', label: 'Categorias', icon: '🏷' },
+        { id: 'premios-giftcards', label: 'Giftcards', icon: '💳' },
+        { id: 'premios-mimos', label: 'Mimos', icon: '🎀' },
+        { id: 'premios-relatorio', label: 'Relatório de prêmios', icon: '📊' },
+    ],
+    resgates: [
+        { id: 'resgates-list', label: 'Resgates', icon: '📋' },
+        { id: 'resgates-resgatar', label: 'Resgatar Prêmio', icon: '🛒' },
+        { id: 'resgates-relatorio', label: 'Relatório de resgates', icon: '📊' },
+    ],
+    feedback: [
+        { id: 'feedback-pesquisas', label: 'Minhas Pesquisas', icon: '📝' },
+        { id: 'feedback-cadastrar', label: 'Cadastrar Pesquisa', icon: '➕' },
+    ],
+    marketing: [
+        { id: 'marketing-automacoes', label: 'Ver automações', icon: '⚡' },
+        { id: 'marketing-cadastrar', label: 'Cadastrar automação', icon: '➕' },
+        { id: 'marketing-push', label: 'Push notification', icon: '🔔' },
+        { id: 'marketing-relatorio', label: 'Relatório de automações', icon: '📊' },
+    ],
+    config: [
+        { id: 'config-dados', label: 'Meus Dados', icon: '👤', role: 'admin' },
+        { id: 'config-senha', label: 'Alterar senha', icon: '🔑' },
+        { id: 'config-site', label: 'Site/App fidelidade', icon: '🌐', role: 'admin' },
+        { id: 'config-conteudo', label: 'Conteúdo', icon: '📄', role: 'admin' },
+        { id: 'config-clientes', label: 'Clientes', icon: '👥', role: 'admin' },
+        { id: 'config-emails', label: 'Mensagens transacionais', icon: '✉' },
+        { id: 'config-codigo', label: 'Código pontuável', icon: '📱', role: 'admin' },
+        { id: 'config-filiais', label: 'Filiais', icon: '🏢', role: 'admin' },
+        { id: 'config-pagamento', label: 'Efetuar pagamento', icon: '💳', role: 'admin' },
+        { id: 'config-recursos', label: 'Recursos adicionais', icon: '🔧', role: 'admin' },
+        { id: 'config-integracao', label: 'Integração', icon: '🔗', role: 'admin' },
+        { id: 'config-limites', label: 'Limites', icon: '⚠', role: 'admin' },
+    ],
+};
+
+/* ============================================
+   AUTH
+   ============================================ */
+function doLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const users = { admin: { password: 'admin123', role: 'Admin' }, operador: { password: 'oper123', role: 'Operador' } };
+    if (users[user] && users[user].password === pass) {
+        currentUser = { username: user, role: users[user].role };
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        document.getElementById('userBadge').textContent = currentUser.role;
+        document.getElementById('userName').textContent = user;
+        // Hide admin-only module nav buttons if operador
+        if (currentUser.role === 'Operador') {
+            document.querySelectorAll('.module-nav button[data-role="admin"]').forEach(b => b.classList.add('hidden'));
+        }
+        ds = new DataService();
+        switchModule('dashboard', document.querySelector('.module-nav button'));
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
+
+function doLogout() {
+    currentUser = null;
+    document.getElementById('adminPanel').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginError').style.display = 'none';
+}
+
+function goToLP() {
+    window.open('or-landing.html', '_blank');
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+function switchModule(module, btnEl) {
+    currentModule = module;
+    // Update nav active state
+    document.querySelectorAll('.module-nav button').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+    // Render sidebar
+    renderSidebar(module);
+    // Load default sub-page
+    const sidebarItems = SIDEBAR_CONFIG[module];
+    if (sidebarItems && sidebarItems.length > 0) {
+        const firstVisible = sidebarItems.find(item => !item.role || currentUser.role.toLowerCase() === item.role);
+        if (firstVisible) switchSubPage(firstVisible.id);
+        else renderModulePage(module);
+    } else {
+        renderModulePage(module);
+    }
+}
+
+function renderSidebar(module) {
+    const sidebar = document.getElementById('sidebar');
+    const items = SIDEBAR_CONFIG[module] || [];
+    if (items.length === 0) { sidebar.innerHTML = ''; sidebar.style.display = 'none'; return; }
+    sidebar.style.display = 'block';
+    let html = '';
+    items.forEach(item => {
+        if (item.role && currentUser.role.toLowerCase() !== item.role) return;
+        html += `<div class="sidebar-item" data-page="${item.id}" onclick="switchSubPage('${item.id}')">
+            <span class="icon">${item.icon}</span> ${item.label}
+        </div>`;
+    });
+    sidebar.innerHTML = html;
+}
+
+function switchSubPage(pageId) {
+    currentSubPage = pageId;
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    const active = document.querySelector(`.sidebar-item[data-page="${pageId}"]`);
+    if (active) active.classList.add('active');
+    renderModulePage(currentModule, pageId);
+    // Close sidebar on mobile
+    document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ============================================
+   MODULE RENDERERS
+   ============================================ */
+async function renderModulePage(module, subPage) {
+    const main = document.getElementById('mainContent');
+    switch (module) {
+        case 'dashboard': await renderDashboard(main); break;
+        case 'clientes': await renderClientes(main, subPage); break;
+        case 'pontos': await renderPontos(main, subPage); break;
+        case 'premios': await renderPremios(main, subPage); break;
+        case 'resgates': await renderResgates(main, subPage); break;
+        case 'feedback': await renderFeedback(main, subPage); break;
+        case 'marketing': await renderMarketing(main, subPage); break;
+        case 'config': await renderConfig(main, subPage); break;
+        default: main.innerHTML = '<p>Módulo não encontrado</p>';
+    }
+}
+
+/* ---- DASHBOARD ---- */
+async function renderDashboard(container) {
+    const stats = await ds.getDashboardStats();
+    container.innerHTML = `
+        <div class="page-header">
+            <div class="page-header-row">
+                <h1>Resumo do programa</h1>
+                <div class="flex items-center gap-1">
+                    <input type="text" class="form-input" placeholder="Digite cpf ou código ou e-mail do cliente" style="width:350px; max-width:100%;" id="dashSearch">
+                    <button class="btn btn-primary btn-sm" onclick="searchClientDash()">🔍</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card blue">
+                <div class="stat-label">Total de Clientes Cadastrados</div>
+                <div class="stat-value">${stats.totalClients.toLocaleString('pt-BR')}</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-label">Quantidade de Clientes Ativos</div>
+                <div class="stat-value">${stats.activeClients.toLocaleString('pt-BR')}</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-label">Quantidade de Clientes Inativos</div>
+                <div class="stat-value">${stats.inactiveClients.toLocaleString('pt-BR')}</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-label">Clientes que Nunca Compraram</div>
+                <div class="stat-value">${stats.neverPurchased.toLocaleString('pt-BR')}</div>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-item">
+                <div class="kpi-icon blue">💰</div>
+                <div><div class="kpi-label">Receita por Cliente</div><div class="kpi-value">R$ ${stats.revenuePerClient.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div></div>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-icon green">🎁</div>
+                <div><div class="kpi-label">Total de Resgates</div><div class="kpi-value">${stats.totalRedemptions.toLocaleString('pt-BR')}</div></div>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-icon orange">🎫</div>
+                <div><div class="kpi-label">Ticket Médio</div><div class="kpi-value">R$ ${stats.avgTicket.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div></div>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-icon purple">👥</div>
+                <div><div class="kpi-label">Total de Indicados</div><div class="kpi-value">${stats.totalReferrals}</div></div>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-item">
+                <div class="kpi-icon blue">🛒</div>
+                <div><div class="kpi-label">Vendas por Cliente</div><div class="kpi-value">${stats.salesPerClient}</div></div>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-icon green">🔄</div>
+                <div><div class="kpi-label">Clientes Retidos</div><div class="kpi-value">${stats.retentionRate}%</div></div>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-icon orange">📈</div>
+                <div><div class="kpi-label">Vendas Repetidas</div><div class="kpi-value">${stats.repeatedSales.toLocaleString('pt-BR')}</div></div>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-icon purple">⭐</div>
+                <div><div class="kpi-label">Satisfação dos Clientes</div><div class="kpi-value">${stats.satisfaction} 😊</div></div>
+            </div>
+        </div>
+
+        <p class="text-muted" style="font-size:0.8rem; text-align:center; margin-top:1rem;">Atualizado em: ${stats.lastUpdate}. <a href="#" onclick="renderDashboard(document.getElementById('mainContent'))" style="color:var(--accent-blue)">Atualizar</a></p>
+    `;
+}
+
+function searchClientDash() {
+    const q = document.getElementById('dashSearch')?.value;
+    if (q) { switchModule('clientes', document.querySelectorAll('.module-nav button')[1]); setTimeout(() => { const el = document.getElementById('clientSearch'); if(el){el.value=q; searchClients();} }, 100); }
+}
+
+/* ---- CLIENTES ---- */
+async function renderClientes(container, subPage) {
+    switch(subPage) {
+        case 'clientes-cadastrar': renderClientesCadastrar(container); break;
+        case 'clientes-importar': renderClientesImportar(container); break;
+        case 'clientes-aniversariantes': await renderClientesAniversariantes(container); break;
+        case 'clientes-relatorio': await renderClientesRelatorio(container); break;
+        case 'clientes-categorias': await renderClientesCategorias(container); break;
+        case 'clientes-config': renderClientesConfig(container); break;
+        default: await renderClientesList(container);
+    }
+}
+
+async function renderClientesList(container) {
+    const clients = await ds.getClients();
+    container.innerHTML = `
+        <div class="page-header"><h1>Clientes</h1></div>
+        <div class="search-bar">
+            <div class="form-group"><label>Pesquisa por nome</label><input class="form-input" id="clientSearch" placeholder="Buscar..." oninput="searchClients()"></div>
+            <div class="form-group"><label>Pesquisa por CPF</label><input class="form-input" id="clientCpfSearch" placeholder="CPF..." oninput="searchClients()"></div>
+            <div class="form-group"><label>Status</label>
+                <select class="form-select" id="clientStatusFilter" onchange="searchClients()">
+                    <option value="">Todos</option><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="searchClients()">🔍 Pesquisar</button>
+            <button class="btn btn-outline">Filtros avançados</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Nome</th><th>CPF</th><th>E-mail</th><th>Categoria</th><th>Pontos</th><th>Status</th><th>Opções</th></tr></thead>
+            <tbody id="clientsTableBody">${renderClientRows(clients)}</tbody>
+        </table></div>
+        <div class="table-footer"><span>${clients.length} registros</span><div class="pagination"><button class="active">1</button></div></div>
+        </div>
+    `;
+}
+
+function renderClientRows(clients) {
+    return clients.map(c => `<tr>
+        <td>${c.name}</td><td>${c.cpf}</td><td>${c.email}</td>
+        <td><span class="badge badge-info">${c.category}</span></td>
+        <td>${c.totalPoints.toLocaleString('pt-BR')}</td>
+        <td><span class="badge ${c.status === 'Ativo' ? 'badge-success' : 'badge-danger'}">${c.status}</span></td>
+        <td class="table-actions">
+            <button class="btn-icon edit btn-sm" onclick="editClient(${c.id})" title="Editar">✏</button>
+            <button class="btn-icon delete btn-sm" onclick="confirmDeleteClient(${c.id})" title="Excluir">🗑</button>
+        </td>
+    </tr>`).join('');
+}
+
+async function searchClients() {
+    const search = document.getElementById('clientSearch')?.value || document.getElementById('clientCpfSearch')?.value || '';
+    const status = document.getElementById('clientStatusFilter')?.value || '';
+    const clients = await ds.getClients({ search, status });
+    const tbody = document.getElementById('clientsTableBody');
+    if (tbody) tbody.innerHTML = renderClientRows(clients);
+}
+
+function renderClientesCadastrar(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Cadastre um novo cliente</h1></div>
+        <div class="card"><div class="card-body">
+            <div class="form-row">
+                <div class="form-group"><label>Nome *</label><input class="form-input" id="newClientName" placeholder="Nome completo"></div>
+                <div class="form-group"><label>CPF/CNPJ</label><input class="form-input" id="newClientCpf" placeholder="000.000.000-00"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>E-mail</label><input class="form-input" id="newClientEmail" type="email" placeholder="fulano@xxx.com"></div>
+                <div class="form-group"><label>Senha</label><input class="form-input" id="newClientPass" type="password" placeholder="••••••••"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Celular</label><input class="form-input" id="newClientPhone" placeholder="(00) 00000-0000"></div>
+            </div>
+            <div style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:1rem;">
+                <button class="btn btn-outline" onclick="switchSubPage('clientes-list')">Cadastro completo</button>
+                <button class="btn btn-primary" onclick="saveNewClient()">Salvar</button>
+            </div>
+        </div></div>
+    `;
+}
+
+async function saveNewClient() {
+    const data = {
+        name: document.getElementById('newClientName').value,
+        cpf: document.getElementById('newClientCpf').value,
+        email: document.getElementById('newClientEmail').value,
+        phone: document.getElementById('newClientPhone').value,
+        category: 'Basic', gender: '', birthday: '',
+    };
+    if (!data.name) { showToast('Preencha o nome do cliente', 'error'); return; }
+    await ds.createClient(data);
+    showToast('Cliente cadastrado com sucesso!', 'success');
+    switchSubPage('clientes-list');
+}
+
+function renderClientesImportar(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Importar clientes</h1></div>
+        <div class="card"><div class="card-body">
+            <div class="form-group"><label>Selecione o arquivo em seu computador</label>
+                <div style="display:flex; gap:0.75rem; align-items:center;">
+                    <input type="file" class="form-input form-file-input" id="importFile" accept=".txt,.csv">
+                    <button class="btn btn-outline">Selecionar</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Separador de colunas</label>
+                    <select class="form-select"><option>; (ponto e vírgula)</option><option>, (vírgula)</option></select>
+                </div>
+                <div class="form-group"><label>Formato campos data</label>
+                    <select class="form-select"><option>dia/mês/ano => 31/01/2014 (padrão)</option><option>ano-mês-dia => 2014-01-31</option></select>
+                </div>
+            </div>
+            <div class="form-group"><label><input type="checkbox"> Ignorar primeira linha do arquivo?</label></div>
+            <div style="text-align:right;"><button class="btn btn-danger" onclick="doImportClients()">Importar</button></div>
+        </div></div>
+        <div class="dica-box mt-3">
+            <h4>DICAS PARA IMPORTAÇÃO:</h4>
+            <p>1. Mantenha todas as colunas na ordem: nome;cpf;email;celular;data_nascimento;sexo<br>
+            2. Se não tiver alguma informação, deixe a coluna vazia, mas não exclua a coluna.<br>
+            3. Ao salvar o arquivo, salve no formato csv separado por ponto e vírgula.<br>
+            4. É possível importar no máximo 500 cadastros por vez.<br>
+            5. O campo 'sexo' deve vir em: F, Feminino, M, Masculino.</p>
+        </div>
+    `;
+}
+
+async function doImportClients() {
+    const fileInput = document.getElementById('importFile');
+    if (!fileInput.files[0]) { showToast('Selecione um arquivo', 'error'); return; }
+    const text = await fileInput.files[0].text();
+    const lines = text.split('\n').filter(l => l.trim());
+    const rows = lines.map(line => {
+        const cols = line.split(';');
+        return { name: cols[0]?.trim(), cpf: cols[1]?.trim(), email: cols[2]?.trim(), phone: cols[3]?.trim(), birthday: cols[4]?.trim(), gender: cols[5]?.trim(), category: 'Basic' };
+    });
+    const result = await ds.importClients(rows);
+    showToast(`${result.imported} clientes importados de ${result.total} registros!`, 'success');
+}
+
+async function renderClientesAniversariantes(container) {
+    const month = new Date().getMonth() + 1;
+    const months = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const clients = await ds.getClientsByBirthday(month);
+    container.innerHTML = `
+        <div class="page-header"><h1>Aniversariantes do mês: ${months[month]}</h1></div>
+        <div class="search-bar">
+            <div class="form-group"><label>Escolha um mês</label><select class="form-select" id="bdayMonth" onchange="filterBirthdays()">
+                ${months.slice(1).map((m, i) => `<option value="${i+1}" ${i+1 === month ? 'selected' : ''}>${m}</option>`).join('')}
+            </select></div>
+            <button class="btn btn-primary" onclick="filterBirthdays()">🔍 Pesquisar</button>
+            <button class="btn btn-orange">Exportar</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Aniversário</th></tr></thead>
+            <tbody id="bdayTable">${clients.map(c => `<tr><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td><td>${c.birthday}</td></tr>`).join('')}</tbody>
+        </table></div></div>
+    `;
+}
+
+async function filterBirthdays() {
+    const month = parseInt(document.getElementById('bdayMonth').value);
+    const clients = await ds.getClientsByBirthday(month);
+    document.getElementById('bdayTable').innerHTML = clients.map(c => `<tr><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td><td>${c.birthday}</td></tr>`).join('');
+}
+
+async function renderClientesRelatorio(container) {
+    const stats = await ds.getDashboardStats();
+    container.innerHTML = `
+        <div class="page-header"><h1>Relatórios de clientes</h1></div>
+        <div class="stat-grid">
+            <div class="stat-card blue"><div class="stat-label">Total de Clientes Cadastrados</div><div class="stat-value">${stats.totalClients.toLocaleString('pt-BR')}</div></div>
+            <div class="stat-card green"><div class="stat-label">Clientes Ativos</div><div class="stat-value">${stats.activeClients.toLocaleString('pt-BR')}</div></div>
+            <div class="stat-card orange"><div class="stat-label">Clientes Inativos</div><div class="stat-value">${stats.inactiveClients.toLocaleString('pt-BR')}</div></div>
+            <div class="stat-card red"><div class="stat-label">Nunca Compraram</div><div class="stat-value">${stats.neverPurchased.toLocaleString('pt-BR')}</div></div>
+        </div>
+        <div class="card mt-2"><div class="card-header"><h3>Perfil dos clientes</h3></div><div class="card-body">
+            <p class="text-muted" style="font-size:0.85rem;">Você possui ${stats.totalClients.toLocaleString('pt-BR')} clientes cadastrados em seu programa. As informações acima variam de acordo com o período de recorrência que é de 365 dias.</p>
+        </div></div>
+    `;
+}
+
+async function renderClientesCategorias(container) {
+    const cats = await ds.getClientCategories();
+    container.innerHTML = `
+        <div class="page-header"><div class="page-header-row"><h1>Categorias</h1>
+            <button class="btn btn-primary" onclick="showModal('Nova Categoria', renderCategoryForm())">📋 Cadastrar categoria</button>
+        </div></div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Título</th><th>Intervalo</th><th>Multiplicador</th><th>Ações</th></tr></thead>
+            <tbody>${cats.map(c => `<tr>
+                <td>${c.title}</td><td>${c.range}</td><td>${c.multiplier.toFixed(2).replace('.',',')}</td>
+                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td>
+            </tr>`).join('')}</tbody>
+        </table></div></div>
+    `;
+}
+
+function renderClientesConfig(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Configurações de clientes</h1></div>
+        <div class="sub-tabs">
+            <button class="active">Geral</button><button>Campos Adicionais</button><button>Indique e Ganhe</button><button>Mimos</button><button>Categoria</button>
+        </div>
+        <div class="card"><div class="card-body">
+            <h3 style="margin-bottom:1rem;">Cadastro</h3>
+            <div class="form-group"><label>O cliente pode se cadastrar através da Loja de Prêmios?</label><select class="form-select" style="width:auto;"><option>Sim</option><option>Não</option></select></div>
+            <h3 style="margin:1.5rem 0 1rem;">Pontuação</h3>
+            <div class="form-group"><label>O cliente pode ganhar pontos antes de se cadastrar?</label><select class="form-select" style="width:auto;"><option>Sim</option><option>Não</option></select></div>
+            <div class="form-group"><label>Deseja bloquear a inserção de pontos com o mesmo código controle?</label><select class="form-select" style="width:auto;"><option>Não</option><option>Sim</option></select></div>
+            <h3 style="margin:1.5rem 0 1rem;">E-mails</h3>
+            <div class="form-group"><label>Enviar emails na inserção de pontos</label><select class="form-select" style="width:auto;"><option>Sempre enviar emails na inserção de pontos</option><option>Nunca enviar</option></select></div>
+            <h3 style="margin:1.5rem 0 1rem;">Recorrência</h3>
+            <div class="form-group"><label>Informe o período de recorrência de seus clientes: <input class="form-input" type="number" value="365" style="width:80px; display:inline-block;"> Dias</label></div>
+            <div style="text-align:right; margin-top:1.5rem;"><button class="btn btn-primary">Salvar</button></div>
+        </div></div>
+    `;
+}
+
+function editClient(id) { showToast('Edição de cliente #' + id + ' (em desenvolvimento)', 'info'); }
+function confirmDeleteClient(id) { showToast('Exclusão de cliente não permitida via interface (segurança)', 'error'); }
+
+/* ---- PONTOS ---- */
+async function renderPontos(container, subPage) {
+    switch(subPage) {
+        case 'pontos-estornar': renderPontosEstornar(container); break;
+        case 'pontos-importar': renderPontosImportar(container); break;
+        case 'pontos-regras': await renderPontosRegras(container); break;
+        case 'pontos-relatorio': await renderPontosRelatorio(container); break;
+        case 'pontos-validar': renderPontosValidar(container); break;
+        case 'pontos-codigos': renderPontosCodigos(container); break;
+        case 'pontos-qrcode': renderPontosQR(container); break;
+        default: await renderPontosInserir(container);
+    }
+}
+
+async function renderPontosInserir(container) {
+    const rules = await ds.getPointRules();
+    container.innerHTML = `
+        <div class="page-header"><h1>Inserir Pontos</h1></div>
+        <div class="card"><div class="card-body">
+            <div class="form-row">
+                <div class="form-group"><label>CPF ou Código</label>
+                    <div style="display:flex; gap:0.5rem;"><input class="form-input" id="insertPointsCpf" placeholder="Digite o CPF ou código"><button class="btn btn-outline btn-sm">?</button></div>
+                </div>
+            </div>
+            <div class="form-group"><label>Regra de pontos:</label>
+                <select class="form-select" id="insertPointsRule">
+                    <option value="">Selecione:</option>
+                    ${rules.map(r => `<option value="${r.id}">${r.name} (${r.multiplier}x)</option>`).join('')}
+                </select>
+            </div>
+            <div class="form-group"><label>Valor (R$)</label><input class="form-input" type="number" id="insertPointsAmount" placeholder="0,00"></div>
+            <div style="text-align:right;"><button class="btn btn-primary" onclick="doInsertPoints()">Avançar</button></div>
+        </div></div>
+    `;
+}
+
+async function doInsertPoints() {
+    const cpf = document.getElementById('insertPointsCpf').value.trim();
+    const ruleId = parseInt(document.getElementById('insertPointsRule').value);
+    const amount = parseFloat(document.getElementById('insertPointsAmount').value);
+    if (!cpf || !ruleId || !amount) { showToast('Preencha todos os campos', 'error'); return; }
+    const clients = await ds.getClients({ search: cpf });
+    if (clients.length === 0) { showToast('Cliente não encontrado', 'error'); return; }
+    const txn = await ds.insertPoints(clients[0].id, amount, ruleId);
+    showToast(`${txn.points} Oranginos inseridos para ${clients[0].name}!`, 'success');
+}
+
+function renderPontosEstornar(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Estornar Pontos</h1></div>
+        <div class="card"><div class="card-body">
+            <div class="form-group"><label>CPF ou Código do cliente</label><input class="form-input" id="reverseCpf" placeholder="CPF ou código"></div>
+            <div class="form-group"><label>Quantidade de pontos a estornar</label><input class="form-input" type="number" id="reverseAmount" placeholder="0"></div>
+            <div class="form-group"><label>Motivo</label><input class="form-input" id="reverseReason" placeholder="Motivo do estorno"></div>
+            <div style="text-align:right;"><button class="btn btn-danger" onclick="doReversePoints()">Estornar</button></div>
+        </div></div>
+    `;
+}
+
+async function doReversePoints() {
+    const cpf = document.getElementById('reverseCpf').value.trim();
+    const amount = parseInt(document.getElementById('reverseAmount').value);
+    const reason = document.getElementById('reverseReason').value;
+    if (!cpf || !amount) { showToast('Preencha CPF e quantidade', 'error'); return; }
+    const clients = await ds.getClients({ search: cpf });
+    if (clients.length === 0) { showToast('Cliente não encontrado', 'error'); return; }
+    await ds.reversePoints(clients[0].id, amount, reason);
+    showToast(`${amount} Oranginos estornados de ${clients[0].name}`, 'success');
+}
+
+function renderPontosImportar(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Importar Pontos</h1></div>
+        <div class="card"><div class="card-body">
+            <div class="form-group"><label>Selecione o arquivo (.txt ou .csv)</label>
+                <input type="file" class="form-input form-file-input" id="importPointsFile" accept=".txt,.csv">
+            </div>
+            <p class="form-hint">Formato: cpf;valor;regra;descricao (separado por ponto e vírgula)</p>
+            <div style="text-align:right; margin-top:1rem;"><button class="btn btn-primary" onclick="doImportPoints()">Importar</button></div>
+        </div></div>
+        <div class="dica-box mt-3"><h4>Formato do arquivo:</h4>
+            <p>Cada linha deve conter: CPF;Valor;Regra;Descrição<br>
+            Exemplo: 12345678901;1500;Hotel;Reserva Hotel São Paulo<br>
+            O valor será multiplicado pela regra automaticamente.</p>
+        </div>
+    `;
+}
+
+async function doImportPoints() {
+    const fileInput = document.getElementById('importPointsFile');
+    if (!fileInput.files[0]) { showToast('Selecione um arquivo', 'error'); return; }
+    const text = await fileInput.files[0].text();
+    const lines = text.split('\n').filter(l => l.trim());
+    let imported = 0;
+    for (const line of lines) {
+        const [cpf, valor, regra, desc] = line.split(';').map(s => s.trim());
+        const clients = await ds.getClients({ search: cpf });
+        if (clients.length > 0) {
+            const rule = ds.pointRules.find(r => r.name.toLowerCase() === regra?.toLowerCase() || r.code.toLowerCase() === regra?.toLowerCase());
+            await ds.insertPoints(clients[0].id, parseFloat(valor) || 0, rule?.id || 0, desc || '');
+            imported++;
+        }
+    }
+    showToast(`${imported} transações importadas de ${lines.length} linhas!`, 'success');
+}
+
+async function renderPontosRegras(container) {
+    const rules = await ds.getPointRules();
+    container.innerHTML = `
+        <div class="page-header"><h1>Regras de pontos</h1></div>
+        <div class="dica-box">
+            <h4>DICAS:</h4>
+            <p>1º Por padrão o sistema trabalha com a regra de 1 'valor' igual a 1 ponto.<br>
+            2º Você pode criar suas próprias regras de pontos.<br>
+            3º Se você deseja usar apenas a regra padrão, não precisa cadastrar nada.</p>
+        </div>
+        <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
+            <button class="btn btn-danger" onclick="showModal('Nova Regra de Ponto', renderRuleForm())">Cadastrar regra de ponto</button>
+            <button class="btn btn-primary">Configurar validade dos pontos</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>ID</th><th>Nome da Regra</th><th>O valor inserido equivale a</th><th>Códigos de produto</th><th>Opções</th></tr></thead>
+            <tbody>${rules.map(r => `<tr>
+                <td>${r.id}</td><td>${r.name}</td><td>${r.multiplier}</td><td>${r.code}</td>
+                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td>
+            </tr>`).join('')}</tbody>
+        </table></div>
+        <div class="table-footer"><span>${rules.length} registros</span></div>
+        </div>
+    `;
+}
+
+async function renderPontosRelatorio(container) {
+    const txns = await ds.getPointTransactions();
+    container.innerHTML = `
+        <div class="page-header"><h1>Relatório de Pontos</h1></div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Data</th><th>Cliente</th><th>Tipo</th><th>Regra</th><th>Pontos</th><th>Descrição</th></tr></thead>
+            <tbody>${txns.slice(0, 20).map(t => `<tr>
+                <td>${t.date}</td><td>${t.clientName}</td>
+                <td><span class="badge ${t.type === 'Inserção' ? 'badge-success' : t.type === 'Resgate' ? 'badge-warning' : 'badge-danger'}">${t.type}</span></td>
+                <td>${t.rule}</td><td class="${t.points >= 0 ? 'text-success' : 'text-danger'}">${t.points > 0 ? '+' : ''}${t.points.toLocaleString('pt-BR')}</td>
+                <td>${t.description}</td>
+            </tr>`).join('')}</tbody>
+        </table></div></div>
+    `;
+}
+
+function renderPontosValidar(container) { container.innerHTML = '<div class="page-header"><h1>Validar Pontos</h1></div><div class="card"><div class="card-body"><p class="text-muted">Funcionalidade de validação de pontos em desenvolvimento.</p></div></div>'; }
+function renderPontosCodigos(container) { container.innerHTML = '<div class="page-header"><h1>Códigos Pontuáveis</h1></div><div class="card"><div class="card-body"><p class="text-muted">Gerador de códigos pontuáveis em desenvolvimento.</p></div></div>'; }
+function renderPontosQR(container) { container.innerHTML = '<div class="page-header"><h1>QR Code</h1></div><div class="card"><div class="card-body"><p class="text-muted">Gerador de QR Code em desenvolvimento.</p></div></div>'; }
+
+/* ---- PRÊMIOS ---- */
+async function renderPremios(container, subPage) {
+    switch(subPage) {
+        case 'premios-cadastrar': await renderPremiosCadastrar(container); break;
+        case 'premios-categorias': await renderPremiosCategorias(container); break;
+        case 'premios-giftcards': container.innerHTML = '<div class="page-header"><h1>Gift Cards</h1></div><div class="card"><div class="card-body"><p class="text-muted">Gerenciamento de Gift Cards em desenvolvimento.</p></div></div>'; break;
+        case 'premios-mimos': container.innerHTML = '<div class="page-header"><h1>Mimos</h1></div><div class="card"><div class="card-body"><p class="text-muted">Gerenciamento de Mimos em desenvolvimento.</p></div></div>'; break;
+        case 'premios-relatorio': container.innerHTML = '<div class="page-header"><h1>Relatório de Prêmios</h1></div><div class="card"><div class="card-body"><p class="text-muted">Relatório de prêmios em desenvolvimento.</p></div></div>'; break;
+        default: await renderPremiosList(container);
+    }
+}
+
+async function renderPremiosList(container) {
+    const prizes = await ds.getPrizes();
+    const cats = await ds.getPrizeCategories();
+    container.innerHTML = `
+        <div class="page-header"><h1>Meus prêmios</h1></div>
+        <div class="search-bar">
+            <div class="form-group"><label>Buscar</label><input class="form-input" placeholder="Nome do prêmio..."></div>
+            <div class="form-group"><label>Categoria</label><select class="form-select">
+                <option value="">Todas</option>${cats.filter(c=>!c.parent).map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
+            </select></div>
+            <button class="btn btn-primary">🔍 Pesquisar</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>ID</th><th>Nome</th><th>Pontos</th><th>Categoria</th><th>Status</th><th>Visível</th><th>Ações</th></tr></thead>
+            <tbody>${prizes.map(p => {
+                const cat = cats.find(c => c.id === p.category);
+                return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.points.toLocaleString('pt-BR')}</td>
+                <td>${cat?.name || '-'}</td><td><span class="badge badge-success">${p.status}</span></td>
+                <td>${p.visible ? 'Sim' : 'Não'}</td>
+                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td></tr>`;
+            }).join('')}</tbody>
+        </table></div></div>
+    `;
+}
+
+async function renderPremiosCadastrar(container) {
+    const cats = await ds.getPrizeCategories();
+    container.innerHTML = `
+        <div class="page-header"><h1>Cadastrar Prêmio</h1></div>
+        <div class="sub-tabs"><button class="active">Geral</button><button>Descrição</button><button>Regras</button><button>Imagens</button><button>Opcional</button></div>
+        <div class="card"><div class="card-body">
+            <div class="form-group"><label>Nome do Prêmio:</label><input class="form-input" id="newPrizeName"></div>
+            <h3 style="margin:1.5rem 0 1rem;">Valores</h3>
+            <div class="form-group"><label>Preço em pontos</label><input class="form-input" type="number" id="newPrizePoints" placeholder="1.000,00"><p class="form-hint">Formato: 1.000,00</p></div>
+            <h3 style="margin:1.5rem 0 1rem;">Categoria/Subcategoria</h3>
+            <div class="form-group"><label>Categoria</label><select class="form-select" id="newPrizeCat">
+                <option>Selecione:</option>${cats.filter(c=>!c.parent).map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
+            </select></div>
+            <button class="btn btn-danger btn-sm mb-3">+ Cadastrar Categoria</button>
+            <h3 style="margin:1.5rem 0 1rem;">Status/Visibilidade</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Status</label><select class="form-select"><option>Ativo</option><option>Inativo</option></select></div>
+                <div class="form-group"><label>Este prêmio pode ser exibido na loja de prêmios?</label><select class="form-select"><option>Sim</option><option>Não</option></select></div>
+            </div>
+            <div style="text-align:right; margin-top:1.5rem;"><button class="btn btn-danger" onclick="saveNewPrize()">Salvar</button></div>
+        </div></div>
+    `;
+}
+
+async function saveNewPrize() {
+    const name = document.getElementById('newPrizeName').value;
+    const points = parseInt(document.getElementById('newPrizePoints').value);
+    const category = parseInt(document.getElementById('newPrizeCat').value);
+    if (!name || !points) { showToast('Preencha nome e pontos', 'error'); return; }
+    await ds.createPrize({ name, points, category: category || 1 });
+    showToast('Prêmio cadastrado com sucesso!', 'success');
+    switchSubPage('premios-list');
+}
+
+async function renderPremiosCategorias(container) {
+    const cats = await ds.getPrizeCategories();
+    container.innerHTML = `
+        <div class="page-header"><h1>Cadastrar Categoria</h1></div>
+        <div class="card mb-3"><div class="card-body">
+            <div style="display:flex; gap:1rem; align-items:flex-end; flex-wrap:wrap;">
+                <div class="form-group"><label>Nome:</label><input class="form-input" id="newCatName"></div>
+                <div class="form-group"><label><input type="checkbox" id="newCatIsSub"> Subcategoria de:</label></div>
+                <div class="form-group"><select class="form-select" id="newCatParent" disabled>
+                    <option>Selecione:</option>${cats.filter(c=>!c.parent).map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
+                </select></div>
+                <button class="btn btn-success" onclick="saveNewPrizeCat()">Salvar</button>
+            </div>
+        </div></div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Nome</th><th>Tipo</th><th>Opções</th></tr></thead>
+            <tbody>${cats.map(c => `<tr>
+                <td>${c.parent ? (cats.find(p=>p.id===c.parent)?.name||'') + ' > ' : ''}${c.name}</td>
+                <td>${c.type}</td>
+                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td>
+            </tr>`).join('')}</tbody>
+        </table></div></div>
+    `;
+    document.getElementById('newCatIsSub')?.addEventListener('change', function() {
+        document.getElementById('newCatParent').disabled = !this.checked;
+    });
+}
+
+async function saveNewPrizeCat() {
+    const name = document.getElementById('newCatName').value;
+    const isSub = document.getElementById('newCatIsSub').checked;
+    const parent = isSub ? parseInt(document.getElementById('newCatParent').value) : null;
+    if (!name) { showToast('Preencha o nome', 'error'); return; }
+    await ds.createPrizeCategory({ name, type: isSub ? 'Subcategoria' : 'Categoria', parent });
+    showToast('Categoria criada!', 'success');
+    renderPremiosCategorias(document.getElementById('mainContent'));
+}
+
+/* ---- RESGATES ---- */
+async function renderResgates(container, subPage) {
+    switch(subPage) {
+        case 'resgates-resgatar': renderResgatesResgatar(container); break;
+        case 'resgates-relatorio': container.innerHTML = '<div class="page-header"><h1>Relatório de Resgates</h1></div><div class="card"><div class="card-body"><p class="text-muted">Relatório em desenvolvimento.</p></div></div>'; break;
+        default: await renderResgatesList(container);
+    }
+}
+
+async function renderResgatesList(container) {
+    const reds = await ds.getRedemptions();
+    container.innerHTML = `
+        <div class="page-header"><h1>Veja os resgates</h1></div>
+        <div class="search-bar">
+            <div class="form-group"><label>Código do Voucher</label><input class="form-input" placeholder="Código do Voucher..."></div>
+            <div class="form-group"><label>CPF ou Código do Cliente</label><input class="form-input" placeholder="CPF ou Código..."></div>
+            <div class="form-group"><label>Status</label><select class="form-select"><option>Todos</option><option>Pendente</option><option>Aprovado</option><option>Entregue</option><option>Cancelado</option></select></div>
+            <button class="btn btn-primary">🔍 Pesquisar</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Voucher</th><th>Cliente</th><th>Prêmio</th><th>Pontos</th><th>Status</th><th>Data</th></tr></thead>
+            <tbody>${reds.map(r => `<tr>
+                <td><code>${r.voucher}</code></td><td>${r.clientName}</td><td>${r.prizeName}</td>
+                <td>${r.points.toLocaleString('pt-BR')}</td>
+                <td><span class="badge ${r.status==='Aprovado'?'badge-success':r.status==='Pendente'?'badge-warning':r.status==='Entregue'?'badge-info':'badge-danger'}">${r.status}</span></td>
+                <td>${r.date}</td>
+            </tr>`).join('')}</tbody>
+        </table></div></div>
+    `;
+}
+
+function renderResgatesResgatar(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Resgatar Prêmio</h1></div>
+        <div class="card"><div class="card-body">
+            <div class="form-group"><label>CPF ou Código do Cliente</label><input class="form-input" id="redeemCpf" placeholder="CPF..."></div>
+            <div class="form-group"><label>ID do Prêmio</label><input class="form-input" type="number" id="redeemPrizeId" placeholder="ID do prêmio"></div>
+            <div style="text-align:right;"><button class="btn btn-success" onclick="doRedeem()">Resgatar</button></div>
+        </div></div>
+    `;
+}
+
+async function doRedeem() {
+    const cpf = document.getElementById('redeemCpf').value.trim();
+    const prizeId = parseInt(document.getElementById('redeemPrizeId').value);
+    if (!cpf || !prizeId) { showToast('Preencha todos os campos', 'error'); return; }
+    const clients = await ds.getClients({ search: cpf });
+    if (clients.length === 0) { showToast('Cliente não encontrado', 'error'); return; }
+    const result = await ds.redeemPrize(clients[0].id, prizeId);
+    if (result.error) { showToast(result.error, 'error'); return; }
+    showToast(`Resgate realizado! Voucher: ${result.voucher}`, 'success');
+}
+
+/* ---- FEEDBACK ---- */
+async function renderFeedback(container, subPage) {
+    if (subPage === 'feedback-cadastrar') {
+        container.innerHTML = '<div class="page-header"><h1>Cadastrar Pesquisa</h1></div><div class="card"><div class="card-body"><p class="text-muted">Criador de pesquisas em desenvolvimento.</p></div></div>';
+        return;
+    }
+    const surveys = await ds.getSurveys();
+    container.innerHTML = `
+        <div class="page-header"><h1>Lista de pesquisas</h1></div>
+        <div class="alert alert-warning">⚠ Atenção! Você possui 49988 envios disponíveis. <a href="#" style="color:var(--accent-blue)">Contratar mais envios</a></div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Título</th><th>Link da pesquisa</th><th>Ações</th></tr></thead>
+            <tbody>${surveys.map(s => `<tr>
+                <td>${s.title}</td><td><a href="${s.link}" target="_blank" style="color:var(--accent-blue)">${s.link}</a></td>
+                <td class="table-actions"><button class="btn-icon btn-sm" style="background:var(--info);color:#fff">⏰</button> <button class="btn-icon btn-sm" style="background:var(--success);color:#fff">✉</button> <button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td>
+            </tr>`).join('')}</tbody>
+        </table></div></div>
+    `;
+}
+
+/* ---- MARKETING ---- */
+async function renderMarketing(container, subPage) {
+    if (subPage === 'marketing-cadastrar') { container.innerHTML = '<div class="page-header"><h1>Cadastrar automação</h1></div><div class="card"><div class="card-body"><p class="text-muted">Criador de automações em desenvolvimento.</p></div></div>'; return; }
+    if (subPage === 'marketing-push') { container.innerHTML = '<div class="page-header"><h1>Push Notification</h1></div><div class="card"><div class="card-body"><p class="text-muted">Push notifications em desenvolvimento.</p></div></div>'; return; }
+    if (subPage === 'marketing-relatorio') { container.innerHTML = '<div class="page-header"><h1>Relatório de automações</h1></div><div class="card"><div class="card-body"><p class="text-muted">Relatório em desenvolvimento.</p></div></div>'; return; }
+    const autos = await ds.getAutomations();
+    container.innerHTML = `
+        <div class="page-header"><h1>Lista de automações</h1></div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Título</th><th>Executa</th><th>Ações</th></tr></thead>
+            <tbody>${autos.map(a => `<tr>
+                <td>${a.title}</td><td>${a.executes}</td>
+                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td>
+            </tr>`).join('')}</tbody>
+        </table></div></div>
+        <div class="dica-box mt-3"><h4>Veja algumas automações poderosas que você pode configurar:</h4>
+            <p>• Feliz Aniversário<br>• Datas especiais (dia das mães, dia dos pais, dia da mulher)<br>• Estamos sentindo sua falta<br>• Prêmios que podem ser resgatados<br>• Ofertas promocionais</p>
+        </div>
+    `;
+}
+
+/* ---- CONFIGURAÇÕES ---- */
+async function renderConfig(container, subPage) {
+    switch(subPage) {
+        case 'config-senha': container.innerHTML = '<div class="page-header"><h1>Alterar senha</h1></div><div class="card"><div class="card-body"><div class="form-group"><label>Senha atual</label><input class="form-input" type="password"></div><div class="form-group"><label>Nova senha</label><input class="form-input" type="password"></div><div class="form-group"><label>Confirmar nova senha</label><input class="form-input" type="password"></div><div style="text-align:right"><button class="btn btn-primary">Salvar</button></div></div></div>'; break;
+        case 'config-site': renderConfigSite(container); break;
+        case 'config-conteudo': renderConfigConteudo(container); break;
+        case 'config-emails': await renderConfigEmails(container); break;
+        case 'config-integracao': renderConfigIntegracao(container); break;
+        default: renderConfigDados(container);
+    }
+}
+
+function renderConfigDados(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Meus Dados</h1></div>
+        <div class="card"><div class="card-body">
+            <div class="form-row">
+                <div class="form-group"><label>Nome da empresa</label><input class="form-input" value="Orange Viagens"></div>
+                <div class="form-group"><label>E-mail</label><input class="form-input" value="contato@orangeviagens.com.br"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Telefone</label><input class="form-input" value="(11) 1234-5678"></div>
+                <div class="form-group"><label>CNPJ</label><input class="form-input" value="00.000.000/0001-00"></div>
+            </div>
+            <div style="text-align:right; margin-top:1rem;"><button class="btn btn-primary">Salvar</button></div>
+        </div></div>
+    `;
+}
+
+function renderConfigSite(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Site/App fidelidade</h1></div>
+        <div class="sub-tabs"><button class="active">Template</button><button>App</button><button>Logo</button><button>Favicon</button><button>Banner</button><button>Voucher</button><button>Geral</button></div>
+        <div class="card"><div class="card-body">
+            <p>Para ver seu site fidelidade, acesse: <a href="#" style="color:var(--accent-blue)" onclick="goToLP()">https://www.donuz.co/orangeviagens</a></p>
+            <p class="text-muted mt-2">Template ativo: <strong>optimus</strong></p>
+        </div></div>
+    `;
+}
+
+function renderConfigConteudo(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Conteúdo</h1></div>
+        <div class="sub-tabs"><button class="active">Como Funciona</button><button>Regulamento</button><button>Política de Privacidade</button><button>Política de Cookie</button></div>
+        <div class="card"><div class="card-body">
+            <h3>Como Ganhar Pontos</h3>
+            <p class="text-muted mt-2" style="line-height:2;">
+                Adquirindo serviços na Orange Viagens:<br>
+                • Ingressos de Parques: 1 ponto para cada R$2,00 em compras<br>
+                • Passagem Aérea: 1 ponto para cada R$2,00 em compras<br>
+                • Locação de Carro: 1 ponto para cada R$1,00 em compras<br>
+                • Hospedagem: 1 ponto para cada R$1,00 em compras<br>
+                • Cruzeiro: 1 ponto para cada R$1,00 em compras<br>
+                • Pacote de Viagem: 1 ponto para cada R$1,00 em compras<br>
+                • Roteiro Personalizado: 2 pontos para cada R$1,00 em compras<br>
+                • Orange Rentals: 2 pontos para cada R$1,00 em compras<br>
+                • Seguro Viagem: 3 pontos para cada R$1,00 em compras<br>
+                • Guia Virtual: 3 pontos para cada R$1,00 em compras<br>
+                • Assessoria de Visto: 3 pontos para cada R$1,00 em compras
+            </p>
+        </div></div>
+    `;
+}
+
+async function renderConfigEmails(container) {
+    const emails = await ds.getEmailTemplates();
+    container.innerHTML = `
+        <div class="page-header"><h1>Email Transacionais</h1></div>
+        <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Email</th><th>Descrição</th><th>Ação</th></tr></thead>
+            <tbody>${emails.map(e => `<tr>
+                <td>${e.name}</td><td>${e.desc}</td>
+                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon btn-sm" style="background:var(--primary);color:#fff;">👁</button></td>
+            </tr>`).join('')}</tbody>
+        </table></div></div>
+    `;
+}
+
+function renderConfigIntegracao(container) {
+    container.innerHTML = `
+        <div class="page-header"><h1>Integração</h1></div>
+        <div class="alert alert-info">ℹ As integrações com o CRM serão habilitadas em breve. A estrutura do DataService já está preparada para receber chamadas de API externas.</div>
+        <div class="card"><div class="card-body">
+            <h3 style="margin-bottom:1rem;">API de Integração</h3>
+            <div class="form-group"><label>API Endpoint (futuro)</label><input class="form-input" value="https://api.orangeviagens.com.br/rewards/v1" disabled></div>
+            <div class="form-group"><label>API Key</label><input class="form-input" value="••••••••••••••••••••••••••••" disabled></div>
+            <p class="form-hint">A integração com o CRM será configurada após a conclusão do sistema.</p>
+        </div></div>
+    `;
+}
+
+/* ============================================
+   MODAL SYSTEM
+   ============================================ */
+function showModal(title, bodyHtml) {
+    document.getElementById('modalContent').innerHTML = `
+        <div class="modal-header"><h3>${title}</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+        <div class="modal-body">${bodyHtml}</div>
+    `;
+    document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+function renderCategoryForm() { return '<div class="form-group"><label>Nome</label><input class="form-input"></div><div class="form-group"><label>Intervalo de pontos</label><input class="form-input" placeholder="Ex: 3000-9999"></div><div class="form-group"><label>Multiplicador</label><input class="form-input" type="number" value="1.00"></div><div style="text-align:right"><button class="btn btn-primary" onclick="closeModal();showToast(\'Categoria salva!\',\'success\')">Salvar</button></div>'; }
+function renderRuleForm() { return '<div class="form-group"><label>Nome da regra</label><input class="form-input"></div><div class="form-group"><label>Multiplicador (valor → pontos)</label><input class="form-input" type="number" value="1"></div><div class="form-group"><label>Código do produto</label><input class="form-input"></div><div style="text-align:right"><button class="btn btn-primary" onclick="closeModal();showToast(\'Regra salva!\',\'success\')">Salvar</button></div>'; }
+
+/* ============================================
+   TOAST SYSTEM
+   ============================================ */
+function showToast(msg, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+/* ============================================
+   KEYBOARD SHORTCUTS
+   ============================================ */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('loginPage') && !document.getElementById('loginPage').classList.contains('hidden')) {
+        doLogin();
+    }
+    if (e.key === 'Escape') closeModal();
+});
+
+</script>
+</body>
+</html>

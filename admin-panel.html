@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orange Rewards - Painel Administrativo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         /* ============================================
            CSS VARIABLES & RESET
@@ -450,15 +451,15 @@
         <p>Acesse o back-office do Orange Rewards</p>
         <div class="login-error" id="loginError">Usuário ou senha inválidos</div>
         <div class="form-group">
-            <label>Usuário</label>
-            <input type="text" id="loginUser" placeholder="Digite seu usuário" autocomplete="off">
+            <label>E-mail</label>
+            <input type="email" id="loginUser" placeholder="Digite seu e-mail" autocomplete="email">
         </div>
         <div class="form-group">
             <label>Senha</label>
             <input type="password" id="loginPass" placeholder="Digite sua senha">
         </div>
         <button class="btn btn-primary" style="width:100%; margin-top:0.5rem; justify-content:center;" onclick="doLogin()">Entrar</button>
-        <p style="margin-top:1.5rem; font-size:0.75rem; color:var(--text-muted);">Admin: admin / admin123<br>Operador: operador / oper123</p>
+        <p style="margin-top:1.5rem; font-size:0.75rem; color:var(--text-muted);">Acesse com seu e-mail e senha cadastrados</p>
     </div>
 </div>
 
@@ -516,291 +517,273 @@
 
 <script>
 /* ============================================
-   DATA SERVICE - Abstraction layer for future CRM
+   SUPABASE CONFIG — PREENCHA COM SEUS DADOS
+   ============================================ */
+const SUPABASE_URL = 'https://ttyzhuobvntfxuefaxjv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
+
+const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ============================================
+   SUPABASE SERVICE — Drop-in replacement do DataService
+   Mesmos métodos, mesma interface — agora com dados reais
    ============================================ */
 class DataService {
-    constructor() {
-        this.initMockData();
+    constructor(session) {
+        this._session = session;
     }
 
-    initMockData() {
-        // Client categories (tiers)
-        this.categories = [
-            { id: 1, title: 'Basic', range: 'Padrão', min: 0, max: 2999, multiplier: 1.00 },
-            { id: 2, title: 'Gold', range: 'A partir de 3.000,00 até 9.999,00', min: 3000, max: 9999, multiplier: 1.00 },
-            { id: 3, title: 'Platinum', range: 'A partir de 10.000,00 até 24.999,00', min: 10000, max: 24999, multiplier: 1.00 },
-            { id: 4, title: 'Prime', range: 'A partir de 25.000,00 até 49.999,00', min: 25000, max: 49999, multiplier: 1.00 },
-            { id: 5, title: 'Select', range: 'Após 50.000,00', min: 50000, max: Infinity, multiplier: 1.00 },
-        ];
+    // ─── Helpers ───
+    _fn(name) { return `${SUPABASE_URL}/functions/v1/${name}`; }
+    _headers() {
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this._session.access_token}`,
+            'apikey': SUPABASE_ANON_KEY,
+        };
+    }
+    async _call(fn, path = '', method = 'GET', body = null) {
+        const url = this._fn(fn) + (path ? `/${path}` : '');
+        const opts = { method, headers: this._headers() };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(url, opts);
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Erro na requisição');
+        return json;
+    }
 
-        // Point rules (from Donuz data)
-        this.pointRules = [
-            { id: 22945, name: 'Ingresso', multiplier: 0.5, code: 'Ingresso' },
-            { id: 22946, name: 'Hotel', multiplier: 1, code: 'Hotel' },
-            { id: 22947, name: 'Casa', multiplier: 1, code: 'Casa' },
-            { id: 22948, name: 'Carro', multiplier: 1, code: 'Carro' },
-            { id: 22949, name: 'Seguro', multiplier: 3, code: 'Seguro' },
-            { id: 23022, name: 'Cruzeiro', multiplier: 1, code: 'Cruzeiro' },
-            { id: 23024, name: 'Pacote de Viagem', multiplier: 1, code: 'Pacote' },
-            { id: 23062, name: 'Passagem Aérea', multiplier: 0.5, code: 'Passagem' },
-            { id: 23210, name: 'Guia Virtual', multiplier: 3, code: 'Guia Virtual' },
-            { id: 23245, name: 'Visto', multiplier: 3, code: 'Visto' },
-        ];
-
-        // Prize categories
-        this.prizeCategories = [
-            { id: 1, name: 'Brindes', type: 'Categoria', parent: null },
-            { id: 2, name: 'Cupons de Desconto', type: 'Categoria', parent: null },
-            { id: 3, name: 'Gift Cards', type: 'Categoria', parent: null },
-            { id: 4, name: 'Meu Kit de Viagem', type: 'Subcategoria', parent: 3 },
-            { id: 5, name: 'Orange Viagens', type: 'Subcategoria', parent: 3 },
-            { id: 6, name: 'Produtos', type: 'Categoria', parent: null },
-        ];
-
-        // Sample prizes
-        this.prizes = [
-            { id: 1, name: 'Sacochila Orange Viagens', points: 150, category: 1, status: 'Ativo', visible: true },
-            { id: 2, name: 'Nécessaire Viagem', points: 200, category: 1, status: 'Ativo', visible: true },
-            { id: 3, name: 'Copo Stanley Orange', points: 350, category: 1, status: 'Ativo', visible: true },
-            { id: 4, name: 'Kit Amenities Premium', points: 500, category: 1, status: 'Ativo', visible: true },
-            { id: 5, name: 'Gift Card R$50', points: 800, category: 3, status: 'Ativo', visible: true },
-            { id: 6, name: 'Gift Card R$100', points: 1500, category: 3, status: 'Ativo', visible: true },
-            { id: 7, name: 'Gift Card R$200', points: 2800, category: 3, status: 'Ativo', visible: true },
-            { id: 8, name: 'Gift Card R$500', points: 6500, category: 3, status: 'Ativo', visible: true },
-            { id: 9, name: 'Mala de Viagem P', points: 3200, category: 6, status: 'Ativo', visible: true },
-            { id: 10, name: 'Mala de Viagem G', points: 5000, category: 6, status: 'Ativo', visible: true },
-        ];
-
-        // Sample clients
-        this.clients = this._generateMockClients();
-
-        // Point transactions
-        this.pointTransactions = this._generateMockTransactions();
-
-        // Redemptions
-        this.redemptions = this._generateMockRedemptions();
-
-        // Transactional emails
-        this.emailTemplates = [
-            { id: 1, name: 'Inserção de pontos', desc: 'Usuário recebe ao ganhar pontos' },
-            { id: 2, name: 'Boas vindas', desc: 'Usuário recebe ao se cadastrar no programa' },
-            { id: 3, name: 'Lembrete de senha', desc: 'Solicitação de lembrete de senha do usuário' },
-            { id: 4, name: 'Confirmação de resgate de prêmio', desc: 'Usuário recebe quando efetuar um resgate de prêmio' },
-            { id: 5, name: 'Confirmação de recebimento de mimo', desc: 'Usuário recebe ao ganhar um mimo' },
-            { id: 6, name: 'Indique amigos', desc: 'Usuário recebe ao ser indicado por um amigo' },
-            { id: 7, name: 'Categoria atualizada', desc: 'Usuário recebe ao mudar categoria' },
-            { id: 8, name: 'Cliente bloqueado', desc: 'Usuário recebe ao ganhar pontos quando está bloqueado' },
-            { id: 9, name: 'Desbloquear cliente', desc: 'Usuário recebe ao indicar alguém e desbloquear' },
-            { id: 10, name: 'Antes de excluir um cliente', desc: 'Usuário recebe ao solicitar que seus dados sejam apagados' },
-            { id: 11, name: 'Excluir um cliente', desc: 'Usuário recebe ao ser excluído do programa' },
-            { id: 12, name: 'Ao cancelar a exclusão do cliente', desc: 'Usuário recebe ao cancelar a exclusão' },
-        ];
-
-        // Marketing automations
-        this.automations = [
-            { id: 1, title: 'Aniversário', executes: 'Dia', active: true },
-            { id: 2, title: 'Atualização de cadastro', executes: 'Dia 31/10/2024', active: true },
-            { id: 3, title: 'Bem-vindo ao Orange Rewards', executes: 'Dia', active: true },
-            { id: 4, title: 'Cliente inativo', executes: 'Dia 31/12/2024', active: true },
-            { id: 5, title: 'Clientes que nunca compraram', executes: 'Dia 31/12/2024', active: true },
-            { id: 6, title: 'Indique e ganhe', executes: 'Dia', active: true },
-            { id: 7, title: 'Mimo Vouchers de Restaurante', executes: 'Diariamente', active: true },
-            { id: 8, title: 'Pontos vencendo', executes: 'Mensalmente no dia primeiro', active: true },
-            { id: 9, title: 'Saldo de pontos', executes: 'Dia 31/12/2023', active: true },
-        ];
-
-        // Surveys
-        this.surveys = [
-            { id: 1, title: 'Pesquisa de satisfação', link: 'http://pts.vc/pesquisa/dnz8os' },
-        ];
-
-        // Dashboard stats
-        this.dashboardStats = {
-            totalClients: 8308, activeClients: 3574, inactiveClients: 4302, neverPurchased: 432,
-            retentionRate: 58, repeatedSales: 20737, influencedSales: 184646818,
-            revenuePerClient: 23531, avgTicket: 7764, salesPerClient: 3,
-            totalRedemptions: 1023, totalReferrals: 32, satisfaction: 'Ótimo',
-            lastUpdate: '30/03/2026 às 08:38:13',
+    // ─── CLIENT METHODS ───
+    async getClients(filters = {}) {
+        const params = new URLSearchParams();
+        if (filters.search) params.set('q', filters.search);
+        if (filters.status) params.set('active', filters.status === 'Ativo' ? 'true' : 'false');
+        if (filters.category) params.set('tier', filters.category.toLowerCase());
+        params.set('limit', '100');
+        const result = await this._call('clients', `?${params}`);
+        return (result.data || []).map(c => this._mapClient(c));
+    }
+    async getClientById(id) {
+        const data = await this._call('clients', id);
+        return this._mapClient(data);
+    }
+    async createClient(data) {
+        const result = await this._call('clients', '', 'POST', {
+            full_name: data.name, email: data.email, phone: data.phone,
+            cpf: data.cpf, birth_date: data.birthday, city: data.city, state: data.state
+        });
+        return this._mapClient(result);
+    }
+    async updateClient(id, data) {
+        const result = await this._call('clients', id, 'PUT', {
+            full_name: data.name, email: data.email, phone: data.phone,
+            cpf: data.cpf, birth_date: data.birthday, is_active: data.status === 'Ativo'
+        });
+        return this._mapClient(result);
+    }
+    async importClients(rows) {
+        const csvLines = ['nome;email;cpf;telefone'];
+        rows.forEach(r => csvLines.push(`${r.name||''};${r.email||''};${r.cpf||''};${r.phone||''}`));
+        const result = await this._call('import-csv', 'clients', 'POST', {
+            csv_content: csvLines.join('\n'), file_name: 'import-painel.txt'
+        });
+        return { imported: result.success, total: result.total };
+    }
+    async getClientCategories() {
+        const { data } = await _supabase.from('customer_categories').select('*').order('min_points');
+        return (data || []).map(c => ({ id: c.id, title: c.name, range: c.max_points ? `${c.min_points.toLocaleString()} a ${c.max_points.toLocaleString()}` : `Após ${c.min_points.toLocaleString()}`, min: c.min_points, max: c.max_points || Infinity, multiplier: c.multiplier }));
+    }
+    async getClientsByBirthday(month) {
+        const clients = await this.getClients({});
+        return clients.filter(c => c.birthday && parseInt(c.birthday.split('-')[1]) === month);
+    }
+    _mapClient(c) {
+        if (!c) return null;
+        const tierMap = { basic: 'Basic', gold: 'Gold', platinum: 'Platinum', prime: 'Prime', select: 'Select' };
+        return {
+            id: c.id, name: c.full_name || c.name, cpf: c.cpf || '',
+            email: c.email || '', phone: c.phone || '',
+            category: tierMap[c.tier] || c.category || 'Basic',
+            totalPoints: c.available_points ?? c.totalPoints ?? 0,
+            status: c.is_active !== false ? 'Ativo' : 'Inativo',
+            joinDate: c.created_at ? c.created_at.slice(0, 10) : c.joinDate || '',
+            birthday: c.birth_date || c.birthday || '',
+            gender: c.metadata?.gender || '', totalSpent: c.metadata?.total_spent || 0,
+            // Preserve any extra fields
+            ...c
         };
     }
 
-    _generateMockClients() {
-        const names = ['Magno Pereira', 'Adriana Duarte Veronese', 'Fernanda Nogueira', 'Lucas Oliveira', 'Ana Clara Santos',
-            'Roberto Lima', 'Carolina Menezes', 'Pedro Souza', 'Juliana Costa', 'Thiago Almeida',
-            'Patricia Rodrigues', 'Marcelo Ferreira', 'Camila Barbosa', 'Diego Martins', 'Larissa Gomes'];
-        const statuses = ['Ativo', 'Ativo', 'Ativo', 'Inativo', 'Inativo'];
-        const cats = ['Basic', 'Gold', 'Platinum', 'Prime', 'Select'];
-        return names.map((name, i) => ({
-            id: i + 1,
-            name,
-            cpf: `${String(35758270000 + i * 1111).padStart(11, '0')}`,
-            email: name.toLowerCase().replace(/ /g, '.').normalize('NFD').replace(/[\u0300-\u036f]/g, '') + '@email.com',
-            phone: `(${11 + i % 5}${i}) 9${String(9000 + i * 111).slice(0,4)}-${String(1000 + i * 222).slice(0,4)}`,
-            category: cats[i % 5],
-            totalPoints: [1200, 5400, 18000, 28500, 65000][i % 5],
-            status: statuses[i % 5],
-            joinDate: `2024-${String(1 + i % 12).padStart(2, '0')}-15`,
-            birthday: `${1985 + i % 15}-${String(1 + i % 12).padStart(2, '0')}-${String(1 + i * 2 % 28).padStart(2, '0')}`,
-            gender: i % 3 === 0 ? 'M' : 'F',
-            totalSpent: [5000, 15000, 45000, 80000, 150000][i % 5],
+    // ─── POINT METHODS ───
+    async getPointRules() {
+        const { data } = await _supabase.from('point_rules').select('*').eq('is_active', true).order('name');
+        return (data || []).map(r => ({ id: r.id, name: r.name, multiplier: r.multiplier, code: r.code }));
+    }
+    async insertPoints(clientId, amount, ruleId, description = '') {
+        const result = await this._call('points', 'credit', 'POST', {
+            customer_id: clientId, points: amount, rule_id: ruleId,
+            monetary_value: amount, description
+        });
+        return this._mapTransaction(result);
+    }
+    async reversePoints(clientId, amount, reason) {
+        // For reverse, we create a debit
+        const result = await this._call('points', 'debit', 'POST', {
+            customer_id: clientId, points: amount, description: `Estorno - ${reason}`
+        });
+        return this._mapTransaction(result);
+    }
+    async getPointTransactions(filters = {}) {
+        const params = new URLSearchParams();
+        if (filters.clientId) params.set('customer_id', filters.clientId);
+        if (filters.type) {
+            const typeMap = { 'Inserção': 'credit', 'Resgate': 'debit', 'Estorno': 'reversal' };
+            params.set('type', typeMap[filters.type] || filters.type);
+        }
+        params.set('limit', '100');
+        const result = await this._call('points', `?${params}`);
+        return (result.data || []).map(t => this._mapTransaction(t));
+    }
+    async createPointRule(data) {
+        const result = await this._call('config', 'rules', 'POST', {
+            name: data.name, code: data.code, multiplier: data.multiplier
+        });
+        return { id: result.id, name: result.name, multiplier: result.multiplier, code: result.code };
+    }
+    _mapTransaction(t) {
+        if (!t) return null;
+        const typeMap = { credit: 'Inserção', debit: 'Resgate', reversal: 'Estorno', bonus: 'Inserção', referral: 'Inserção', expiration: 'Expiração' };
+        return {
+            id: t.id, clientId: t.customer_id,
+            clientName: t.customers?.full_name || t.clientName || '',
+            type: typeMap[t.type] || t.type,
+            points: t.points, rule: t.point_rules?.name || t.rule || '',
+            description: t.description || '',
+            date: t.created_at ? t.created_at.slice(0, 10) : t.date || ''
+        };
+    }
+
+    // ─── PRIZE METHODS ───
+    async getPrizes(filters = {}) {
+        const params = new URLSearchParams();
+        if (filters.category) params.set('category_id', filters.category);
+        params.set('limit', '100');
+        const result = await this._call('prizes', `?${params}`);
+        return (result.data || []).map(p => this._mapPrize(p));
+    }
+    async createPrize(data) {
+        const result = await this._call('prizes', '', 'POST', {
+            name: data.name, category_id: data.category, points_required: data.points,
+            type: data.type || 'brinde', description: data.description, stock: data.stock
+        });
+        return this._mapPrize(result);
+    }
+    async updatePrize(id, data) {
+        const result = await this._call('prizes', id, 'PUT', data);
+        return this._mapPrize(result);
+    }
+    async getPrizeCategories() {
+        const { data } = await _supabase.from('prize_categories').select('*').eq('is_active', true).order('sort_order');
+        return (data || []).map(c => ({ id: c.id, name: c.name, type: 'Categoria', parent: null, slug: c.slug }));
+    }
+    async createPrizeCategory(data) {
+        const { data: result } = await _supabase.from('prize_categories').insert({
+            name: data.name, slug: data.name.toLowerCase().replace(/\s+/g, '-'),
+            description: data.description, icon: data.icon
+        }).select().single();
+        return { id: result.id, name: result.name, type: 'Categoria', parent: null };
+    }
+    _mapPrize(p) {
+        if (!p) return null;
+        return {
+            id: p.id, name: p.name, points: p.points_required || p.points,
+            category: p.category_id || p.category,
+            status: p.is_active !== false ? 'Ativo' : 'Inativo',
+            visible: p.is_active !== false,
+            image_url: p.image_url, description: p.description,
+            stock: p.stock, min_tier: p.min_tier
+        };
+    }
+
+    // ─── REDEMPTION METHODS ───
+    async getRedemptions(filters = {}) {
+        const params = new URLSearchParams();
+        if (filters.status) {
+            const statusMap = { 'Pendente': 'pending', 'Aprovado': 'approved', 'Entregue': 'delivered', 'Cancelado': 'cancelled' };
+            params.set('status', statusMap[filters.status] || filters.status);
+        }
+        params.set('limit', '100');
+        const result = await this._call('redemptions', `?${params}`);
+        return (result.data || []).map(r => this._mapRedemption(r));
+    }
+    async redeemPrize(clientId, prizeId) {
+        try {
+            const result = await this._call('redemptions', '', 'POST', {
+                customer_id: clientId, prize_id: prizeId
+            });
+            return this._mapRedemption(result);
+        } catch (e) {
+            return { error: e.message };
+        }
+    }
+    _mapRedemption(r) {
+        if (!r) return null;
+        const statusMap = { pending: 'Pendente', approved: 'Aprovado', delivered: 'Entregue', cancelled: 'Cancelado' };
+        return {
+            id: r.id, voucher: r.id?.slice(0, 8)?.toUpperCase() || '',
+            clientId: r.customer_id, clientName: r.customers?.full_name || '',
+            prizeId: r.prize_id, prizeName: r.prizes?.name || '',
+            points: r.points_spent, status: statusMap[r.status] || r.status,
+            date: r.created_at ? r.created_at.slice(0, 10) : ''
+        };
+    }
+
+    // ─── MARKETING / FEEDBACK ───
+    async getAutomations() {
+        const result = await this._call('marketing', 'automations');
+        return (result || []).map(a => ({
+            id: a.id, title: a.name, executes: a.trigger || '',
+            active: a.status === 'active'
+        }));
+    }
+    async getSurveys() {
+        const result = await this._call('feedback', 'surveys');
+        return (result || []).map(s => ({
+            id: s.id, title: s.title, link: '#',
+            response_count: s.response_count || 0
+        }));
+    }
+    async getEmailTemplates() {
+        const result = await this._call('marketing', 'templates');
+        return (result || []).map(t => ({
+            id: t.id, name: t.name, desc: t.subject || ''
         }));
     }
 
-    _generateMockTransactions() {
-        const types = ['Inserção', 'Inserção', 'Inserção', 'Resgate', 'Estorno'];
-        const rules = ['Hotel', 'Passagem Aérea', 'Pacote de Viagem', 'Seguro', 'Cruzeiro'];
-        const txns = [];
-        for (let i = 0; i < 30; i++) {
-            txns.push({
-                id: i + 1,
-                clientId: (i % 15) + 1,
-                clientName: this._generateMockClients()[i % 15]?.name || 'Cliente',
-                type: types[i % 5],
-                points: [500, 1200, 800, -1500, -300][i % 5],
-                rule: rules[i % 5],
-                description: `${types[i % 5]} - ${rules[i % 5]}`,
-                date: `2026-${String(1 + i % 3).padStart(2, '0')}-${String(1 + i * 3 % 28).padStart(2, '0')}`,
-            });
+    // ─── DASHBOARD ───
+    async getDashboardStats() {
+        try {
+            const result = await this._call('dashboard', 'stats');
+            return {
+                totalClients: result.total_customers || 0,
+                activeClients: result.active_customers_90d || 0,
+                inactiveClients: (result.total_customers || 0) - (result.active_customers_90d || 0),
+                neverPurchased: 0,
+                retentionRate: result.retention_rate || 0,
+                repeatedSales: 0,
+                influencedSales: result.revenue_influenced_30d || 0,
+                revenuePerClient: result.total_customers > 0 ? Math.round(result.revenue_influenced_30d / result.total_customers) : 0,
+                avgTicket: 0,
+                salesPerClient: 0,
+                totalRedemptions: result.redemptions_30d || 0,
+                totalReferrals: 0,
+                satisfaction: 'N/A',
+                lastUpdate: new Date().toLocaleString('pt-BR'),
+            };
+        } catch(e) {
+            console.error('Dashboard stats error:', e);
+            return { totalClients:0, activeClients:0, inactiveClients:0, neverPurchased:0, retentionRate:0, repeatedSales:0, influencedSales:0, revenuePerClient:0, avgTicket:0, salesPerClient:0, totalRedemptions:0, totalReferrals:0, satisfaction:'N/A', lastUpdate:new Date().toLocaleString('pt-BR') };
         }
-        return txns;
     }
-
-    _generateMockRedemptions() {
-        const statuses = ['Aprovado', 'Pendente', 'Entregue', 'Cancelado'];
-        const reds = [];
-        for (let i = 0; i < 15; i++) {
-            reds.push({
-                id: i + 1,
-                voucher: `VCH-${String(100000 + i * 7777).slice(0, 6)}`,
-                clientId: (i % 10) + 1,
-                clientName: this._generateMockClients()[i % 10]?.name || 'Cliente',
-                prizeId: (i % 10) + 1,
-                prizeName: this.prizes[i % 10]?.name || 'Prêmio',
-                points: this.prizes[i % 10]?.points || 500,
-                status: statuses[i % 4],
-                date: `2026-${String(1 + i % 3).padStart(2, '0')}-${String(5 + i * 2 % 25).padStart(2, '0')}`,
-            });
-        }
-        return reds;
-    }
-
-    // ---- CLIENT METHODS ----
-    async getClients(filters = {}) {
-        let result = [...this.clients];
-        if (filters.search) {
-            const s = filters.search.toLowerCase();
-            result = result.filter(c => c.name.toLowerCase().includes(s) || c.cpf.includes(s) || c.email.toLowerCase().includes(s));
-        }
-        if (filters.status) result = result.filter(c => c.status === filters.status);
-        if (filters.category) result = result.filter(c => c.category === filters.category);
-        return result;
-    }
-    async getClientById(id) { return this.clients.find(c => c.id === id); }
-    async createClient(data) {
-        const newClient = { id: this.clients.length + 1, ...data, status: 'Ativo', totalPoints: 0, totalSpent: 0, joinDate: new Date().toISOString().slice(0,10) };
-        this.clients.unshift(newClient);
-        return newClient;
-    }
-    async updateClient(id, data) {
-        const idx = this.clients.findIndex(c => c.id === id);
-        if (idx >= 0) { this.clients[idx] = { ...this.clients[idx], ...data }; return this.clients[idx]; }
-        return null;
-    }
-    async importClients(rows) {
-        let imported = 0;
-        rows.forEach(row => {
-            if (row.name) { this.clients.push({ id: this.clients.length + 1, ...row, status: 'Ativo', totalPoints: 0, totalSpent: 0, joinDate: new Date().toISOString().slice(0,10) }); imported++; }
-        });
-        return { imported, total: rows.length };
-    }
-    async getClientCategories() { return [...this.categories]; }
-    async getClientsByBirthday(month) { return this.clients.filter(c => c.birthday && parseInt(c.birthday.split('-')[1]) === month); }
-
-    // ---- POINT METHODS ----
-    async getPointRules() { return [...this.pointRules]; }
-    async insertPoints(clientId, amount, ruleId, description = '') {
-        const rule = this.pointRules.find(r => r.id === ruleId);
-        const points = amount * (rule ? rule.multiplier : 1);
-        const txn = { id: this.pointTransactions.length + 1, clientId, type: 'Inserção', points, rule: rule?.name || '', description: description || `Inserção - ${rule?.name}`, date: new Date().toISOString().slice(0,10), clientName: (this.clients.find(c => c.id === clientId))?.name || '' };
-        this.pointTransactions.unshift(txn);
-        const client = this.clients.find(c => c.id === clientId);
-        if (client) { client.totalPoints += points; this._updateCategory(client); }
-        return txn;
-    }
-    async reversePoints(clientId, amount, reason) {
-        const txn = { id: this.pointTransactions.length + 1, clientId, type: 'Estorno', points: -amount, rule: '', description: `Estorno - ${reason}`, date: new Date().toISOString().slice(0,10), clientName: (this.clients.find(c => c.id === clientId))?.name || '' };
-        this.pointTransactions.unshift(txn);
-        const client = this.clients.find(c => c.id === clientId);
-        if (client) { client.totalPoints = Math.max(0, client.totalPoints - amount); this._updateCategory(client); }
-        return txn;
-    }
-    async getPointTransactions(filters = {}) {
-        let result = [...this.pointTransactions];
-        if (filters.clientId) result = result.filter(t => t.clientId === filters.clientId);
-        if (filters.type) result = result.filter(t => t.type === filters.type);
-        return result;
-    }
-    async createPointRule(data) {
-        const rule = { id: Math.max(...this.pointRules.map(r => r.id)) + 1, ...data };
-        this.pointRules.push(rule);
-        return rule;
-    }
-    _updateCategory(client) {
-        const pts = client.totalPoints;
-        for (const cat of [...this.categories].reverse()) { if (pts >= cat.min) { client.category = cat.title; break; } }
-    }
-
-    // ---- PRIZE METHODS ----
-    async getPrizes(filters = {}) {
-        let result = [...this.prizes];
-        if (filters.category) result = result.filter(p => p.category === filters.category);
-        if (filters.search) { const s = filters.search.toLowerCase(); result = result.filter(p => p.name.toLowerCase().includes(s)); }
-        return result;
-    }
-    async createPrize(data) {
-        const prize = { id: this.prizes.length + 1, ...data, status: 'Ativo', visible: true };
-        this.prizes.push(prize);
-        return prize;
-    }
-    async updatePrize(id, data) {
-        const idx = this.prizes.findIndex(p => p.id === id);
-        if (idx >= 0) { this.prizes[idx] = { ...this.prizes[idx], ...data }; return this.prizes[idx]; }
-        return null;
-    }
-    async getPrizeCategories() { return [...this.prizeCategories]; }
-    async createPrizeCategory(data) {
-        const cat = { id: this.prizeCategories.length + 1, ...data };
-        this.prizeCategories.push(cat);
-        return cat;
-    }
-
-    // ---- REDEMPTION METHODS ----
-    async getRedemptions(filters = {}) {
-        let result = [...this.redemptions];
-        if (filters.status) result = result.filter(r => r.status === filters.status);
-        if (filters.search) { const s = filters.search.toLowerCase(); result = result.filter(r => r.voucher.toLowerCase().includes(s) || r.clientName.toLowerCase().includes(s)); }
-        return result;
-    }
-    async redeemPrize(clientId, prizeId) {
-        const client = this.clients.find(c => c.id === clientId);
-        const prize = this.prizes.find(p => p.id === prizeId);
-        if (!client || !prize) return { error: 'Cliente ou prêmio não encontrado' };
-        if (client.totalPoints < prize.points) return { error: 'Pontos insuficientes' };
-        client.totalPoints -= prize.points;
-        this._updateCategory(client);
-        const redemption = { id: this.redemptions.length + 1, voucher: `VCH-${Date.now().toString().slice(-6)}`, clientId, clientName: client.name, prizeId, prizeName: prize.name, points: prize.points, status: 'Pendente', date: new Date().toISOString().slice(0,10) };
-        this.redemptions.unshift(redemption);
-        this.pointTransactions.unshift({ id: this.pointTransactions.length + 1, clientId, clientName: client.name, type: 'Resgate', points: -prize.points, rule: '', description: `Resgate - ${prize.name}`, date: new Date().toISOString().slice(0,10) });
-        return redemption;
-    }
-
-    // ---- MARKETING / FEEDBACK ----
-    async getAutomations() { return [...this.automations]; }
-    async getSurveys() { return [...this.surveys]; }
-    async getEmailTemplates() { return [...this.emailTemplates]; }
-
-    // ---- DASHBOARD ----
-    async getDashboardStats() { return { ...this.dashboardStats }; }
 }
 
 /* ============================================
@@ -874,28 +857,42 @@ const SIDEBAR_CONFIG = {
 /* ============================================
    AUTH
    ============================================ */
-function doLogin() {
-    const user = document.getElementById('loginUser').value.trim();
+async function doLogin() {
+    const email = document.getElementById('loginUser').value.trim();
     const pass = document.getElementById('loginPass').value;
-    const users = { admin: { password: 'admin123', role: 'Admin' }, operador: { password: 'oper123', role: 'Operador' } };
-    if (users[user] && users[user].password === pass) {
-        currentUser = { username: user, role: users[user].role };
+    const errEl = document.getElementById('loginError');
+    errEl.style.display = 'none';
+
+    try {
+        const { data, error } = await _supabase.auth.signInWithPassword({ email, password: pass });
+        if (error) throw error;
+
+        // Buscar perfil e role
+        const { data: profile } = await _supabase.from('profiles').select('*').eq('id', data.user.id).single();
+        if (!profile) throw new Error('Perfil não encontrado');
+
+        const roleName = profile.role === 'admin' ? 'Admin' : 'Operador';
+        currentUser = { username: profile.full_name || email, role: roleName, id: profile.id };
+
         document.getElementById('loginPage').classList.add('hidden');
         document.getElementById('adminPanel').classList.remove('hidden');
-        document.getElementById('userBadge').textContent = currentUser.role;
-        document.getElementById('userName').textContent = user;
-        // Hide admin-only module nav buttons if operador
-        if (currentUser.role === 'Operador') {
+        document.getElementById('userBadge').textContent = roleName;
+        document.getElementById('userName').textContent = profile.full_name || email;
+
+        if (roleName === 'Operador') {
             document.querySelectorAll('.module-nav button[data-role="admin"]').forEach(b => b.classList.add('hidden'));
         }
-        ds = new DataService();
+
+        ds = new DataService(data.session);
         switchModule('dashboard', document.querySelector('.module-nav button'));
-    } else {
-        document.getElementById('loginError').style.display = 'block';
+    } catch(e) {
+        errEl.textContent = e.message || 'Usuário ou senha inválidos';
+        errEl.style.display = 'block';
     }
 }
 
-function doLogout() {
+async function doLogout() {
+    await _supabase.auth.signOut();
     currentUser = null;
     document.getElementById('adminPanel').classList.add('hidden');
     document.getElementById('loginPage').classList.remove('hidden');

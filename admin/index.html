@@ -459,7 +459,7 @@
             <input type="password" id="loginPass" placeholder="Digite sua senha">
         </div>
         <button class="btn btn-primary" style="width:100%; margin-top:0.5rem; justify-content:center;" onclick="doLogin()">Entrar</button>
-        <p style="margin-top:1.5rem; font-size:0.75rem; color:var(--text-muted);">Admin: admin / admin123<br>Operador: operador / oper123</p>
+        <p style="margin-top:1.5rem; font-size:0.75rem; color:var(--text-muted);">Use seu email e senha corporativos</p>
     </div>
 </div>
 
@@ -543,7 +543,7 @@ class DataService {
     }
 
     async _call(fn, path = '', method = 'GET', body = null) {
-        const url = this._fn(fn) + (path ? `/${path}` : '');
+        const url = this._fn(fn) + (path ? (path.startsWith('?') ? path : `/${path}`) : '');
         const opts = { method, headers: this._headers() };
         if (body) opts.body = JSON.stringify(body);
         const res = await fetch(url, opts);
@@ -593,9 +593,28 @@ class DataService {
 
     async getDashboardStats() {
         try {
-            return await this._call('dashboard');
+            const d = await this._call('dashboard');
+            return {
+                totalClients: d.totalClients || d.total_clients || 0,
+                activeClients: d.activeClients || d.active_clients || 0,
+                inactiveClients: d.inactiveClients || d.inactive_clients || 0,
+                neverPurchased: d.neverPurchased || d.never_purchased || 0,
+                retentionRate: d.retentionRate || d.retention_rate || 0,
+                repeatedSales: d.repeatedSales || d.repeated_sales || 0,
+                influencedSales: d.influencedSales || d.influenced_sales || 0,
+                revenuePerClient: d.revenuePerClient || d.revenue_per_client || 0,
+                avgTicket: d.avgTicket || d.avg_ticket || 0,
+                salesPerClient: d.salesPerClient || d.sales_per_client || 0,
+                totalRedemptions: d.totalRedemptions || d.total_redemptions || 0,
+                totalReferrals: d.totalReferrals || d.total_referrals || 0,
+                satisfaction: d.satisfaction || 'N/A',
+                lastUpdate: d.lastUpdate || d.last_update || new Date().toLocaleString('pt-BR'),
+            };
         } catch (e) {
-            return { totalClients: 0, activeClients: 0, pointsIssued: 0, redemptions: 0 };
+            return { totalClients: 0, activeClients: 0, inactiveClients: 0, neverPurchased: 0,
+                retentionRate: 0, repeatedSales: 0, influencedSales: 0, revenuePerClient: 0,
+                avgTicket: 0, salesPerClient: 0, totalRedemptions: 0, totalReferrals: 0,
+                satisfaction: 'N/A', lastUpdate: new Date().toLocaleString('pt-BR') };
         }
     }
 

@@ -66,6 +66,87 @@
             object-fit: contain;
         }
 
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+            height: 100%;
+        }
+
+        .nav-tabs .tab-btn {
+            padding: 0 1.25rem;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-light);
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .nav-tabs .tab-btn:hover {
+            color: var(--primary);
+            background: var(--light-accent);
+        }
+
+        .nav-tabs .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .mobile-menu {
+            display: none;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .mobile-menu.open {
+            display: block;
+        }
+
+        .mob-tab {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.9rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .mob-tab:hover, .mob-tab.active {
+            color: var(--primary);
+            background: var(--light-accent);
+            border-left-color: var(--primary);
+        }
+
+        .mob-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.5rem;
+            border-top: 1px solid var(--border);
+            margin-top: 0.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
         .nav-right {
             display: flex;
             align-items: center;
@@ -97,6 +178,24 @@
             justify-content: center;
             font-weight: 600;
             font-size: 0.9rem;
+        }
+
+        .hamburger {
+            display: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
         }
 
         /* Balance Header */
@@ -136,6 +235,21 @@
             margin-bottom: 0.5rem;
         }
 
+        .balance-meta {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.75rem;
+        }
+
         .balance-right {
             text-align: right;
         }
@@ -151,138 +265,590 @@
             opacity: 0.9;
         }
 
+        .tier-progress {
+            width: 100%;
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.2);
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .tier-progress-fill {
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            width: 57%;
+            border-radius: 2px;
+            transition: width 0.6s ease-out;
+        }
+
+        /* Tab Navigation */
+        /* Tab buttons are now in .nav-tabs inside top-nav */
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .content-wrapper {
             padding: 2rem;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
+        /* Alert Banner */
+        .alert-banner {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .modal-overlay.H {
-            display: none !important;
-        }
-
-        .modal-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 36px 32px;
-            max-width: 440px;
-            width: 95%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .modal-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .modal-subtitle {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .modal-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 4px;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #D1D5DB;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 12px;
-            font-family: inherit;
-            background: #F9FAFB;
-        }
-
-        .modal-btn {
-            width: 100%;
-            padding: 14px;
-            background: #E8610A;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .modal-error {
-            color: #EF4444;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
-
-        .modal-field {
-            margin-bottom: 4px;
-        }
-
-        .H {
-            display: none !important;
-        }
-
-        .profile-banner {
-            background: linear-gradient(135deg,#E8610A,#F59E0B);
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .profile-banner-title {
-            color: #fff;
-            font-weight: 700;
-            font-size: 15px;
-        }
-
-        .profile-banner-btn {
-            background: rgba(255,255,255,.25);
-            color: #fff;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-            font-family: inherit;
-        }
-
-        /* Stat Cards */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-content p {
+            font-size: 0.85rem;
+            opacity: 0.95;
+        }
+
+        /* Metric Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .stat-card {
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .metric-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-light);
+        }
+
+        .section-card-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .section-card-body {
+            padding: 1.5rem;
+        }
+
+        /* Proximity Cards */
+        .proximity-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .proximity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .proximity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .proximity-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .proximity-progress {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .proximity-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--dark));
+            border-radius: 4px;
+            transition: width 0.6s ease-out;
+        }
+
+        .proximity-status {
+            font-size: 0.8rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .proximity-status.pending {
+            color: var(--primary);
+        }
+
+        /* Activity List */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-left {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-date {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .activity-points {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .activity-points.positive {
+            color: var(--success);
+        }
+
+        .activity-points.negative {
+            color: var(--dark);
+        }
+
+        /* Tier Progress Card */
+        .tier-card {
+            background: linear-gradient(135deg, var(--light-accent) 0%, white 100%);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .tier-current {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .tier-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .tier-progress-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .tier-progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--dark));
+            width: 57%;
+            border-radius: 6px;
+            transition: width 0.8s ease-out;
+        }
+
+        .tier-next {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .tier-next strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Tips Card */
+        .tip-card {
+            background: #FFF3EC;
+            border-left: 4px solid #E8610A;
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tip-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .tip-content h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .tip-content p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        /* Prizes Grid */
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232, 97, 10, 0.1);
+        }
+
+        .category-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: flex-start; }
+        .cat-btn { padding: 0.5rem 1rem; border-radius: 20px; border: 1.5px solid var(--border); background: white; cursor: pointer; font-size: 0.85rem; font-weight: 500; color: var(--text); transition: all 0.2s; font-family: inherit; }
+        .cat-btn:hover, .cat-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .cat-dropdown { position: relative; }
+        .dd-menu { display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 50; min-width: 200px; margin-top: 4px; }
+        .dd-menu.open { display: block; }
+        .dd-menu button { display: block; width: 100%; text-align: left; padding: 0.75rem 1rem; border: none; background: none; cursor: pointer; font-size: 0.85rem; color: var(--text); font-family: inherit; transition: background 0.15s; }
+        .dd-menu button:hover { background: var(--light-accent); color: var(--primary); }
+        .dd-arrow { font-size: 0.7rem; margin-left: 2px; }
+
+        .prizes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .prize-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prize-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+
+        .prize-visual {
+            width: 100%;
+            height: 220px;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+            padding: 8px;
+        }
+
+        .prize-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* no overlay on prize images */
+
+        .prize-content {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prize-name {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .prize-cost {
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .prize-amount {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .prize-currency {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .prize-btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            margin-top: auto;
+        }
+
+        .prize-btn.available {
+            background: var(--primary);
+            color: white;
+        }
+
+        .prize-btn.available:hover {
+            background: var(--dark);
+        }
+
+        .prize-btn.unavailable {
+            background: var(--bg-light);
+            color: var(--primary);
+            cursor: not-allowed;
+        }
+
+        /* Statement Table */
+        .statement-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .statement-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .statement-summary-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .statement-summary-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .statement-summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .statement-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .statement-table thead {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .statement-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .statement-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .statement-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .statement-date {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .statement-amount {
+            font-weight: 600;
+        }
+
+        .statement-amount.positive {
+            color: var(--success);
+        }
+
+        .statement-amount.negative {
+            color: var(--dark);
+        }
+
+        /* How It Works */
+        .how-it-works-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .how-it-works-table th {
+            background: var(--bg-light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .how-it-works-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .how-it-works-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tier-item {
             background: white;
             padding: 1.5rem;
             border-radius: 8px;
@@ -290,280 +856,1897 @@
             text-align: center;
         }
 
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            font-weight: 500;
+        .tier-item.active {
+            border-color: var(--primary);
+            background: var(--light-accent);
+        }
+
+        .tier-item-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
             margin-bottom: 0.5rem;
         }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .tier-item-range {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .tier-item-benefits {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .faq-section {
+            margin-top: 2rem;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .faq-item.open .faq-question {
             color: var(--primary);
         }
 
+        .faq-question {
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.2s;
+        }
+
+        .faq-toggle {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        /* Referral */
+        .referral-link-box {
+            background: linear-gradient(135deg, var(--light-accent) 0%, white 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .referral-link-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .referral-link-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .referral-link-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+        }
+
+        .copy-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .copy-btn:hover {
+            background: var(--dark);
+        }
+
+        .copy-feedback {
+            display: none;
+            color: var(--success);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .referral-stat {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .referral-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .referral-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .referral-steps {
+            margin-bottom: 2rem;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .step-content p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Contact Form */
+        .contact-info-row { display: flex; justify-content: center; gap: 3rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .contact-item { display: flex; align-items: center; gap: 0.75rem; }
+        .contact-icon { font-size: 1.5rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-light); border-radius: 50%; }
+        .contact-form-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 2rem; max-width: 800px; margin: 0 auto; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .contact-form-card .form-group { margin-bottom: 0.5rem; }
+        .contact-form-card .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text); }
+        .contact-form-card .form-group input, .contact-form-card .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; background: var(--bg-light); }
+        .contact-form-card .form-group input:focus, .contact-form-card .form-group textarea:focus { outline: none; border-color: var(--primary); background: white; }
+        .submit-btn { background: var(--primary); color: white; border: none; padding: 0.75rem 2rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: inherit; transition: background 0.2s; margin-top: 0.5rem; }
+        .submit-btn:hover { background: var(--dark); }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .contact-info-row { flex-direction: column; align-items: center; } }
+
+        /* Profile Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232, 97, 10, 0.1);
+        }
+
+        .form-group input:disabled {
+            background: var(--bg-light);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .btn-primary {
+            padding: 0.75rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--dark);
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 2rem;
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-accent);
+        }
+
+        .btn-danger {
+            padding: 0.75rem 2rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .form-section h3 {
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+
+        /* Mobile */
         @media (max-width: 768px) {
-            .balance-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 1.5rem;
+            .hamburger {
+                display: flex;
             }
 
-            .balance-left {
-                flex-direction: column;
-                width: 100%;
+            .nav-tabs {
+                display: none;
             }
 
-            .balance-right {
-                width: 100%;
+            .user-menu {
+                display: none;
+            }
+
+            .nav-left {
+                gap: 1rem;
             }
 
             .top-nav {
                 padding: 0 1rem;
             }
 
+            .balance-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .balance-left {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .balance-right {
+                margin-top: 1rem;
+                width: 100%;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .prizes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .statement-table {
+                font-size: 0.85rem;
+            }
+
+            .statement-table th,
+            .statement-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
             .content-wrapper {
                 padding: 1rem;
             }
+
+            .search-filter {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .tiers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .referral-link-input {
+                flex-direction: column;
+            }
+
+            .copy-btn {
+                width: 100%;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Counter Animation */
+        .number-counter {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 32px;
+            max-width: 420px;
+            width: 92%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 4px;
+        }
+        .modal-header p {
+            color: #6B7280;
+            font-size: 14px;
+        }
+        .form-group-modal {
+            margin-bottom: 16px;
+        }
+        .form-group-modal label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .form-group-modal input, .form-group-modal select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #D1D5DB;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #F9FAFB;
+        }
+        .form-group-modal input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .modal-error {
+            color: #EF4444;
+            font-size: 13px;
+            min-height: 20px;
+            margin-bottom: 4px;
+        }
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background .2s;
+        }
+        .modal-btn:hover {
+            background: #B84D08;
+        }
+        .modal-footer {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #6B7280;
+        }
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <!-- TOP NAV -->
-    <div class="top-nav">
+    <!-- Top Navigation -->
+    <nav class="top-nav">
         <div class="nav-left">
-            <a href="/" class="logo">
-                <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/logotipo/357587179122b4b517a85358b491435cb2a49logo.png" alt="Orange Rewards">
-            </a>
+            <a href="#" class="logo"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/logotipo/357587179122b4b517a85358b491435cb2a49logo.png" alt="Orange Rewards"></a>
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab('resumo', this)">Resumo</button>
+                <button class="tab-btn" onclick="switchTab('premios', this)">Prêmios</button>
+                <button class="tab-btn" onclick="switchTab('extrato', this)">Extrato</button>
+                <button class="tab-btn" onclick="switchTab('como-funciona', this)">Como funciona</button>
+                <button class="tab-btn" onclick="switchTab('indique-amigos', this)">Indique amigos</button>
+                <button class="tab-btn" onclick="switchTab('meu-perfil', this)">Meu perfil</button>
+                <button class="tab-btn" onclick="switchTab('fale-conosco', this)">Fale conosco</button>
+            </div>
         </div>
         <div class="nav-right">
-            <span style="font-size:0.9rem;color:#666;" id="userName">Bem-vindo</span>
-            <button onclick="doLogout()" style="background:none;border:none;color:var(--primary);cursor:pointer;font-weight:600;font-size:0.9rem;font-family:inherit">Sair</button>
+            <div class="user-menu" onclick="switchTab('meu-perfil', document.querySelector('.tab-btn[onclick*=meu-perfil]'))">
+                <div class="avatar">AS</div>
+                <span>Alex Sperandio</span>
+            </div>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mob-tab active" onclick="switchTab('resumo', document.querySelectorAll('.tab-btn')[0]); closeMobileMenu()">Resumo</button>
+        <button class="mob-tab" onclick="switchTab('premios', document.querySelectorAll('.tab-btn')[1]); closeMobileMenu()">Prêmios</button>
+        <button class="mob-tab" onclick="switchTab('extrato', document.querySelectorAll('.tab-btn')[2]); closeMobileMenu()">Extrato</button>
+        <button class="mob-tab" onclick="switchTab('como-funciona', document.querySelectorAll('.tab-btn')[3]); closeMobileMenu()">Como funciona</button>
+        <button class="mob-tab" onclick="switchTab('indique-amigos', document.querySelectorAll('.tab-btn')[4]); closeMobileMenu()">Indique amigos</button>
+        <button class="mob-tab" onclick="switchTab('meu-perfil', document.querySelectorAll('.tab-btn')[5]); closeMobileMenu()">Meu perfil</button>
+        <button class="mob-tab" onclick="switchTab('fale-conosco', document.querySelectorAll('.tab-btn')[6]); closeMobileMenu()">Fale conosco</button>
+        <div class="mob-user">
+            <div class="avatar" style="width:32px;height:32px;font-size:0.75rem">AS</div>
+            <span>Alex Sperandio</span>
         </div>
     </div>
 
-    <!-- BALANCE HEADER -->
+    <!-- Balance Header -->
     <div class="balance-header">
         <div class="balance-left">
-            <div class="balance-avatar" id="userAvatar">C</div>
+            <div class="balance-avatar">AS</div>
             <div class="balance-info">
-                <h2 data-user-name>Bem-vindo</h2>
-                <div style="font-size:0.85rem;opacity:0.9">Saldo de Oranginos</div>
+                <h2>Olá, Alex!</h2>
+                <div class="balance-meta">
+                    <span class="tier-badge">Prime</span>
+                    <small>Membro desde jan/2024</small>
+                </div>
             </div>
         </div>
         <div class="balance-right">
-            <div class="balance-amount" data-user-points>0</div>
-            <div class="balance-label">Oranginos Disponíveis</div>
+            <div class="balance-amount" id="balanceAmount">28.500</div>
+            <div class="balance-label">Oranginos disponíveis</div>
         </div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content-wrapper">
-        <!-- Profile Completion Banner (will be inserted here via JS) -->
+    <!-- Tabs now integrated in top-nav -->
 
-        <!-- Main Content -->
-        <div class="stat-grid">
-            <div class="stat-card">
-                <div class="stat-label">Saldo Total</div>
-                <div class="stat-value" data-user-points-total>0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Categoria</div>
-                <div class="stat-value" id="userTier">Basic</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Status</div>
-                <div class="stat-value" style="color:var(--success)">Ativo</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PASSWORD CHANGE MODAL -->
-    <div id="modal-password" class="modal-overlay H">
-        <div class="modal-card">
-            <div class="modal-title">Bem-vindo(a) de volta!</div>
-            <div class="modal-subtitle">Por segurança, defina uma nova senha para sua conta.</div>
-            <form onsubmit="changePassword(event)">
-                <div class="modal-field"><label class="modal-label">Nova senha</label><input type="password" id="new-pass" class="modal-input" minlength="8" required></div>
-                <div class="modal-field"><label class="modal-label">Confirmar nova senha</label><input type="password" id="new-pass2" class="modal-input" required></div>
-                <div id="pw-error" class="modal-error"></div>
-                <button type="submit" class="modal-btn">Definir nova senha</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- PROFILE COMPLETION MODAL -->
-    <div id="modal-profile" class="modal-overlay H">
-        <div class="modal-card">
-            <div class="modal-title">Complete seu perfil</div>
-            <div class="modal-subtitle">Preencha seus dados para ativar benefícios</div>
-            <form onsubmit="submitProfileCompletion(event); return false;">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px">
-                    <div class="modal-field"><label class="modal-label">Nome</label><input type="text" id="prof-first" class="modal-input" required></div>
-                    <div class="modal-field"><label class="modal-label">Sobrenome</label><input type="text" id="prof-last" class="modal-input" required></div>
+    <!-- TAB 1: RESUMO -->
+    <div id="resumo" class="tab-content active">
+        <div class="content-wrapper">
+            <!-- Alert Banner -->
+            <div class="alert-banner">
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div class="alert-content">
+                    <h3>Atenção: Oranginos expirando!</h3>
+                    <p>3.200 Oranginos expiram em 45 dias. Resgate agora e não perca!</p>
                 </div>
-                <div class="modal-field"><label class="modal-label">CPF</label><input type="text" id="prof-cpf" class="modal-input" placeholder="000.000.000-00" required></div>
-                <div class="modal-field"><label class="modal-label">E-mail</label><input type="email" id="prof-email" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">Telefone</label><input type="tel" id="prof-phone" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">WhatsApp</label><input type="tel" id="prof-mobile" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">Data de nascimento</label><input type="date" id="prof-birth" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">Gênero</label><select id="prof-gender" class="modal-input" required style="cursor:pointer"><option value="">Selecione</option><option value="M">Masculino</option><option value="F">Feminino</option><option value="O">Outro</option></select></div>
-                <div class="modal-field"><label class="modal-label">Endereço</label><input type="text" id="prof-address" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">Número</label><input type="text" id="prof-number" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">Complemento</label><input type="text" id="prof-complement" class="modal-input"></div>
-                <div class="modal-field"><label class="modal-label">Bairro</label><input type="text" id="prof-neighborhood" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">Cidade</label><input type="text" id="prof-city" class="modal-input" required></div>
-                <div class="modal-field"><label class="modal-label">Estado</label><input type="text" id="prof-state" class="modal-input" placeholder="SP" required></div>
-                <div class="modal-field"><label class="modal-label">CEP</label><input type="text" id="prof-zip" class="modal-input" placeholder="00000-000" required></div>
-                <div id="prof-error" class="modal-error"></div>
-                <button type="submit" class="modal-btn">Salvar e ganhar 100 Oranginos</button>
-                <button type="button" onclick="document.getElementById('modal-profile').classList.add('H')" style="display:block;width:100%;margin-top:10px;padding:12px;background:none;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:14px;color:#888;font-family:inherit">Preencher depois</button>
-            </form>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Saldo Atual</div>
+                    <div class="metric-value" id="metric1">28.500</div>
+                    <div class="metric-subtitle">Oranginos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Ganhos Totais</div>
+                    <div class="metric-value" id="metric2">42.300</div>
+                    <div class="metric-subtitle">Até hoje</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Resgates Realizados</div>
+                    <div class="metric-value" id="metric3">2</div>
+                    <div class="metric-subtitle">Prêmios</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Indicações Feitas</div>
+                    <div class="metric-value" id="metric4">5</div>
+                    <div class="metric-subtitle">Amigos</div>
+                </div>
+            </div>
+
+            <!-- Tier Progress -->
+            <div class="tier-card">
+                <div class="tier-current">Seu nível atual</div>
+                <div class="tier-name">Prime</div>
+                <div class="tier-progress-bar">
+                    <div class="tier-progress-bar-fill"></div>
+                </div>
+                <div class="tier-next">
+                    Faltam <strong>21.500 Oranginos</strong> para alcançar <strong>Select</strong>
+                </div>
+            </div>
+
+            <!-- Prêmios Mais Próximos -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Prêmios Mais Próximos</h3>
+                </div>
+                <div class="section-card-body">
+                    <div class="proximity-item">
+                        <div class="proximity-header">
+                            <span class="proximity-name">Gift Card Orange 200 (15.000)</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="proximity-progress">
+                            <div class="proximity-progress-fill" style="width: 100%"></div>
+                        </div>
+                        <div class="proximity-status">✓ Disponível para resgate!</div>
+                    </div>
+
+                    <div class="proximity-item">
+                        <div class="proximity-header">
+                            <span class="proximity-name">Kit Organizador de Mala (20.000)</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="proximity-progress">
+                            <div class="proximity-progress-fill" style="width: 100%"></div>
+                        </div>
+                        <div class="proximity-status">✓ Disponível para resgate!</div>
+                    </div>
+
+                    <div class="proximity-item">
+                        <div class="proximity-header">
+                            <span class="proximity-name">Necessaire Londres (15.000)</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="proximity-progress">
+                            <div class="proximity-progress-fill" style="width: 100%"></div>
+                        </div>
+                        <div class="proximity-status">✓ Disponível para resgate!</div>
+                    </div>
+
+                    <div class="proximity-item">
+                        <div class="proximity-header">
+                            <span class="proximity-name">Gift Card Orange 500 (30.000)</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="proximity-progress">
+                            <div class="proximity-progress-fill" style="width: 95%"></div>
+                        </div>
+                        <div class="proximity-status pending">Faltam apenas 1.500!</div>
+                    </div>
+
+                    <div class="proximity-item">
+                        <div class="proximity-header">
+                            <span class="proximity-name">Gift Card Orange 1.000 (60.000)</span>
+                            <span>47,5%</span>
+                        </div>
+                        <div class="proximity-progress">
+                            <div class="proximity-progress-fill" style="width: 47.5%"></div>
+                        </div>
+                        <div class="proximity-status pending">Faltam 31.500!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dica -->
+            <div class="tip-card">
+                <div class="tip-icon">💡</div>
+                <div class="tip-content">
+                    <h4>Dica para ganhar mais Oranginos</h4>
+                    <p>Contrate <strong>Seguro Viagem</strong> e ganhe <strong>3× mais pontos</strong> por real gasto! Uma contratação de R$500 já rende 1.500 Oranginos. Você também ganha pontos indicando amigos — são 100 Oranginos por cada indicação que fizer uma compra.</p>
+                </div>
+            </div>
+
+            <!-- Atividade Recente -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Atividade Recente</h3>
+                </div>
+                <div class="section-card-body">
+                    <ul class="activity-list">
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Pacote Cancún</div>
+                                <div class="activity-date">há 3 dias</div>
+                            </div>
+                            <div class="activity-points positive">+2.400</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Hospedagem Orlando</div>
+                                <div class="activity-date">há 1 semana</div>
+                            </div>
+                            <div class="activity-points positive">+1.800</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Resgate: Gift Card R$200</div>
+                                <div class="activity-date">há 2 semanas</div>
+                            </div>
+                            <div class="activity-points negative">-15.000</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Seguro Viagem Europa</div>
+                                <div class="activity-date">há 3 semanas</div>
+                            </div>
+                            <div class="activity-points positive">+300</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Indicação de amigo aceita</div>
+                                <div class="activity-date">há 1 mês</div>
+                            </div>
+                            <div class="activity-points positive">+100</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TAB 2: PRÊMIOS -->
+    <div id="premios" class="tab-content">
+        <div class="content-wrapper">
+            <div class="search-filter">
+                <div class="search-box">
+                    <input type="text" id="searchPrizes" placeholder="Procure por um prêmio...">
+                </div>
+                <div class="category-filters">
+                    <button class="cat-btn active" onclick="filterCategory('todos')">Todos</button>
+                    <div class="cat-dropdown">
+                        <button class="cat-btn" onclick="toggleDropdown('dd-brindes')">Brindes <span class="dd-arrow">▾</span></button>
+                        <div class="dd-menu" id="dd-brindes">
+                            <button onclick="filterCategory('Kit Organizador')">Kit Organizador de Mala</button>
+                            <button onclick="filterCategory('Necessaire')">Necessaire Londres</button>
+                            <button onclick="filterCategory('Porta Passaporte')">Porta Passaporte</button>
+                        </div>
+                    </div>
+                    <button class="cat-btn" onclick="filterCategory('Gift Cards')">Gift Cards</button>
+                    <button class="cat-btn" onclick="filterCategory('Ofertas')">Ofertas</button>
+                </div>
+            </div>
+
+            <div class="prizes-grid" id="prizesGrid">
+                <!-- 1. Gift Card Orange 1000 -->
+                <div class="prize-card" data-prize="Gift Card Orange 1000" data-category="Gift Cards">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202507181522581899205563.png" alt="Gift Card Orange 1000" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Gift Card Orange 1.000</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">60.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn unavailable" onclick="alert('Você precisa de 31.500 Oranginos a mais')">
+                            Faltam 31.500
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Gift Card Orange 200 -->
+                <div class="prize-card" data-prize="Gift Card Orange 200" data-category="Gift Cards">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250718152149279428639.png" alt="Gift Card Orange 200" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Gift Card Orange 200</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">15.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Gift Card Orange 200', 15000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Gift Card Orange 500 -->
+                <div class="prize-card" data-prize="Gift Card Orange 500" data-category="Gift Cards">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250718152224662630950.png" alt="Gift Card Orange 500" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Gift Card Orange 500</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">30.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Gift Card Orange 500', 30000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Kit Organizador Azul -->
+                <div class="prize-card" data-prize="Kit Organizador Azul" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250625152355230473453.jpg" alt="Kit Organizador de Mala - Azul" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Kit Organizador - Azul</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Kit Organizador - Azul', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. Kit Organizador Rosa -->
+                <div class="prize-card" data-prize="Kit Organizador Rosa" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202506251526431640451401.jpg" alt="Kit Organizador de Mala - Rosa" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Kit Organizador - Rosa</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Kit Organizador - Rosa', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. Kit Organizador Verde Água -->
+                <div class="prize-card" data-prize="Kit Organizador Verde Água" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250625152536644684259.jpg" alt="Kit Organizador de Mala - Verde Água" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Kit Organizador - Verde Água</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Kit Organizador - Verde Água', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 7. Kit Organizador Vermelho -->
+                <div class="prize-card" data-prize="Kit Organizador Vermelho" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250625152231496971643.jpg" alt="Kit Organizador de Mala - Vermelho" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Kit Organizador - Vermelho</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Kit Organizador - Vermelho', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 8. Necessaire Londres Verde Água -->
+                <div class="prize-card" data-prize="Necessaire Londres Verde Água" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202507220940111991737371.jpg" alt="Necessaire Londres - Verde Água" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Necessaire Londres - Verde Água</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">15.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Necessaire Londres - Verde Água', 15000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 9. Necessaire Londres Verde Musgo -->
+                <div class="prize-card" data-prize="Necessaire Londres Verde Musgo" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202506251549531774302651.jpg" alt="Necessaire Londres - Verde Musgo" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Necessaire Londres - Verde Musgo</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">15.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Necessaire Londres - Verde Musgo', 15000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 10. Porta Passaporte Individual Caramelo -->
+                <div class="prize-card" data-prize="Porta Passaporte Individual Caramelo" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20251013150032291986044.jpg" alt="Porta Passaporte Individual - Caramelo" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Porta Passaporte - Caramelo</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">15.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Porta Passaporte - Caramelo', 15000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 11. Porta Passaporte Individual Preto -->
+                <div class="prize-card" data-prize="Porta Passaporte Individual Preto" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131502221213925633.jpg" alt="Porta Passaporte Individual - Preto" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Porta Passaporte - Preto</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">15.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Porta Passaporte - Preto', 15000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 12. Porta Passaporte Individual Verde -->
+                <div class="prize-card" data-prize="Porta Passaporte Individual Verde" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131455201698732564.jpg" alt="Porta Passaporte Individual - Verde" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Porta Passaporte - Verde</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">15.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Porta Passaporte - Verde', 15000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 13. Porta Passaporte Pasta DUO Caramelo -->
+                <div class="prize-card" data-prize="Porta Passaporte Pasta DUO Caramelo" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20251013142140306806731.jpg" alt="Porta Passaporte Pasta DUO - Caramelo" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Porta Passaporte DUO - Caramelo</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Porta Passaporte DUO - Caramelo', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 14. Porta Passaporte Pasta DUO Preto -->
+                <div class="prize-card" data-prize="Porta Passaporte Pasta DUO Preto" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131428581400255300.jpg" alt="Porta Passaporte Pasta DUO - Preto" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Porta Passaporte DUO - Preto</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Porta Passaporte DUO - Preto', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 15. Porta Passaporte Pasta QUATRO Caramelo -->
+                <div class="prize-card" data-prize="Porta Passaporte Pasta QUATRO Caramelo" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131432441528014808.jpg" alt="Porta Passaporte Pasta QUATRO - Caramelo" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Porta Passaporte QUATRO - Caramelo</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Porta Passaporte QUATRO - Caramelo', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 16. Porta Passaporte Pasta QUATRO Preto -->
+                <div class="prize-card" data-prize="Porta Passaporte Pasta QUATRO Preto" data-category="Acessórios de Viagem">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20251013143355868697159.jpg" alt="Porta Passaporte Pasta QUATRO - Preto" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Porta Passaporte QUATRO - Preto</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">20.000</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Porta Passaporte QUATRO - Preto', 20000)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 17. Orlando Vineland Premium Outlets -->
+                <div class="prize-card" data-prize="Orlando Vineland Premium Outlets" data-category="Ofertas">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202601091121081492936204.png" alt="Ofertas - Orlando Vineland Premium Outlets" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">Orlando Vineland - Ofertas</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">10</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('Orlando Vineland - Ofertas', 10)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 18. The Mall at Millenia -->
+                <div class="prize-card" data-prize="The Mall at Millenia" data-category="Ofertas">
+                    <div class="prize-visual"><img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/2026010911203559876933.png" alt="Ofertas - The Mall at Millenia" loading="lazy"></div>
+                    <div class="prize-content">
+                        <div class="prize-name">The Mall at Millenia - Ofertas</div>
+                        <div class="prize-cost">
+                            <span class="prize-amount">10</span>
+                            <span class="prize-currency">Oranginos</span>
+                        </div>
+                        <button class="prize-btn available" onclick="redeemPrize('The Mall at Millenia - Ofertas', 10)">
+                            ✓ Resgatar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: EXTRATO -->
+    <div id="extrato" class="tab-content">
+        <div class="content-wrapper">
+            <div class="statement-filters">
+                <input type="date" class="filter-input" id="dateFrom">
+                <input type="date" class="filter-input" id="dateTo">
+                <button class="btn-secondary" onclick="filterStatement()">Filtrar</button>
+            </div>
+
+            <div class="statement-summary">
+                <div class="statement-summary-item">
+                    <div class="statement-summary-label">Total Ganho</div>
+                    <div class="statement-summary-value">42.300</div>
+                </div>
+                <div class="statement-summary-item">
+                    <div class="statement-summary-label">Total Resgatado</div>
+                    <div class="statement-summary-value">-15.000</div>
+                </div>
+                <div class="statement-summary-item">
+                    <div class="statement-summary-label">Saldo Atual</div>
+                    <div class="statement-summary-value">28.500</div>
+                </div>
+            </div>
+
+            <table class="statement-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Oranginos</th>
+                        <th>Saldo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="statement-date">08/04/2026</td>
+                        <td>Pacote Cancún</td>
+                        <td class="statement-amount positive">+2.400</td>
+                        <td>28.500</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">01/04/2026</td>
+                        <td>Hospedagem Orlando</td>
+                        <td class="statement-amount positive">+1.800</td>
+                        <td>26.100</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">25/03/2026</td>
+                        <td>Resgate: Gift Card R$200</td>
+                        <td class="statement-amount negative">-15.000</td>
+                        <td>24.300</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">18/03/2026</td>
+                        <td>Seguro Viagem Europa</td>
+                        <td class="statement-amount positive">+300</td>
+                        <td>39.300</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">15/03/2026</td>
+                        <td>Indicação de amigo (compra)</td>
+                        <td class="statement-amount positive">+100</td>
+                        <td>39.000</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">10/03/2026</td>
+                        <td>Passagem Aérea Rio-SP</td>
+                        <td class="statement-amount positive">+850</td>
+                        <td>38.900</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">05/03/2026</td>
+                        <td>Hospedagem São Paulo</td>
+                        <td class="statement-amount positive">+1.200</td>
+                        <td>38.050</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">28/02/2026</td>
+                        <td>Roteiro Personalizado Japão</td>
+                        <td class="statement-amount positive">+3.500</td>
+                        <td>36.850</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">20/02/2026</td>
+                        <td>Locação de Carro Porto</td>
+                        <td class="statement-amount positive">+450</td>
+                        <td>33.350</td>
+                    </tr>
+                    <tr>
+                        <td class="statement-date">15/02/2026</td>
+                        <td>Ingresso Parque Disney</td>
+                        <td class="statement-amount positive">+925</td>
+                        <td>32.900</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 4: COMO FUNCIONA -->
+    <div id="como-funciona" class="tab-content">
+        <div class="content-wrapper">
+            <h2 style="margin-bottom: 1.5rem;">Como ganhar Oranginos</h2>
+
+            <table class="how-it-works-table">
+                <thead>
+                    <tr>
+                        <th>Serviço</th>
+                        <th>Pontos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ingressos de Parques</td>
+                        <td>1 ponto a cada R$2,00</td>
+                    </tr>
+                    <tr>
+                        <td>Passagem Aérea</td>
+                        <td>1 ponto a cada R$2,00</td>
+                    </tr>
+                    <tr>
+                        <td>Locação de Carro</td>
+                        <td>1 ponto a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Hospedagem (casa ou hotel)</td>
+                        <td>1 ponto a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Cruzeiro</td>
+                        <td>1 ponto a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Pacote de Viagem</td>
+                        <td>1 ponto a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Roteiro Personalizado</td>
+                        <td>2 pontos a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Orange Rentals</td>
+                        <td>2 pontos a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Seguro Viagem</td>
+                        <td>3 pontos a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Guia Virtual</td>
+                        <td>3 pontos a cada R$1,00</td>
+                    </tr>
+                    <tr>
+                        <td>Assessoria de Visto</td>
+                        <td>3 pontos a cada R$1,00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 style="margin: 2rem 0 1.5rem;">Seus níveis</h2>
+
+            <div class="tiers-grid">
+                <div class="tier-item" style="border-top: 3px solid #D2853F;">
+                    <div class="tier-item-name" style="color: #D2853F;">Basic</div>
+                    <div class="tier-item-range">1 a 2.999 Oranginos</div>
+                    <div class="tier-item-benefits">Entrada no programa. Comece sua jornada!</div>
+                </div>
+                <div class="tier-item" style="border-top: 3px solid #A68B2E;">
+                    <div class="tier-item-name" style="color: #A68B2E;">Gold</div>
+                    <div class="tier-item-range">3.000 até 9.999 Oranginos</div>
+                    <div class="tier-item-benefits">Bônus em indicações. Ganhe mais benefícios!</div>
+                </div>
+                <div class="tier-item" style="border-top: 3px solid #7C7D8A;">
+                    <div class="tier-item-name" style="color: #7C7D8A;">Platinum</div>
+                    <div class="tier-item-range">10.000 até 24.999 Oranginos</div>
+                    <div class="tier-item-benefits">Acesso a prêmios exclusivos e benefícios premium.</div>
+                </div>
+                <div class="tier-item active" style="border-top: 3px solid #3A3A3A;">
+                    <div class="tier-item-name" style="color: #3A3A3A;">Prime</div>
+                    <div class="tier-item-range">25.000 até 49.999 Oranginos</div>
+                    <div class="tier-item-benefits">Seu nível atual! Prioridade máxima em serviços.</div>
+                </div>
+                <div class="tier-item" style="border-top: 3px solid #E8610A;">
+                    <div class="tier-item-name" style="color: #E8610A;">Select</div>
+                    <div class="tier-item-range">a partir de 50.000 Oranginos</div>
+                    <div class="tier-item-benefits">Status VIP! Acesso a prêmios exclusivos e prioridade absoluta.</div>
+                </div>
+            </div>
+
+            <h2 style="margin: 2rem 0 1.5rem;">Perguntas frequentes</h2>
+
+            <div class="faq-section">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Quanto tempo os Oranginos são válidos?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Os Oranginos acumulados em sua conta têm validade de 24 meses a partir da sua última compra. Isso significa que você tem um bom tempo para usar seus pontos! Quanto mais você viaja, mais tempo seus pontos ficam ativos.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Como faço para resgatar meus prêmios?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Resgate é bem fácil! Acesse a aba "Prêmios", escolha o prêmio que deseja e clique em "Resgatar". Você receberá uma confirmação por email com os detalhes da sua recompensa.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Os pontos de indicação contam para subir de nível?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Sim! Todos os Oranginos que você ganha, seja através de compras ou indicações, contam para seu progresso de nível. Indique amigos e suba de nível mais rápido!
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Posso transferir meus Oranginos para outra pessoa?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Os Oranginos são pessoais e não podem ser transferidos. No entanto, você pode indicar seus amigos para ganharem seus próprios pontos e aproveitar o programa juntos!
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>E se meu Orangino expirar antes de usar?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Com a validade de 24 meses, você tem bastante tempo! Mas é importante ficar atento ao aviso que enviamos quando seus pontos estão prestes a expirar. Resgate seus prêmios antes da data limite.
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="margin: 2rem 0 1.5rem;">Regulamento</h2>
+
+            <div class="section-card">
+                <div class="section-card-body">
+                    <ul style="list-style: disc; margin-left: 1.5rem; color: var(--text-light); line-height: 1.8; font-size: 0.9rem;">
+                        <li>Pontos são creditados após finalização do processo de emissão</li>
+                        <li>Prazo de creditação: Ingressos até 7 dias úteis; Hospedagem, carro e demais serviços até 7 dias úteis; Aéreo até 24h úteis</li>
+                        <li>Validade dos pontos: 24 meses após a data da última compra</li>
+                        <li>Para resgate: entrar com login/senha, escolher prêmio na aba Prêmios, clicar em Resgatar</li>
+                        <li>Não serão permitidas alterações após a solicitação de resgate</li>
+                        <li>Os vouchers resgatados não poderão ser utilizados em ações promocionais vigentes</li>
+                        <li>Vouchers do Kit de Viagem serão enviados para o endereço registrado no cadastro</li>
+                        <li>Chips serão enviados em até 40 dias de antecedência da data da viagem</li>
+                        <li>Para transferência de pontuação entre contas, será cobrada uma taxa de 500 pontos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: INDIQUE AMIGOS -->
+    <div id="indique-amigos" class="tab-content">
+        <div class="content-wrapper">
+            <h2 style="margin-bottom: 1.5rem;">Indique amigos e ganhe Oranginos</h2>
+
+            <div class="referral-link-box">
+                <div class="referral-link-label">Seu link de indicação</div>
+                <div class="referral-link-input">
+                    <input type="text" id="referralLink" value="orangeviagens.com.br/indicar/alex-s" readonly>
+                    <button class="copy-btn" onclick="copyReferralLink()">Copiar link</button>
+                </div>
+                <div class="copy-feedback" id="copyFeedback">✓ Link copiado para a área de transferência!</div>
+            </div>
+
+            <div class="referral-stats">
+                <div class="referral-stat">
+                    <div class="referral-stat-value">5</div>
+                    <div class="referral-stat-label">Amigos indicados</div>
+                </div>
+                <div class="referral-stat">
+                    <div class="referral-stat-value">3</div>
+                    <div class="referral-stat-label">Que já compraram</div>
+                </div>
+                <div class="referral-stat">
+                    <div class="referral-stat-value">500</div>
+                    <div class="referral-stat-label">Oranginos ganhos</div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1.5rem;">Como funciona</h3>
+
+            <div class="referral-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Compartilhe seu link</h4>
+                        <p>Envie seu link de indicação para amigos por email, WhatsApp ou redes sociais. Quanto mais pessoas souberem, maior a chance de ganhar Oranginos!</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Seu amigo se cadastra</h4>
+                        <p>Quando seu amigo clica no link e se cadastra no programa Orange Rewards, você já ganha 50 Oranginos! Mesmo se ele não fizer uma compra.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Ele faz uma compra</h4>
+                        <p>Se seu amigo comprar algo através de Orange Viagens, você recebe 100 Oranginos adicionais. Sem limite de quantas pessoas você pode indicar!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Suas indicações recentes</h3>
+                </div>
+                <div class="section-card-body">
+                    <ul class="activity-list">
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Marina Souza</div>
+                                <div class="activity-date">Cadastrada há 2 meses - Comprou</div>
+                            </div>
+                            <div class="activity-points positive">+100</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Lucas Oliveira</div>
+                                <div class="activity-date">Cadastrado há 1 mês - Comprou</div>
+                            </div>
+                            <div class="activity-points positive">+100</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Fernanda Costa</div>
+                                <div class="activity-date">Cadastrada há 2 semanas - Comprou</div>
+                            </div>
+                            <div class="activity-points positive">+100</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Bruno Santos</div>
+                                <div class="activity-date">Cadastrado há 1 semana - Aguardando compra</div>
+                            </div>
+                            <div class="activity-points positive">+50</div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-left">
+                                <div class="activity-title">Ana Martins</div>
+                                <div class="activity-date">Cadastrada há 3 dias - Aguardando compra</div>
+                            </div>
+                            <div class="activity-points positive">+50</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 6: MEU PERFIL -->
+    <!-- TAB 7: FALE CONOSCO -->
+    <div id="fale-conosco" class="tab-content">
+        <div class="content-wrapper">
+            <h2 style="text-align:center; margin-bottom: 0.5rem; font-size: 1.8rem;">Fale Conosco</h2>
+            <p style="text-align:center; color: var(--text-light); margin-bottom: 2rem;">Envie uma mensagem e vamos dar um retorno em seu email no próximo dia útil!</p>
+
+            <div class="contact-info-row">
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div><strong>Telefone</strong><br><span style="color:var(--text-light);font-size:0.9rem">15 3346 6623</span></div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div><strong>Email</strong><br><span style="color:var(--text-light);font-size:0.9rem">rewards@orangeviagens.com.br</span></div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div><strong>Endereço</strong><br><span style="color:var(--text-light);font-size:0.9rem">Av São Paulo, 3445</span></div>
+                </div>
+            </div>
+
+            <div class="contact-form-card">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Seu nome</label>
+                        <input type="text" placeholder="ex: João Paulo">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" placeholder="ex: joao@gmail.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Celular</label>
+                        <input type="tel" placeholder="ex: (31) 9 9999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>Assunto</label>
+                        <input type="text" placeholder="ex: Preciso falar com suporte">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea rows="5" placeholder="Digite sua mensagem"></textarea>
+                </div>
+                <button class="submit-btn" onclick="alert('Mensagem enviada com sucesso! Retornaremos em breve.')">ENVIAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 8: MEU PERFIL -->
+    <div id="meu-perfil" class="tab-content">
+        <div class="content-wrapper">
+            <div class="form-section">
+                <h3>Informações Pessoais</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullName">Nome Completo</label>
+                        <input type="text" id="fullName" value="Alex Sperandio" placeholder="Seu nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF</label>
+                        <input type="text" id="cpf" value="123.456.789-00" disabled placeholder="CPF">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" value="rewards@orangeviagens.com.br" placeholder="Seu email">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" value="15 3346 6623" placeholder="Seu telefone">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Endereço</label>
+                    <input type="text" id="address" value="Av São Paulo, 3445" placeholder="Seu endereço">
+                </div>
+
+                <button class="btn-primary" onclick="saveProfile()">Salvar alterações</button>
+            </div>
+
+            <div class="form-section">
+                <h3>Alterar Senha</h3>
+                <div class="form-group">
+                    <label for="currentPassword">Senha atual</label>
+                    <input type="password" id="currentPassword" placeholder="Digite sua senha atual">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Nova senha</label>
+                    <input type="password" id="newPassword" placeholder="Digite sua nova senha">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirme a senha</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirme sua nova senha">
+                </div>
+
+                <button class="btn-primary" onclick="changePassword()">Atualizar senha</button>
+            </div>
+
+            <div class="form-section">
+                <h3>Preferências de Notificação</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifEmail" checked>
+                        <label for="notifEmail">Receber notificações por email</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifSMS" checked>
+                        <label for="notifSMS">Receber notificações por SMS</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifOffers" checked>
+                        <label for="notifOffers">Ofertas e promoções</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifExpiring" checked>
+                        <label for="notifExpiring">Aviso de pontos expirando</label>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="saveNotifications()" style="margin-top: 1.5rem;">Salvar preferências</button>
+            </div>
+
+            <div class="form-section" style="background: #fee2e2; border-color: #fca5a5;">
+                <h3 style="color: #dc2626;">Sair da conta</h3>
+                <p style="color: #7f1d1d; margin-bottom: 1.5rem;">Você será desconectado de sua conta Orange Rewards.</p>
+                <button class="btn-danger" onclick="logout()">Sair</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://ttyzhuobvntfxuefaxjv.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
-        const API_BASE = SUPABASE_URL + '/functions/v1';
-        const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let customerProfile = null;
+        // Tab switching
+        function switchTab(tabName, btn) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(function(tab) {
+                tab.classList.remove('active');
+                tab.style.display = 'none';
+            });
 
-        async function checkAuthSession() {
-            const { data: { session } } = await _sb.auth.getSession();
-            if (!session) { window.location.href = '/'; return; }
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(function(b) {
+                b.classList.remove('active');
+            });
 
-            const { data } = await _sb.from('customers').select('*').eq('auth_user_id', session.user.id).single();
-            if (!data) { window.location.href = '/'; return; }
-            customerProfile = data;
+            // Show selected tab
+            var targetTab = document.getElementById(tabName);
+            if (targetTab) {
+                targetTab.classList.add('active');
+                targetTab.style.display = 'block';
+            }
+            if (btn) btn.classList.add('active');
 
-            // Update UI with user name
-            const nameEls = document.querySelectorAll('[data-user-name]');
-            nameEls.forEach(el => el.textContent = data.full_name || data.first_name || 'Cliente');
-            document.getElementById('userName').textContent = data.full_name || data.first_name || 'Cliente';
-            document.getElementById('userAvatar').textContent = (data.first_name || 'C')[0].toUpperCase();
+            // Scroll to top of content
+            window.scrollTo({ top: 200, behavior: 'smooth' });
+        }
 
-            // Update points display
-            const ptsEls = document.querySelectorAll('[data-user-points]');
-            ptsEls.forEach(el => el.textContent = (data.available_points || 0).toLocaleString('pt-BR'));
-            document.querySelector('[data-user-points-total]').textContent = (data.available_points || 0).toLocaleString('pt-BR');
+        // Animated counters
+        function animateCounter(elementId, finalValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            const duration = 1500;
+            const steps = 60;
+            const increment = finalValue / steps;
+            let current = 0;
 
-            if (data.needs_password_change) {
-                document.getElementById('modal-password').classList.remove('H');
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= finalValue) {
+                    element.textContent = finalValue.toLocaleString('pt-BR');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString('pt-BR');
+                }
+            }, duration / steps);
+        }
+
+        // Run counters on page load
+        window.addEventListener('load', () => {
+            animateCounter('balanceAmount', 28500);
+            animateCounter('metric1', 28500);
+            animateCounter('metric2', 42300);
+            animateCounter('metric3', 2);
+            animateCounter('metric4', 5);
+        });
+
+        // Prize search/filter
+        const searchInput = document.getElementById('searchPrizes');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.prize-card').forEach(card => {
+                    const prizeName = (card.dataset.prize || '').toLowerCase();
+                    card.style.display = prizeName.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+
+        // Copy referral link
+        function copyReferralLink() {
+            const link = document.getElementById('referralLink').value;
+            navigator.clipboard.writeText(link).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.style.display = 'block';
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        // Redeem prize
+        function redeemPrize(prizeName, cost) {
+            alert(`Prêmio "${prizeName}" resgatado com sucesso! Você usou ${cost} Oranginos. Um email de confirmação foi enviado para você.`);
+        }
+
+        // Save profile
+        function saveProfile() {
+            const name = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !email || !phone || !address) {
+                alert('Por favor, preencha todos os campos!');
                 return;
             }
 
-            if (!data.profile_bonus_claimed) {
-                showProfileBanner();
+            alert('Suas informações foram atualizadas com sucesso!');
+        }
+
+        // Change password
+        function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (!current || !newPass || !confirm) {
+                alert('Por favor, preencha todos os campos de senha!');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                alert('As senhas não correspondem!');
+                return;
+            }
+
+            if (newPass.length < 8) {
+                alert('A senha deve ter pelo menos 8 caracteres!');
+                return;
+            }
+
+            alert('Sua senha foi alterada com sucesso!');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        // Save notifications
+        function saveNotifications() {
+            alert('Suas preferências de notificação foram salvas!');
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                alert('Você foi desconectado com sucesso!');
+                // In a real app, this would redirect to login page
             }
         }
 
-        function showProfileBanner() {
-            const mainContent = document.querySelector('.content-wrapper');
-            if (mainContent && !document.getElementById('profile-completion-banner')) {
-                const banner = document.createElement('div');
-                banner.id = 'profile-completion-banner';
-                banner.className = 'profile-banner';
-                banner.innerHTML = '<div class="profile-banner-title">Complete seu perfil e ganhe 100 Oranginos!</div><button class="profile-banner-btn" onclick="showProfileModal()">Completar</button>';
-                banner.onclick = function(e) { if(e.target === banner || e.target.classList.contains('profile-banner-title')) showProfileModal(); };
-                mainContent.insertBefore(banner, mainContent.firstChild);
+        // Filter statement
+        function filterStatement() {
+            const from = document.getElementById('dateFrom').value;
+            const to = document.getElementById('dateTo').value;
+
+            if (!from || !to) {
+                alert('Por favor, selecione ambas as datas!');
+                return;
+            }
+
+            alert(`Extrato filtrado de ${from} a ${to}`);
+        }
+
+        // Prize filter functions
+        function toggleDropdown(id) {
+            var menu = document.getElementById(id);
+            if (menu) {
+                document.querySelectorAll('.dd-menu').forEach(function(m) { if (m.id !== id) m.classList.remove('open'); });
+                menu.classList.toggle('open');
             }
         }
 
-        function showProfileModal() {
-            const m = document.getElementById('modal-profile');
-            if (!m) return;
-            if (customerProfile) {
-                const f = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
-                f('prof-first', customerProfile.first_name);
-                f('prof-last', customerProfile.last_name);
-                f('prof-cpf', customerProfile.cpf);
-                f('prof-email', customerProfile.email);
-                f('prof-phone', customerProfile.phone);
-                f('prof-mobile', customerProfile.mobile);
-                f('prof-birth', customerProfile.birth_date);
-                f('prof-gender', customerProfile.gender);
-                f('prof-address', customerProfile.address);
-                f('prof-number', customerProfile.address_number);
-                f('prof-complement', customerProfile.address_complement);
-                f('prof-neighborhood', customerProfile.neighborhood);
-                f('prof-city', customerProfile.city);
-                f('prof-state', customerProfile.state);
-                f('prof-zip', customerProfile.zip_code);
+        function filterCategory(category) {
+            document.querySelectorAll('.dd-menu').forEach(function(m) { m.classList.remove('open'); });
+            document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+
+            if (category === 'todos') {
+                document.querySelectorAll('.cat-btn')[0].classList.add('active');
             }
-            m.classList.remove('H');
+
+            document.querySelectorAll('.prize-card').forEach(function(card) {
+                var prize = (card.dataset.prize || '').toLowerCase();
+                var cat = (card.dataset.category || '').toLowerCase();
+                if (category === 'todos') {
+                    card.style.display = '';
+                } else {
+                    var show = prize.includes(category.toLowerCase()) || cat.includes(category.toLowerCase());
+                    card.style.display = show ? '' : 'none';
+                }
+            });
         }
 
-        async function changePassword(e) {
-            e.preventDefault();
-            const pw = document.getElementById('new-pass').value;
-            const pw2 = document.getElementById('new-pass2').value;
-            const errEl = document.getElementById('pw-error');
-            errEl.textContent = '';
-            if (pw.length < 8) { errEl.textContent = 'Senha deve ter no mínimo 8 caracteres'; return; }
-            if (pw !== pw2) { errEl.textContent = 'Senhas não conferem'; return; }
-            const { error } = await _sb.auth.updateUser({ password: pw });
-            if (error) { errEl.textContent = error.message; return; }
-            await _sb.from('customers').update({ needs_password_change: false }).eq('id', customerProfile.id);
-            customerProfile.needs_password_change = false;
-            document.getElementById('modal-password').classList.add('H');
-            if (!customerProfile.profile_bonus_claimed) showProfileBanner();
-        }
-
-        async function submitProfileCompletion(e) {
-            e.preventDefault();
-            const errEl = document.getElementById('prof-error');
-            errEl.textContent = '';
-            const data = {
-                first_name: document.getElementById('prof-first').value.trim(),
-                last_name: document.getElementById('prof-last').value.trim(),
-                full_name: document.getElementById('prof-first').value.trim() + ' ' + document.getElementById('prof-last').value.trim(),
-                cpf: document.getElementById('prof-cpf').value.trim(),
-                email: document.getElementById('prof-email').value.trim(),
-                phone: document.getElementById('prof-phone').value.trim(),
-                mobile: document.getElementById('prof-mobile').value.trim(),
-                birth_date: document.getElementById('prof-birth').value || null,
-                gender: document.getElementById('prof-gender').value,
-                address: document.getElementById('prof-address').value.trim(),
-                address_number: document.getElementById('prof-number').value.trim(),
-                address_complement: document.getElementById('prof-complement').value.trim(),
-                neighborhood: document.getElementById('prof-neighborhood').value.trim(),
-                city: document.getElementById('prof-city').value.trim(),
-                state: document.getElementById('prof-state').value.trim(),
-                zip_code: document.getElementById('prof-zip').value.trim()
-            };
-            const { error } = await _sb.from('customers').update(data).eq('id', customerProfile.id);
-            if (error) { errEl.textContent = 'Erro ao salvar: ' + error.message; return; }
-
-            const hasAllFields = data.first_name && data.last_name && data.cpf && data.email &&
-                                data.phone && data.mobile && data.birth_date && data.gender &&
-                                data.address && data.address_number && data.neighborhood &&
-                                data.city && data.state && data.zip_code;
-            if (hasAllFields) {
-                try {
-                    const { data: { session } } = await _sb.auth.getSession();
-                    await fetch(API_BASE + '/points/credit', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + session.access_token, 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ customer_id: customerProfile.id, points: 100, description: 'Bônus por completar perfil' })
-                    });
-                    await _sb.from('customers').update({ profile_bonus_claimed: true }).eq('id', customerProfile.id);
-                    customerProfile.profile_bonus_claimed = true;
-                } catch (err) { console.error('Erro ao creditar pontos:', err); }
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.cat-dropdown')) {
+                document.querySelectorAll('.dd-menu').forEach(function(m) { m.classList.remove('open'); });
             }
-            document.getElementById('modal-profile').classList.add('H');
-            const banner = document.getElementById('profile-completion-banner');
-            if (banner) banner.remove();
-            location.reload();
+        });
+
+        // FAQ toggle
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (e.target.closest('.faq-question')) {
+                    item.classList.toggle('open');
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            var menu = document.getElementById('mobileMenu');
+            if (menu) menu.classList.toggle('open');
         }
 
-        async function doLogout() {
-            await _sb.auth.signOut();
-            window.location.href = '/';
+        function closeMobileMenu() {
+            var menu = document.getElementById('mobileMenu');
+            if (menu) menu.classList.remove('open');
         }
-
-        document.addEventListener('DOMContentLoaded', checkAuthSession);
     </script>
+
+<!-- PASSWORD CHANGE MODAL -->
+<div id="modal-password" class="modal" onclick="if(event.target===this)closeModal('modal-password')">
+  <div class="modal-content">
+    <button onclick="closeModal('modal-password')" class="modal-close">&times;</button>
+    <div class="modal-header">
+      <h2>Alterar Senha</h2>
+      <p>Crie uma nova senha para sua conta</p>
+    </div>
+    <form onsubmit="doChangePassword(event)">
+      <div class="form-group-modal">
+        <label>Nova Senha *</label>
+        <input type="password" id="new-pass" required minlength="8">
+      </div>
+      <div class="form-group-modal">
+        <label>Confirmar Senha *</label>
+        <input type="password" id="new-pass2" required>
+      </div>
+      <div id="pwd-error" class="modal-error"></div>
+      <button type="submit" class="modal-btn">Salvar Senha</button>
+    </form>
+  </div>
+</div>
+
+<!-- PROFILE COMPLETION BANNER -->
+<div id="profile-banner" style="display:none;background:#E8610A;color:#fff;padding:20px;margin:0;text-align:center;font-weight:600">
+  Complete seu perfil e ganhe 100 Oranginos! <a href="#" onclick="scrollToProfile();return false" style="color:#fff;text-decoration:underline;cursor:pointer">Clique aqui</a> para completar agora.
+</div>
+
+<script>
+const SUPABASE_URL='https://ttyzhuobvntfxuefaxjv.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
+const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function scrollToProfile(){document.getElementById('meu-perfil').scrollIntoView({behavior:'smooth'});}
+
+async function doChangePassword(e){
+  e.preventDefault();
+  const pass=document.getElementById('new-pass').value;
+  const pass2=document.getElementById('new-pass2').value;
+  const err=document.getElementById('pwd-error');
+  err.textContent='';
+  if(pass!==pass2){err.textContent='Senhas não conferem';return;}
+  if(pass.length<8){err.textContent='Senha deve ter no mínimo 8 caracteres';return;}
+  const{error}=await _sb.auth.updateUser({password:pass});
+  if(error){err.textContent=error.message;return;}
+  closeModal('modal-password');
+  alert('Senha alterada com sucesso!');
+  const{data:{user}}=await _sb.auth.getUser();
+  if(user){
+    await _sb.from('customers').update({needs_password_change:false}).eq('auth_user_id',user.id);
+  }
+}
+
+async function doLogout(){
+  await _sb.auth.signOut();
+  window.location.href='/';
+}
+
+async function loadCustomerData(){
+  const{data:{session}}=await _sb.auth.getSession();
+  if(!session){window.location.href='/';return;}
+  const{data:customer}=await _sb.from('customers').select('*').eq('auth_user_id',session.user.id).single();
+  if(!customer){window.location.href='/';return;}
+
+  const firstName=customer.full_name?customer.full_name.split(' ')[0]:'Cliente';
+  const initials=(customer.full_name||'').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()||'CL';
+
+  document.querySelectorAll('.balance-avatar').forEach(el=>el.textContent=initials);
+  document.querySelectorAll('.avatar').forEach(el=>{if(el.closest('.balance-info'))return;el.textContent=initials;});
+  const greeting=document.querySelector('.balance-info h2');
+  if(greeting)greeting.textContent=`Olá, ${firstName}!`;
+
+  const balanceEl=document.getElementById('balanceAmount');
+  if(balanceEl)balanceEl.textContent=(customer.available_points||0).toLocaleString('pt-BR');
+
+  document.querySelectorAll('.metric-value').forEach((el,i)=>{
+    if(i===0)el.textContent=(customer.available_points||0).toLocaleString('pt-BR');
+    else if(i===1)el.textContent=(customer.total_points_earned||0).toLocaleString('pt-BR');
+  });
+
+  if(customer.needs_password_change){
+    openModal('modal-password');
+  }
+
+  if(!customer.profile_bonus_claimed){
+    document.getElementById('profile-banner').style.display='block';
+  }
+}
+
+window.addEventListener('load',loadCustomerData);
+</script>
 </body>
 </html>

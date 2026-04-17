@@ -304,6 +304,13 @@
             font-size: 0.95rem;
         }
 
+        /* COMO FUNCIONA */
+        .how-it-works {
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+        }
+
         .section-title {
             font-size: 2.5rem;
             font-weight: 800;
@@ -316,6 +323,619 @@
             color: var(--primary);
         }
 
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .step-card {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 24px rgba(232, 97, 10, 0.1);
+            transform: translateY(-8px);
+        }
+
+        .step-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .step-icon svg {
+            width: 30px;
+            height: 30px;
+            filter: brightness(0) invert(1);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--gray-200);
+            line-height: 1;
+        }
+
+        .step-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .step-card p {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        /* TABELA DE PONTUAÇÃO */
+        .scoring-section {
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+        }
+
+        .multiplier-groups {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .multiplier-group {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .multiplier-group:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .multiplier-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .badge-1x {
+            background: #E0F2FE;
+            color: #0369A1;
+        }
+
+        .badge-2x {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .badge-3x {
+            background: #FBE3E6;
+            color: #9F1239;
+        }
+
+        .scoring-item {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .scoring-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .scoring-item p {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .scoring-points {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* PRÊMIOS */
+        .prizes-section {
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+        }
+
+        .prize-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--gray-200);
+            background: white;
+            color: var(--text-dark);
+            border-radius: 2rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .prizes-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .prize-card {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .prize-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 16px 32px rgba(232, 97, 10, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .prize-visual {
+            height: 240px;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 8px;
+        }
+
+        .prize-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .prize-visual svg {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            z-index: 1;
+            filter: brightness(0) invert(1);
+        }
+
+        .prize-info {
+            padding: 1.5rem;
+        }
+
+        .prize-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .prize-info p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .prize-cost {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .prize-btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .prize-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(232, 97, 10, 0.2);
+        }
+
+        /* TIERS */
+        .tiers-section {
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+        }
+
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tier-card {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tier-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 16px 32px rgba(232, 97, 10, 0.15);
+            transform: scale(1.05);
+        }
+
+        .tier-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .tier-light .tier-icon {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .tier-dark .tier-icon {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .tier-icon svg {
+            width: 35px;
+            height: 35px;
+        }
+
+        .tier-light .tier-icon svg {
+            filter: brightness(0) opacity(0.7);
+        }
+
+        .tier-dark .tier-icon svg {
+            filter: brightness(0) invert(1);
+        }
+
+        .tier-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: inherit;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+
+        .tier-range {
+            font-size: 0.9rem;
+            color: inherit;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .tier-card.tier-dark .tier-benefits {
+            background: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.95);
+        }
+
+        .tier-card.tier-light .tier-benefits {
+            background: rgba(0,0,0,0.08);
+            color: #3a2a1a;
+        }
+
+        .tier-benefits {
+            text-align: left;
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+
+        /* REFERRAL */
+        .referral-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 4rem 2rem;
+            border-radius: 1.5rem;
+        }
+
+        .referral-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .referral-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .referral-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        .referral-items {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .referral-item {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .referral-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .referral-item p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .referral-points {
+            display: inline-block;
+            background: var(--success);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        /* TESTIMONIALS */
+        .testimonials-section {
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .testimonial-stars {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-role {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        /* FINAL CTA */
+        .final-cta {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 1400px;
+            margin: 5rem auto;
+            border-radius: 1.5rem;
+        }
+
+        .final-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .final-cta p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .final-cta .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .final-cta .btn:hover {
+            background: var(--light-accent);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--gray-900);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: 5rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-col h4 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-col a {
+            color: #D1D5DB;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col a:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            font-size: 0.9rem;
+        }
+
+        .footer-contact p {
+            margin-bottom: 0.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary-dark);
+            transform: translateY(-4px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+            color: #9CA3AF;
+            font-size: 0.85rem;
+        }
+
+        /* ANIMATIONS */
         .fade-in {
             opacity: 0;
             animation: fadeIn 0.8s ease-in-out forwards;
@@ -332,25 +952,23 @@
             }
         }
 
-        /* MODAL STYLES */
-        .auth-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .auth-overlay.active {
-            display: flex !important;
-        }
-
         /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .prizes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .prizes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prize-filters {
+                justify-content: center;
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -411,6 +1029,28 @@
                 font-size: 2rem;
             }
 
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .referral-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .referral-section {
+                padding: 2rem;
+            }
+
+            .final-cta {
+                margin: 3rem 1rem;
+                padding: 2rem;
+            }
+
+            .final-cta h2 {
+                font-size: 1.75rem;
+            }
+
             .social-proof {
                 grid-template-columns: 1fr;
                 gap: 1rem;
@@ -429,6 +1069,13 @@
 
             .nav-logo img {
                 height: 32px;
+            }
+
+            .prizes-grid,
+            .tiers-grid,
+            .testimonials-grid,
+            .multiplier-groups {
+                grid-template-columns: 1fr;
             }
 
             .proof-item h3 {
@@ -455,8 +1102,8 @@
             </ul>
 
             <div class="nav-cta">
-                <a href="#" class="btn btn-secondary" onclick="showLoginModal()">Entrar</a>
-                <a href="#" class="btn btn-primary" onclick="showSignupModal()">Cadastrar</a>
+                <a href="#" onclick="showLoginModal(); return false;" class="btn btn-secondary">Entrar</a>
+                <a href="#" onclick="showSignupModal(); return false;" class="btn btn-primary">Cadastrar</a>
             </div>
 
             <div class="hamburger" id="hamburger">
@@ -474,7 +1121,7 @@
             <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Programa de Fidelidade da Orange Viagens</p>
             <p>Acumule pontos ao comprar hospedagem, ingressos, passagens aéreas, guiamentos virtuais, aluguel de carros e muito mais. Resgate prêmios incríveis e aproveite benefícios exclusivos.</p>
             <div class="hero-cta">
-                <a href="#" class="btn btn-primary" onclick="showSignupModal()">Cadastre-se Grátis</a>
+                <a href="#" onclick="showSignupModal(); return false;" class="btn btn-primary">Cadastre-se Grátis</a>
                 <a href="#how" class="btn btn-secondary">Saiba Mais</a>
             </div>
         </div>
@@ -509,75 +1156,572 @@
         </div>
     </section>
 
+    <!-- COMO FUNCIONA -->
+    <section class="how-it-works" id="how">
+        <h2 class="section-title">Como <span class="highlight">Funciona</span></h2>
+
+        <div class="steps">
+            <div class="step-card fade-in">
+                <div class="step-number">1</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <h3>Cadastre-se</h3>
+                <p>Crie sua conta gratuitamente em segundos e comece a acumular pontos imediatamente em suas compras.</p>
+            </div>
+
+            <div class="step-card fade-in">
+                <div class="step-number">2</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </div>
+                <h3>Acumule Pontos</h3>
+                <p>Ganhe Oranginos em todas as suas compras. Quanto mais gasta, mais pontos acumula! Indicações também geram bônus.</p>
+            </div>
+
+            <div class="step-card fade-in">
+                <div class="step-number">3</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </div>
+                <h3>Resgate Prêmios</h3>
+                <p>Escolha entre Gift Cards, produtos exclusivos e muito mais. Seus Oranginos valem por 24 meses após a última compra.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TABELA DE PONTUAÇÃO -->
+    <section class="scoring-section">
+        <h2 class="section-title">Tabela de <span class="highlight">Pontuação</span></h2>
+
+        <div class="multiplier-groups">
+            <div class="multiplier-group fade-in">
+                <div class="multiplier-badge badge-1x">1 Ponto = R$ 2</div>
+                <div class="scoring-item">
+                    <p>Ingressos de Parques</p>
+                    <div class="scoring-points">1 ponto a cada R$ 2,00</div>
+                </div>
+                <div class="scoring-item">
+                    <p>Passagem Aérea</p>
+                    <div class="scoring-points">1 ponto a cada R$ 2,00</div>
+                </div>
+            </div>
+
+            <div class="multiplier-group fade-in">
+                <div class="multiplier-badge badge-1x">1 Ponto = R$ 1</div>
+                <div class="scoring-item">
+                    <p>Locação de Carro</p>
+                    <div class="scoring-points">1 ponto a cada R$ 1,00</div>
+                </div>
+                <div class="scoring-item">
+                    <p>Hospedagem (Casa ou Hotel)</p>
+                    <div class="scoring-points">1 ponto a cada R$ 1,00</div>
+                </div>
+                <div class="scoring-item">
+                    <p>Cruzeiro</p>
+                    <div class="scoring-points">1 ponto a cada R$ 1,00</div>
+                </div>
+                <div class="scoring-item">
+                    <p>Pacote de Viagem</p>
+                    <div class="scoring-points">1 ponto a cada R$ 1,00</div>
+                </div>
+            </div>
+
+            <div class="multiplier-group fade-in">
+                <div class="multiplier-badge badge-2x">2 Pontos = R$ 1</div>
+                <div class="scoring-item">
+                    <p>Roteiro Personalizado</p>
+                    <div class="scoring-points">2 pontos a cada R$ 1,00</div>
+                </div>
+                <div class="scoring-item">
+                    <p>Orange Rentals</p>
+                    <div class="scoring-points">2 pontos a cada R$ 1,00</div>
+                </div>
+            </div>
+
+            <div class="multiplier-group fade-in">
+                <div class="multiplier-badge badge-3x">3 Pontos = R$ 1</div>
+                <div class="scoring-item">
+                    <p>Seguro Viagem</p>
+                    <div class="scoring-points">3 pontos a cada R$ 1,00</div>
+                </div>
+                <div class="scoring-item">
+                    <p>Guia Virtual</p>
+                    <div class="scoring-points">3 pontos a cada R$ 1,00</div>
+                </div>
+                <div class="scoring-item">
+                    <p>Assessoria de Visto</p>
+                    <div class="scoring-points">3 pontos a cada R$ 1,00</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRÊMIOS -->
+    <section class="prizes-section" id="prizes">
+        <h2 class="section-title">Prêmios em <span class="highlight">Destaque</span></h2>
+
+        <div class="prize-filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="gift-cards">Gift Cards</button>
+            <button class="filter-btn" data-filter="acessorios">Acessórios de Viagem</button>
+            <button class="filter-btn" data-filter="ofertas">Ofertas</button>
+        </div>
+
+        <div class="prizes-grid">
+            <!-- PAGE 1 - Gift Cards and MKDV Products -->
+            <div class="prize-card fade-in" data-category="gift-cards">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202507181522581899205563.png" alt="Gift Card Orange 1000" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Gift Card Orange 1.000</h3>
+                    <div class="prize-cost">
+                        <span>60.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="gift-cards">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250718152149279428639.png" alt="Gift Card Orange 200" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Gift Card Orange 200</h3>
+                    <div class="prize-cost">
+                        <span>15.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="gift-cards">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250718152224662630950.png" alt="Gift Card Orange 500" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Gift Card Orange 500</h3>
+                    <div class="prize-cost">
+                        <span>30.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250625152355230473453.jpg" alt="Kit Organizador Mala Azul" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Kit Organizador Mala - Azul</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202506251526431640451401.jpg" alt="Kit Organizador Mala Rosa" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Kit Organizador Mala - Rosa</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250625152536644684259.jpg" alt="Kit Organizador Mala Verde Água" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Kit Organizador Mala - Verde Água</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20250625152231496971643.jpg" alt="Kit Organizador Mala Vermelho" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Kit Organizador Mala - Vermelho</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202507220940111991737371.jpg" alt="Necessaire Londres Verde Água" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Necessaire Londres - Verde Água</h3>
+                    <div class="prize-cost">
+                        <span>15.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202506251549531774302651.jpg" alt="Necessaire Londres Verde Musgo" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Necessaire Londres - Verde Musgo</h3>
+                    <div class="prize-cost">
+                        <span>15.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <!-- PAGE 2 - More MKDV Products and Offers -->
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20251013150032291986044.jpg" alt="Porta Passaporte Individual Caramelo" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Porta Passaporte Individual - Caramelo</h3>
+                    <div class="prize-cost">
+                        <span>15.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131502221213925633.jpg" alt="Porta Passaporte Individual Preto" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Porta Passaporte Individual - Preto</h3>
+                    <div class="prize-cost">
+                        <span>15.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131455201698732564.jpg" alt="Porta Passaporte Individual Verde" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Porta Passaporte Individual - Verde</h3>
+                    <div class="prize-cost">
+                        <span>15.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20251013142140306806731.jpg" alt="Porta Passaporte Pasta DUO Caramelo" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Porta Passaporte Pasta DUO - Caramelo</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131428581400255300.jpg" alt="Porta Passaporte Pasta DUO Preto" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Porta Passaporte Pasta DUO - Preto</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202510131432441528014808.jpg" alt="Porta Passaporte Pasta QUATRO Caramelo" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Porta Passaporte Pasta QUATRO - Caramelo</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="acessorios">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/20251013143355868697159.jpg" alt="Porta Passaporte Pasta QUATRO Preto" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Porta Passaporte Pasta QUATRO - Preto</h3>
+                    <div class="prize-cost">
+                        <span>20.000</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="ofertas">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/202601091121081492936204.png" alt="Orlando Vineland Premium Outlets" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>Orlando Vineland Premium Outlets</h3>
+                    <div class="prize-cost">
+                        <span>10</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+
+            <div class="prize-card fade-in" data-category="ofertas">
+                <div class="prize-visual">
+                    <img src="https://s3-sa-east-1.amazonaws.com/static.donuz.co/resources/uploads/lojaDePremios/premioImagem/2026010911203559876933.png" alt="The Mall at Millenia" loading="lazy">
+                </div>
+                <div class="prize-info">
+                    <h3>The Mall at Millenia</h3>
+                    <div class="prize-cost">
+                        <span>10</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Oranginos</span>
+                    </div>
+                    <button class="prize-btn">Resgatar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TIERS -->
+    <section class="tiers-section" id="categorias">
+        <h2 class="section-title">Nossas <span class="highlight">Categorias</span></h2>
+
+        <div class="tiers-grid">
+            <div class="tier-card tier-light fade-in" style="background: linear-gradient(135deg, #F4A460 0%, #D2853F 100%); color: #3a2000;">
+                <div class="tier-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h3>Basic</h3>
+                <div class="tier-range">1 a 2.999 Oranginos</div>
+                <div class="tier-benefits">
+                    <strong>Benefícios:</strong><br>
+                    • Acesso ao programa<br>
+                    • Acúmulo de pontos<br>
+                    • Resgate de prêmios
+                </div>
+            </div>
+
+            <div class="tier-card tier-light fade-in" style="background: linear-gradient(135deg, #C9A84C 0%, #A68B2E 100%); color: #3a2800;">
+                <div class="tier-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <h3>Gold</h3>
+                <div class="tier-range">3.000 até 9.999 Oranginos</div>
+                <div class="tier-benefits">
+                    <strong>Benefícios:</strong><br>
+                    • Bônus em pontos<br>
+                    • Acesso a promoções<br>
+                    • Suporte prioritário
+                </div>
+            </div>
+
+            <div class="tier-card tier-dark fade-in" style="background: linear-gradient(135deg, #A8A9B4 0%, #7C7D8A 100%); color: #ffffff;">
+                <div class="tier-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        <path d="M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path>
+                        <path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"></path>
+                    </svg>
+                </div>
+                <h3>Platinum</h3>
+                <div class="tier-range">10.000 até 24.999 Oranginos</div>
+                <div class="tier-benefits">
+                    <strong>Benefícios:</strong><br>
+                    • Multiplicador 1.5x<br>
+                    • Acesso VIP exclusivo<br>
+                    • Upgrade de prêmios
+                </div>
+            </div>
+
+            <div class="tier-card tier-dark fade-in" style="background: linear-gradient(135deg, #5A5A5A 0%, #3A3A3A 100%); color: #ffffff;">
+                <div class="tier-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 15l-2-2m0 0l2-2m-2 2h12M4 4h7a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H4"></path>
+                    </svg>
+                </div>
+                <h3>Prime</h3>
+                <div class="tier-range">25.000 até 49.999 Oranginos</div>
+                <div class="tier-benefits">
+                    <strong>Benefícios:</strong><br>
+                    • Multiplicador 1.75x<br>
+                    • Acesso VIP elite<br>
+                    • Benefícios premium
+                </div>
+            </div>
+
+            <div class="tier-card tier-dark fade-in active" style="background: linear-gradient(135deg, #E8610A 0%, #B84D08 100%); color: #ffffff;">
+                <div class="tier-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <h3>Select</h3>
+                <div class="tier-range">a partir de 50.000 Oranginos</div>
+                <div class="tier-benefits">
+                    <strong>Benefícios:</strong><br>
+                    • Multiplicador 2x<br>
+                    • Acesso platinum<br>
+                    • Benefícios VIP únicos
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REFERRAL -->
+    <section class="referral-section" id="referral">
+        <div class="referral-content">
+            <div class="fade-in">
+                <h2>Indique e Ganhe Oranginos</h2>
+                <p>Compartilhe a experiência Orange Viagens com seus amigos e ganhe bônus em pontos por cada indicação bem-sucedida.</p>
+            </div>
+
+            <div class="referral-items fade-in">
+                <div class="referral-item">
+                    <h4>Compra Realizada</h4>
+                    <p><span class="referral-points">100 Oranginos</span> por convidado que fizer seu primeiro pedido na Orange Viagens</p>
+                </div>
+                <div class="referral-item">
+                    <h4>Newsletter</h4>
+                    <p><span class="referral-points">50 Oranginos</span> por convidado que se inscrever na nossa newsletter</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+        <h2 class="section-title">O Que Nossos <span class="highlight">Membros</span> Falam</h2>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Adorei o programa Orange Rewards! Já consegui acumular pontos suficientes para um Gift Card de R$500 em menos de um ano. Recomendo para todos que viajam frequentemente."</p>
+                <div class="testimonial-author">Marina Silva</div>
+                <div class="testimonial-role">São Paulo, SP</div>
+            </div>
+
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Excelente forma de economizar! Cada viagem que faço com a Orange Viagens gera pontos que utilizo posteriormente. O sistema é simples e rápido de usar."</p>
+                <div class="testimonial-author">Carlos Mendes</div>
+                <div class="testimonial-role">Rio de Janeiro, RJ</div>
+            </div>
+
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Fiquei surpreso com a variedade de prêmios disponíveis. Além dos Gift Cards, consegui resgatar o kit organizador de mala que é super útil. Voltarei a usar!"</p>
+                <div class="testimonial-author">Beatriz Costa</div>
+                <div class="testimonial-role">Belo Horizonte, MG</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final-cta" id="register">
+        <h2>Comece a Acumular Oranginos Hoje!</h2>
+        <p>Junte-se a milhares de viajantes que já estão ganhando prêmios. Cadastre-se gratuitamente em segundos.</p>
+        <a href="#" onclick="showSignupModal(); return false;" class="btn">Cadastrar Agora</a>
+    </section>
+
     <!-- FOOTER -->
     <footer id="contact">
-        <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 2rem; padding: 3rem 2rem 0;">
-            <div>
-                <h4 style="font-weight: 700; margin-bottom: 1rem; color: var(--primary);">Sobre Orange Rewards</h4>
-                <ul style="list-style: none;">
-                    <li style="margin-bottom: 0.75rem;"><a href="#rules" style="color: #D1D5DB; text-decoration: none; font-size: 0.9rem;">Regulamento</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="#" style="color: #D1D5DB; text-decoration: none; font-size: 0.9rem;">Perguntas Frequentes</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="#" style="color: #D1D5DB; text-decoration: none; font-size: 0.9rem;">Blog</a></li>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Sobre Orange Rewards</h4>
+                <ul>
+                    <li><a href="#rules">Regulamento</a></li>
+                    <li><a href="#">Perguntas Frequentes</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Termos de Uso</a></li>
                 </ul>
             </div>
-            <div>
-                <h4 style="font-weight: 700; margin-bottom: 1rem; color: var(--primary);">Contato</h4>
-                <p style="font-size: 0.9rem; color: #D1D5DB; margin-bottom: 0.5rem;"><strong>Email:</strong><br><a href="mailto:rewards@orangeviagens.com.br" style="color: #D1D5DB;">rewards@orangeviagens.com.br</a></p>
+
+            <div class="footer-col">
+                <h4>Orange Viagens</h4>
+                <ul>
+                    <li><a href="#">Sobre Nós</a></li>
+                    <li><a href="#">Passagens Aéreas</a></li>
+                    <li><a href="#">Hospedagem</a></li>
+                    <li><a href="#">Pacotes</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contato</h4>
+                <div class="footer-contact">
+                    <p><strong>Email:</strong><br><a href="mailto:rewards@orangeviagens.com.br">rewards@orangeviagens.com.br</a></p>
+                    <p><strong>Telefone:</strong><br><a href="tel:+551533466623">15 3346 6623</a></p>
+                    <p><strong>Endereço:</strong><br>Av. São Paulo, 3445<br>São Paulo, SP</p>
+                    <div class="social-links">
+                        <a href="#" title="Facebook">f</a>
+                        <a href="#" title="Instagram">@</a>
+                        <a href="#" title="Twitter">𝕏</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div style="border-top: 1px solid #374151; padding-top: 2rem; text-align: center; color: #9CA3AF; font-size: 0.85rem; margin: 0 2rem;">
-            <p>&copy; 2024 Orange Viagens. Todos os direitos reservados.</p>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 Orange Viagens. Todos os direitos reservados. | <a href="#" style="color: inherit;">Política de Privacidade</a> | <a href="#" style="color: inherit;">Termos de Serviço</a></p>
         </div>
     </footer>
-
-    <!-- LOGIN MODAL -->
-    <div id="modal-login" class="auth-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:10000;display:none;align-items:center;justify-content:center">
-        <div style="background:#fff;border-radius:16px;padding:40px 32px;max-width:420px;width:92%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-            <button onclick="closeModals()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#999">&times;</button>
-            <div style="text-align:center;margin-bottom:24px">
-                <div style="width:56px;height:56px;background:var(--primary);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                </div>
-                <h2 style="font-size:22px;font-weight:700;color:#1F2937">Entrar na minha conta</h2>
-                <p style="color:#6B7280;font-size:14px">Orange Rewards</p>
-            </div>
-            <form onsubmit="doLogin(event)">
-                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">E-mail</label>
-                <input type="email" id="login-email" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:16px;font-family:inherit;background:#F9FAFB">
-                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Senha</label>
-                <input type="password" id="login-pass" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:8px;font-family:inherit;background:#F9FAFB">
-                <div id="login-error" style="color:#EF4444;font-size:13px;margin-bottom:12px"></div>
-                <div style="text-align:right;margin-bottom:16px"><a href="#" style="color:var(--primary);font-size:13px;text-decoration:none">Esqueceu a senha?</a></div>
-                <button type="submit" style="width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit">Entrar</button>
-            </form>
-            <p style="text-align:center;margin-top:16px;font-size:14px;color:#6B7280">Não tem conta? <a href="#" onclick="showSignupModal()" style="color:var(--primary);font-weight:600;text-decoration:none">Cadastre-se grátis</a></p>
-        </div>
-    </div>
-
-    <!-- SIGNUP MODAL -->
-    <div id="modal-signup" class="auth-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:10000;display:none;align-items:center;justify-content:center">
-        <div style="background:#fff;border-radius:16px;padding:40px 32px;max-width:420px;width:92%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto">
-            <button onclick="closeModals()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#999">&times;</button>
-            <div style="text-align:center;margin-bottom:24px">
-                <h2 style="font-size:22px;font-weight:700;color:#1F2937">Criar minha conta</h2>
-                <p style="color:#6B7280;font-size:14px">Orange Rewards</p>
-            </div>
-            <form onsubmit="doSignup(event)">
-                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Nome completo</label>
-                <input type="text" id="reg-name" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
-                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">E-mail</label>
-                <input type="email" id="reg-email" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
-                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Senha</label>
-                <input type="password" id="reg-pass" required minlength="8" style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
-                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Confirmar senha</label>
-                <input type="password" id="reg-pass2" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
-                <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#6B7280;margin-bottom:16px;cursor:pointer"><input type="checkbox" id="reg-terms" required> Li e aceito o <a href="#rules" style="color:var(--primary)">regulamento</a></label>
-                <div id="reg-error" style="color:#EF4444;font-size:13px;margin-bottom:12px"></div>
-                <button type="submit" style="width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit">Criar conta</button>
-            </form>
-            <p style="text-align:center;margin-top:16px;font-size:14px;color:#6B7280">Já tem conta? <a href="#" onclick="showLoginModal()" style="color:var(--primary);font-weight:600;text-decoration:none">Entrar</a></p>
-        </div>
-    </div>
 
     <script>
         // MOBILE MENU
@@ -589,6 +1733,7 @@
             navLinks.classList.toggle('active');
         });
 
+        // CLOSE MENU ON LINK CLICK
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 hamburger.classList.remove('active');
@@ -596,53 +1741,189 @@
             });
         });
 
-        // SUPABASE CONFIG
-        const SUPABASE_URL = 'https://ttyzhuobvntfxuefaxjv.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
-        const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ACTIVE NAV LINK ON SCROLL
+        const sections = document.querySelectorAll('section[id]');
+        const navItems = document.querySelectorAll('.nav-link');
 
-        function showLoginModal() { closeModals(); document.getElementById('modal-login').classList.add('active'); }
-        function showSignupModal() { closeModals(); document.getElementById('modal-signup').classList.add('active'); }
-        function closeModals() { document.querySelectorAll('.auth-overlay').forEach(m => m.classList.remove('active')); }
-
-        document.addEventListener('click', e => { if(e.target.classList.contains('auth-overlay')) closeModals(); });
-
-        async function doLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-pass').value;
-            const errEl = document.getElementById('login-error');
-            errEl.textContent = '';
-            const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
-            if (error) { errEl.textContent = 'Email ou senha inválidos'; return; }
-            window.location.href = '/area-do-cliente/';
-        }
-
-        async function doSignup(e) {
-            e.preventDefault();
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-pass').value;
-            const pass2 = document.getElementById('reg-pass2').value;
-            const terms = document.getElementById('reg-terms').checked;
-            const errEl = document.getElementById('reg-error');
-            errEl.textContent = '';
-            if (!name || !email || !pass) { errEl.textContent = 'Nome, email e senha são obrigatórios'; return; }
-            if (pass.length < 8) { errEl.textContent = 'Senha deve ter no mínimo 8 caracteres'; return; }
-            if (pass !== pass2) { errEl.textContent = 'Senhas não conferem'; return; }
-            if (!terms) { errEl.textContent = 'Aceite o regulamento para continuar'; return; }
-            const { data, error } = await _sb.auth.signUp({ email, password: pass });
-            if (error) { errEl.textContent = error.message; return; }
-            const { error: custErr } = await _sb.from('customers').insert({
-                auth_user_id: data.user.id, full_name: name, first_name: name.split(' ')[0],
-                last_name: name.split(' ').slice(1).join(' '), email,
-                needs_password_change: false, profile_bonus_claimed: false
+        function updateActiveNav() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
             });
-            if (custErr) { errEl.textContent = 'Erro ao criar perfil: ' + custErr.message; return; }
-            window.location.href = '/area-do-cliente/';
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href').slice(1) === current) {
+                    item.classList.add('active');
+                }
+            });
         }
 
-        (async () => { const { data: { session } } = await _sb.auth.getSession(); if (session) window.location.href = '/area-do-cliente/'; })();
+        window.addEventListener('scroll', updateActiveNav);
+
+        // INTERSECTION OBSERVER FOR FADE-IN ANIMATIONS
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeIn 0.8s ease-in-out forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+
+        // SMOOTH SCROLL FALLBACK
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Prize filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const prizeCards = document.querySelectorAll('.prize-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filterValue = this.getAttribute('data-filter');
+
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Filter cards
+                prizeCards.forEach(card => {
+                    const cardCategory = card.getAttribute('data-category');
+
+                    if (filterValue === 'all' || cardCategory === filterValue) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
     </script>
+
+<!-- AUTH MODALS -->
+<div id="modal-login" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:10000;align-items:center;justify-content:center" onclick="if(event.target===this)closeModals()">
+  <div style="background:#fff;border-radius:16px;padding:40px 32px;max-width:420px;width:92%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <button onclick="closeModals()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#999">&times;</button>
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:56px;height:56px;background:#E8610A;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <h2 style="font-size:22px;font-weight:700;color:#1F2937">Entrar na minha conta</h2>
+      <p style="color:#6B7280;font-size:14px">Orange Rewards</p>
+    </div>
+    <form onsubmit="doLogin(event)">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">E-mail</label>
+      <input type="email" id="login-email" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:16px;font-family:inherit;background:#F9FAFB">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Senha</label>
+      <input type="password" id="login-pass" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:8px;font-family:inherit;background:#F9FAFB">
+      <div id="login-error" style="color:#EF4444;font-size:13px;min-height:20px;margin-bottom:4px"></div>
+      <div style="text-align:right;margin-bottom:16px"><a href="#" style="color:#E8610A;font-size:13px;text-decoration:none">Esqueceu a senha?</a></div>
+      <button type="submit" style="width:100%;padding:14px;background:#E8610A;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s">Entrar</button>
+    </form>
+    <p style="text-align:center;margin-top:16px;font-size:14px;color:#6B7280">Não tem conta? <a href="#" onclick="showSignupModal();return false" style="color:#E8610A;font-weight:600;text-decoration:none">Cadastre-se grátis</a></p>
+  </div>
+</div>
+
+<div id="modal-signup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:10000;align-items:center;justify-content:center" onclick="if(event.target===this)closeModals()">
+  <div style="background:#fff;border-radius:16px;padding:40px 32px;max-width:420px;width:92%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto">
+    <button onclick="closeModals()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#999">&times;</button>
+    <div style="text-align:center;margin-bottom:24px">
+      <h2 style="font-size:22px;font-weight:700;color:#1F2937">Criar minha conta</h2>
+      <p style="color:#6B7280;font-size:14px">Orange Rewards</p>
+    </div>
+    <form onsubmit="doSignup(event)">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Nome completo *</label>
+      <input type="text" id="reg-name" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">CPF</label>
+      <input type="text" id="reg-cpf" placeholder="000.000.000-00" style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">E-mail *</label>
+      <input type="email" id="reg-email" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">WhatsApp</label>
+      <input type="tel" id="reg-whatsapp" style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Data de nascimento</label>
+      <input type="date" id="reg-birth" style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Senha *</label>
+      <input type="password" id="reg-pass" required minlength="8" style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Confirmar senha *</label>
+      <input type="password" id="reg-pass2" required style="width:100%;padding:12px 16px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px;margin-bottom:12px;font-family:inherit;background:#F9FAFB">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#6B7280;margin-bottom:16px;cursor:pointer"><input type="checkbox" id="reg-terms" required> Li e aceito o <a href="#rules" onclick="closeModals()" style="color:#E8610A">regulamento</a></label>
+      <div id="reg-error" style="color:#EF4444;font-size:13px;min-height:20px;margin-bottom:4px"></div>
+      <button type="submit" style="width:100%;padding:14px;background:#E8610A;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit">Criar conta</button>
+    </form>
+    <p style="text-align:center;margin-top:16px;font-size:14px;color:#6B7280">Já tem conta? <a href="#" onclick="showLoginModal();return false" style="color:#E8610A;font-weight:600;text-decoration:none">Entrar</a></p>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL='https://ttyzhuobvntfxuefaxjv.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
+const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+function showLoginModal(){closeModals();document.getElementById('modal-login').style.display='flex';}
+function showSignupModal(){closeModals();document.getElementById('modal-signup').style.display='flex';}
+function closeModals(){document.getElementById('modal-login').style.display='none';document.getElementById('modal-signup').style.display='none';}
+
+async function doLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-error');
+  err.textContent='';
+  const{error}=await _sb.auth.signInWithPassword({email,password:pass});
+  if(error){err.textContent='Email ou senha inválidos';return;}
+  window.location.href='/area-do-cliente/';
+}
+
+async function doSignup(e){
+  e.preventDefault();
+  const name=document.getElementById('reg-name').value.trim();
+  const cpf=document.getElementById('reg-cpf').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const whatsapp=document.getElementById('reg-whatsapp').value.trim();
+  const birth=document.getElementById('reg-birth').value;
+  const pass=document.getElementById('reg-pass').value;
+  const pass2=document.getElementById('reg-pass2').value;
+  const terms=document.getElementById('reg-terms').checked;
+  const err=document.getElementById('reg-error');
+  err.textContent='';
+  if(!name||!email||!pass){err.textContent='Nome, email e senha são obrigatórios';return;}
+  if(pass.length<8){err.textContent='Senha deve ter no mínimo 8 caracteres';return;}
+  if(pass!==pass2){err.textContent='Senhas não conferem';return;}
+  if(!terms){err.textContent='Aceite o regulamento para continuar';return;}
+  const{data,error}=await _sb.auth.signUp({email,password:pass});
+  if(error){err.textContent=error.message;return;}
+  await _sb.from('customers').insert({auth_user_id:data.user.id,full_name:name,first_name:name.split(' ')[0],last_name:name.split(' ').slice(1).join(' '),email,cpf:cpf.replace(/\D/g,'')||null,phone:whatsapp.replace(/\D/g,'')||null,birth_date:birth||null,needs_password_change:false,profile_bonus_claimed:false});
+  window.location.href='/area-do-cliente/';
+}
+
+// Auto-redirect if already logged in
+(async()=>{const{data:{session}}=await _sb.auth.getSession();if(session)window.location.href='/area-do-cliente/';})();
+</script>
 </body>
 </html>

@@ -1884,6 +1884,8 @@
 const SUPABASE_URL='https://ttyzhuobvntfxuefaxjv.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
 const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+// Detect base path for GitHub Pages compatibility
+const _base=(()=>{const p=window.location.pathname;const i=p.indexOf('/orange-rewards-frontend');return i>=0?p.substring(0,i)+'/orange-rewards-frontend':'';})();
 
 function showLoginModal(){closeModals();document.getElementById('modal-login').style.display='flex';}
 function showSignupModal(){closeModals();document.getElementById('modal-signup').style.display='flex';}
@@ -1897,7 +1899,7 @@ async function doLogin(e){
   err.textContent='';
   const{error}=await _sb.auth.signInWithPassword({email,password:pass});
   if(error){err.textContent='Email ou senha inválidos';return;}
-  window.location.href='/area-do-cliente/';
+  window.location.href=_base+'/area-do-cliente/';
 }
 
 async function doSignup(e){
@@ -1919,11 +1921,11 @@ async function doSignup(e){
   const{data,error}=await _sb.auth.signUp({email,password:pass});
   if(error){err.textContent=error.message;return;}
   await _sb.from('customers').insert({auth_user_id:data.user.id,full_name:name,first_name:name.split(' ')[0],last_name:name.split(' ').slice(1).join(' '),email,cpf:cpf.replace(/\D/g,'')||null,phone:whatsapp.replace(/\D/g,'')||null,birth_date:birth||null,needs_password_change:false,profile_bonus_claimed:false});
-  window.location.href='/area-do-cliente/';
+  window.location.href=_base+'/area-do-cliente/';
 }
 
 // Auto-redirect if already logged in
-(async()=>{const{data:{session}}=await _sb.auth.getSession();if(session)window.location.href='/area-do-cliente/';})();
+(async()=>{const{data:{session}}=await _sb.auth.getSession();if(session)window.location.href=_base+'/area-do-cliente/';})();
 </script>
 </body>
 </html>

@@ -2687,6 +2687,7 @@
 const SUPABASE_URL='https://ttyzhuobvntfxuefaxjv.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
 const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const _base=(()=>{const p=window.location.pathname;const i=p.indexOf('/orange-rewards-frontend');return i>=0?p.substring(0,i)+'/orange-rewards-frontend':'';})();
 
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
@@ -2712,14 +2713,14 @@ async function doChangePassword(e){
 
 async function doLogout(){
   await _sb.auth.signOut();
-  window.location.href='/';
+  window.location.href=_base+'/';
 }
 
 async function loadCustomerData(){
   const{data:{session}}=await _sb.auth.getSession();
-  if(!session){window.location.href='/';return;}
+  if(!session){window.location.href=_base+'/';return;}
   const{data:customer}=await _sb.from('customers').select('*').eq('auth_user_id',session.user.id).single();
-  if(!customer){window.location.href='/';return;}
+  if(!customer){window.location.href=_base+'/';return;}
 
   const firstName=customer.full_name?customer.full_name.split(' ')[0]:'Cliente';
   const initials=(customer.full_name||'').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()||'CL';

@@ -129,11 +129,31 @@ async function requireStaff(req: Request): Promise<boolean> {
 
 // === FUNCTION BODY ===
 // Edge Function: /public-api
-// API pública para as landing pages (sem autenticação admin)
-// Usa anon key — dados públicos apenas
+// Endpoints públicos (catálogo) + endpoints autenticados (dados do cliente)
 
+// Helper: extrair e validar o customer autenticado via JWT
+async function getAuthenticatedCustomer(req: Request): Promise<{ id: string; [key: string]: any } | null> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
 
+  try {
+    const supabaseAuth = getSupabaseClient(req);
+    const { data: { user }, error } = await supabaseAuth.auth.getUser();
+    if (error || !user) return null;
 
+    const admin = getSupabaseAdmin();
+    const { data: customer } = await admin
+      .from('customers')
+      .select('*')
+      .eq('auth_user_id', user.id)
+      .eq('is_active', true)
+      .single();
+
+    return customer || null;
+  } catch {
+    return null;
+  }
+}
 
 
 serve(async (req: Request) => {
@@ -142,7 +162,11 @@ serve(async (req: Request) => {
 
   const url = new URL(req.url);
   const method = req.method;
-  const supabase = getSupabaseAdmin(); // Usa admin para leitura pública controlada
+  const supabase = getSupabaseAdmin();
+
+  // ══════════════════════════════════════════
+  // ENDPOINTS PÚBLICOS (sem autenticação)
+  // ══════════════════════════════════════════
 
   // ─── GET /public-api/prizes ─── Prêmios ativos para a loja
   if (method === 'GET' && url.pathname.includes('/prizes')) {
@@ -163,7 +187,6 @@ serve(async (req: Request) => {
     const { data, error } = await query;
     if (error) return errorResponse(error.message);
 
-    // Filtrar por tier (mostrar prêmios até o tier do cliente)
     const tierOrder = ['basic', 'gold', 'platinum', 'prime', 'select'];
     const tierIdx = tierOrder.indexOf(tier);
     const filtered = (data || []).filter(p => tierOrder.indexOf(p.min_tier || 'basic') <= tierIdx);
@@ -182,7 +205,7 @@ serve(async (req: Request) => {
     return jsonResponse(data);
   }
 
-  // ─── GET /public-api/tiers ─── Informações dos tiers (para "Como funciona")
+  // ─── GET /public-api/tiers ─── Informações dos tiers
   if (method === 'GET' && url.pathname.includes('/tiers')) {
     const { data, error } = await supabase
       .from('customer_categories')
@@ -209,33 +232,28 @@ serve(async (req: Request) => {
     return jsonResponse(settings);
   }
 
-  // ─── POST /public-api/customer/login ─── Login do cliente (por email+CPF)
-  if (method === 'POST' && url.pathname.includes('/customer/login')) {
-    const body = await req.json();
-    const { email, cpf } = body;
+  // ══════════════════════════════════════════
+  // ENDPOINTS PROTEGIDOS (exigem JWT válido)
+  // ══════════════════════════════════════════
 
-    if (!email && !cpf) return errorResponse('Email ou CPF obrigatório');
+  // ─── GET /public-api/customer/me ─── Perfil do cliente autenticado
+  if (method === 'GET' && url.pathname.includes('/customer/me') && !url.pathname.includes('/points') && !url.pathname.includes('/redemptions')) {
+    const customer = await getAuthenticatedCustomer(req);
+    if (!customer) return unauthorizedResponse();
 
-    let query = supabase.from('customers').select('id, full_name, email, phone, tier, available_points, total_points, used_points, referral_code, customer_categories(name, color, benefits)');
-
-    if (email) query = query.eq('email', email);
-    if (cpf) query = query.eq('cpf', cpf.replace(/\D/g, ''));
-
-    const { data, error } = await query.eq('is_active', true).single();
-    if (error || !data) return errorResponse('Cliente não encontrado', 404);
-
-    return jsonResponse(data);
+    const { auth_user_id, needs_password_change, ...safeData } = customer;
+    return jsonResponse(safeData);
   }
 
-  // ─── GET /public-api/customer/:id/points ─── Extrato de pontos
+  // ─── GET /public-api/customer/me/points ─── Extrato de pontos (autenticado)
   if (method === 'GET' && url.pathname.includes('/customer/') && url.pathname.includes('/points')) {
-    const parts = url.pathname.split('/');
-    const customerId = parts[parts.indexOf('customer') + 1];
+    const customer = await getAuthenticatedCustomer(req);
+    if (!customer) return unauthorizedResponse();
 
     const { data, error } = await supabase
       .from('point_transactions')
       .select('id, type, points, description, created_at, point_rules(name)')
-      .eq('customer_id', customerId)
+      .eq('customer_id', customer.id)
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -243,36 +261,33 @@ serve(async (req: Request) => {
     return jsonResponse(data);
   }
 
-  // ─── GET /public-api/customer/:id/redemptions ─── Resgates do cliente
+  // ─── GET /public-api/customer/me/redemptions ─── Resgates (autenticado)
   if (method === 'GET' && url.pathname.includes('/customer/') && url.pathname.includes('/redemptions')) {
-    const parts = url.pathname.split('/');
-    const customerId = parts[parts.indexOf('customer') + 1];
+    const customer = await getAuthenticatedCustomer(req);
+    if (!customer) return unauthorizedResponse();
 
     const { data, error } = await supabase
       .from('redemptions')
       .select('id, status, points_spent, created_at, prizes(name, image_url)')
-      .eq('customer_id', customerId)
+      .eq('customer_id', customer.id)
       .order('created_at', { ascending: false });
 
     if (error) return errorResponse(error.message);
     return jsonResponse(data);
   }
 
-  // ─── POST /public-api/customer/:id/redeem ─── Cliente resgata prêmio
+  // ─── POST /public-api/customer/me/redeem ─── Resgatar prêmio (autenticado)
   if (method === 'POST' && url.pathname.includes('/redeem')) {
-    const parts = url.pathname.split('/');
-    const customerId = parts[parts.indexOf('customer') + 1];
-    const body = await req.json();
+    const customer = await getAuthenticatedCustomer(req);
+    if (!customer) return unauthorizedResponse();
 
+    const body = await req.json();
     if (!body.prize_id) return errorResponse('prize_id obrigatório');
 
-    // Validações (mesma lógica do redemptions)
     const { data: prize } = await supabase.from('prizes').select('*').eq('id', body.prize_id).eq('is_active', true).single();
     if (!prize) return errorResponse('Prêmio não disponível', 404);
     if (prize.stock !== null && prize.stock <= 0) return errorResponse('Sem estoque');
 
-    const { data: customer } = await supabase.from('customers').select('available_points, tier').eq('id', customerId).single();
-    if (!customer) return errorResponse('Cliente não encontrado', 404);
     if (customer.available_points < prize.points_required) return errorResponse('Saldo insuficiente');
 
     const tierOrder = ['basic', 'gold', 'platinum', 'prime', 'select'];
@@ -280,16 +295,15 @@ serve(async (req: Request) => {
       return errorResponse(`Tier mínimo: ${prize.min_tier}`);
     }
 
-    // Debitar e criar resgate
     await supabase.from('point_transactions').insert({
-      customer_id: customerId,
+      customer_id: customer.id,
       type: 'debit',
       points: -prize.points_required,
       description: `Resgate: ${prize.name}`,
     });
 
     const { data, error } = await supabase.from('redemptions').insert({
-      customer_id: customerId,
+      customer_id: customer.id,
       prize_id: body.prize_id,
       points_spent: prize.points_required,
     }).select('*, prizes(name)').single();
@@ -298,20 +312,21 @@ serve(async (req: Request) => {
     return jsonResponse(data, 201);
   }
 
-  // ─── POST /public-api/survey/:id/respond ─── Responder pesquisa
+  // ─── POST /public-api/survey/:id/respond ─── Responder pesquisa (autenticado)
   if (method === 'POST' && url.pathname.includes('/survey/') && url.pathname.includes('/respond')) {
+    const customer = await getAuthenticatedCustomer(req);
+    if (!customer) return unauthorizedResponse();
+
     const parts = url.pathname.split('/');
     const surveyId = parts[parts.indexOf('survey') + 1];
     const body = await req.json();
-
-    if (!body.customer_id) return errorResponse('customer_id obrigatório');
 
     const { data: survey } = await supabase.from('surveys').select('*').eq('id', surveyId).eq('status', 'active').single();
     if (!survey) return errorResponse('Pesquisa não disponível', 404);
 
     const { data, error } = await supabase.from('survey_responses').insert({
       survey_id: surveyId,
-      customer_id: body.customer_id,
+      customer_id: customer.id,
       answers: body.answers || {},
       nps_score: body.nps_score,
       completed_at: new Date().toISOString(),
@@ -322,10 +337,9 @@ serve(async (req: Request) => {
       return errorResponse(error.message);
     }
 
-    // Bônus de pontos por responder
     if (survey.bonus_points > 0) {
       await supabase.from('point_transactions').insert({
-        customer_id: body.customer_id,
+        customer_id: customer.id,
         type: 'bonus',
         points: survey.bonus_points,
         description: `Bônus: pesquisa "${survey.title}"`,
@@ -335,14 +349,14 @@ serve(async (req: Request) => {
     return jsonResponse(data, 201);
   }
 
-  // ─── POST /public-api/referral ─── Usar código de indicação
+  // ─── POST /public-api/referral ─── Usar código de indicação (autenticado)
   if (method === 'POST' && url.pathname.includes('/referral')) {
-    const body = await req.json();
-    if (!body.referral_code || !body.customer_id) {
-      return errorResponse('referral_code e customer_id obrigatórios');
-    }
+    const customer = await getAuthenticatedCustomer(req);
+    if (!customer) return unauthorizedResponse();
 
-    // Buscar quem indicou
+    const body = await req.json();
+    if (!body.referral_code) return errorResponse('referral_code obrigatório');
+
     const { data: referrer } = await supabase
       .from('customers')
       .select('id')
@@ -350,19 +364,17 @@ serve(async (req: Request) => {
       .single();
 
     if (!referrer) return errorResponse('Código de indicação inválido', 404);
-    if (referrer.id === body.customer_id) return errorResponse('Não é possível indicar a si mesmo');
+    if (referrer.id === customer.id) return errorResponse('Não é possível indicar a si mesmo');
 
-    // Buscar config de bônus
     const { data: bonusReferrer } = await supabase.from('system_settings').select('value').eq('key', 'referral_bonus_referrer').single();
     const { data: bonusReferred } = await supabase.from('system_settings').select('value').eq('key', 'referral_bonus_referred').single();
 
     const pointsReferrer = bonusReferrer?.value || 200;
     const pointsReferred = bonusReferred?.value || 100;
 
-    // Criar indicação
     const { error } = await supabase.from('referrals').insert({
       referrer_id: referrer.id,
-      referred_id: body.customer_id,
+      referred_id: customer.id,
       bonus_points_referrer: pointsReferrer,
       bonus_points_referred: pointsReferred,
       is_confirmed: true,
@@ -374,14 +386,13 @@ serve(async (req: Request) => {
       return errorResponse(error.message);
     }
 
-    // Creditar bônus
     await Promise.all([
       supabase.from('point_transactions').insert({
         customer_id: referrer.id, type: 'referral', points: pointsReferrer,
         description: 'Bônus por indicação',
       }),
       supabase.from('point_transactions').insert({
-        customer_id: body.customer_id, type: 'referral', points: pointsReferred,
+        customer_id: customer.id, type: 'referral', points: pointsReferred,
         description: 'Bônus: indicado por amigo',
       }),
     ]);

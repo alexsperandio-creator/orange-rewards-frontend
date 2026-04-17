@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orange Rewards - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1299,116 +1298,9 @@
             font-weight: 700;
             color: var(--primary);
         }
-
-        /* MODALS */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,.6);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal.show {
-            display: flex;
-        }
-        .modal-content {
-            background: #fff;
-            border-radius: 16px;
-            padding: 40px 32px;
-            max-width: 420px;
-            width: 92%;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0,0,0,.3);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-close {
-            position: absolute;
-            top: 14px;
-            right: 18px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-        .modal-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        .modal-header h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1F2937;
-            margin-bottom: 4px;
-        }
-        .modal-header p {
-            color: #6B7280;
-            font-size: 14px;
-        }
-        .form-group-modal {
-            margin-bottom: 16px;
-        }
-        .form-group-modal label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 6px;
-        }
-        .form-group-modal input, .form-group-modal select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #D1D5DB;
-            border-radius: 10px;
-            font-size: 15px;
-            font-family: inherit;
-            background: #F9FAFB;
-        }
-        .form-group-modal input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        .modal-error {
-            color: #EF4444;
-            font-size: 13px;
-            min-height: 20px;
-            margin-bottom: 4px;
-        }
-        .modal-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background .2s;
-        }
-        .modal-btn:hover {
-            background: #B84D08;
-        }
-        .modal-footer {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 14px;
-            color: #6B7280;
-        }
-        .modal-footer a {
-            color: var(--primary);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-        }
     </style>
+    <script src="/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
     <!-- Top Navigation -->
@@ -2654,100 +2546,5 @@
             if (menu) menu.classList.remove('open');
         }
     </script>
-
-<!-- PASSWORD CHANGE MODAL -->
-<div id="modal-password" class="modal" onclick="if(event.target===this)closeModal('modal-password')">
-  <div class="modal-content">
-    <button onclick="closeModal('modal-password')" class="modal-close">&times;</button>
-    <div class="modal-header">
-      <h2>Alterar Senha</h2>
-      <p>Crie uma nova senha para sua conta</p>
-    </div>
-    <form onsubmit="doChangePassword(event)">
-      <div class="form-group-modal">
-        <label>Nova Senha *</label>
-        <input type="password" id="new-pass" required minlength="8">
-      </div>
-      <div class="form-group-modal">
-        <label>Confirmar Senha *</label>
-        <input type="password" id="new-pass2" required>
-      </div>
-      <div id="pwd-error" class="modal-error"></div>
-      <button type="submit" class="modal-btn">Salvar Senha</button>
-    </form>
-  </div>
-</div>
-
-<!-- PROFILE COMPLETION BANNER -->
-<div id="profile-banner" style="display:none;background:#E8610A;color:#fff;padding:20px;margin:0;text-align:center;font-weight:600">
-  Complete seu perfil e ganhe 100 Oranginos! <a href="#" onclick="scrollToProfile();return false" style="color:#fff;text-decoration:underline;cursor:pointer">Clique aqui</a> para completar agora.
-</div>
-
-<script>
-const SUPABASE_URL='https://ttyzhuobvntfxuefaxjv.supabase.co';
-const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
-const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const _base=(()=>{const p=window.location.pathname;const i=p.indexOf('/orange-rewards-frontend');return i>=0?p.substring(0,i)+'/orange-rewards-frontend':'';})();
-
-function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
-function scrollToProfile(){document.getElementById('meu-perfil').scrollIntoView({behavior:'smooth'});}
-
-async function doChangePassword(e){
-  e.preventDefault();
-  const pass=document.getElementById('new-pass').value;
-  const pass2=document.getElementById('new-pass2').value;
-  const err=document.getElementById('pwd-error');
-  err.textContent='';
-  if(pass!==pass2){err.textContent='Senhas não conferem';return;}
-  if(pass.length<8){err.textContent='Senha deve ter no mínimo 8 caracteres';return;}
-  const{error}=await _sb.auth.updateUser({password:pass});
-  if(error){err.textContent=error.message;return;}
-  closeModal('modal-password');
-  alert('Senha alterada com sucesso!');
-  const{data:{user}}=await _sb.auth.getUser();
-  if(user){
-    await _sb.from('customers').update({needs_password_change:false}).eq('auth_user_id',user.id);
-  }
-}
-
-async function doLogout(){
-  await _sb.auth.signOut();
-  window.location.href=_base+'/';
-}
-
-async function loadCustomerData(){
-  const{data:{session}}=await _sb.auth.getSession();
-  if(!session){window.location.href=_base+'/';return;}
-  const{data:customer}=await _sb.from('customers').select('*').eq('auth_user_id',session.user.id).single();
-  if(!customer){window.location.href=_base+'/';return;}
-
-  const firstName=customer.full_name?customer.full_name.split(' ')[0]:'Cliente';
-  const initials=(customer.full_name||'').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()||'CL';
-
-  document.querySelectorAll('.balance-avatar').forEach(el=>el.textContent=initials);
-  document.querySelectorAll('.avatar').forEach(el=>{if(el.closest('.balance-info'))return;el.textContent=initials;});
-  const greeting=document.querySelector('.balance-info h2');
-  if(greeting)greeting.textContent=`Olá, ${firstName}!`;
-
-  const balanceEl=document.getElementById('balanceAmount');
-  if(balanceEl)balanceEl.textContent=(customer.available_points||0).toLocaleString('pt-BR');
-
-  document.querySelectorAll('.metric-value').forEach((el,i)=>{
-    if(i===0)el.textContent=(customer.available_points||0).toLocaleString('pt-BR');
-    else if(i===1)el.textContent=(customer.total_points_earned||0).toLocaleString('pt-BR');
-  });
-
-  if(customer.needs_password_change){
-    openModal('modal-password');
-  }
-
-  if(!customer.profile_bonus_claimed){
-    document.getElementById('profile-banner').style.display='block';
-  }
-}
-
-window.addEventListener('load',loadCustomerData);
-</script>
 </body>
 </html>

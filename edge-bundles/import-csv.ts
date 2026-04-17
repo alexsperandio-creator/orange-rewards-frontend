@@ -390,5 +390,168 @@ serve(async (req: Request) => {
     return jsonResponse({ import_id: importLog!.id, total: rows.length, success, errors: errs.length });
   }
 
+  // ─── POST /import-csv/donuz ─── Importar clientes Donuz com Auth
+  if (method === 'POST' && url.pathname.includes('/donuz')) {
+    const body = await req.json();
+    const csvText = body.csv_content;
+
+    if (!csvText) return errorResponse('csv_content é obrigatório');
+
+    const { rows } = parseCSV(csvText, ';');
+
+    // Criar log de importação
+    const { data: importLog } = await admin
+      .from('import_logs')
+      .insert({
+        file_name: body.file_name || 'donuz.txt',
+        import_type: 'donuz',
+        total_rows: rows.length,
+        status: 'processing',
+        imported_by: userId,
+      })
+      .select()
+      .single();
+
+    let successCount = 0;
+    const errors: any[] = [];
+    const credentials: any[] = [];
+
+    // Temp password generator
+    function genTempPassword() {
+      const c = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+      let p = 'Or';
+      for (let i = 0; i < 6; i++) p += c[Math.floor(Math.random() * c.length)];
+      return p + '!';
+    }
+
+    // Mapa de colunas esperadas
+    const columnMap: Record<string, string> = {
+      'idcliente': 'donuz_id',
+      'codigocliente': 'donuz_code',
+      'primeironome': 'first_name',
+      'segundonome': 'last_name',
+      'cpf': 'cpf',
+      'email': 'email',
+      'telefone': 'phone',
+      'endereco': 'address',
+      'numero': 'address_number',
+      'complemento': 'address_complement',
+      'bairro': 'neighborhood',
+      'cidade': 'city',
+      'estado': 'state',
+      'cep': 'zip_code',
+      'celular': 'mobile',
+      'datanascimento': 'birth_date',
+      'datacadastro': 'created_at',
+      'sexo': 'gender',
+      'ultimologin': 'last_activity',
+      'solicitourremocaodados': 'data_removal_requested',
+      'saldo': 'available_points',
+      'saldoexpirado': 'expired_points',
+      'frequencia': 'frequency',
+      'valorgasto': 'total_spent',
+      'pontosacumulados': 'total_points',
+      'camposadicionais': 'metadata',
+    };
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      try {
+        // Map row data
+        const data: any = {};
+        Object.entries(columnMap).forEach(([csvCol, dbCol]) => {
+          const rowVal = row[csvCol];
+          if (rowVal !== undefined && rowVal !== '') {
+            data[dbCol] = rowVal;
+          }
+        });
+
+        const email = data.email || '';
+        const firstName = data.first_name || '';
+        const lastName = data.last_name || '';
+
+        if (!email) {
+          errors.push({ row: i + 2, message: 'Email é obrigatório para criar usuário' });
+          continue;
+        }
+
+        // Create full_name
+        data.full_name = (firstName + ' ' + lastName).trim();
+
+        // Convert numeric fields
+        if (data.available_points) data.available_points = parseInt(data.available_points) || 0;
+        if (data.expired_points) data.expired_points = parseInt(data.expired_points) || 0;
+        if (data.total_spent) data.total_spent = parseFloat(data.total_spent) || 0;
+        if (data.total_points) data.total_points = parseInt(data.total_points) || 0;
+        if (data.frequency) data.frequency = parseInt(data.frequency) || 0;
+
+        // Set flags
+        data.needs_password_change = true;
+        data.profile_bonus_claimed = false;
+
+        // Create auth user
+        const tempPassword = genTempPassword();
+        const { data: authUser, error: authErr } = await admin.auth.admin.createUser({
+          email: email,
+          password: tempPassword,
+          email_confirm: true,
+        });
+
+        if (authErr) {
+          errors.push({ row: i + 2, message: `Erro ao criar usuário: ${authErr.message}` });
+          continue;
+        }
+
+        // Link auth user
+        data.auth_user_id = authUser.user.id;
+
+        // Insert customer
+        const { error: custErr } = await admin.from('customers').insert([data]);
+
+        if (custErr) {
+          // Clean up auth user if customer insert fails
+          await admin.auth.admin.deleteUser(authUser.user.id);
+          errors.push({ row: i + 2, message: `Erro ao criar cliente: ${custErr.message}` });
+          continue;
+        }
+
+        credentials.push({
+          email: email,
+          temp_password: tempPassword,
+        });
+
+        successCount++;
+      } catch (err) {
+        errors.push({ row: i + 2, message: String(err) });
+      }
+    }
+
+    // Update import log
+    await admin.from('import_logs').update({
+      processed_rows: rows.length,
+      success_rows: successCount,
+      error_rows: errors.length,
+      status: errors.length === 0 ? 'completed' : (successCount > 0 ? 'partial' : 'failed'),
+      errors: errors.slice(0, 100),
+      completed_at: new Date().toISOString(),
+    }).eq('id', importLog!.id);
+
+    await logAudit(admin, userId, 'import', 'import_log', importLog!.id, null, {
+      file_name: body.file_name || 'donuz.txt',
+      total: rows.length,
+      success: successCount,
+      errors: errors.length,
+    });
+
+    return jsonResponse({
+      import_id: importLog!.id,
+      total: rows.length,
+      success: successCount,
+      errors: errors.length,
+      error_details: errors.slice(0, 20),
+      credentials: credentials,
+    });
+  }
+
   return errorResponse('Rota não encontrada', 404);
 });

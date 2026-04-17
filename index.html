@@ -536,10 +536,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         <div style="font-size:13px;color:#aaa;margin-top:5px">Orange Rewards</div>
       </div>
       <div style="background:#fff;border:1px solid #e8e8e8;border-radius:var(--rl);padding:26px">
-        <div class="fg"><label class="fl">E-mail ou CPF</label><input class="fi" placeholder="seu@email.com ou 000.000.000-00"></div>
-        <div class="fg"><label class="fl">Senha</label><input class="fi" type="password" placeholder="••••••••"></div>
+        <div class="fg"><label class="fl">E-mail</label><input class="fi" id="login-email" placeholder="seu@email.com"></div>
+        <div class="fg"><label class="fl">Senha</label><input class="fi" id="login-pass" type="password" placeholder="••••••••"></div>
+        <div id="login-error" style="color:#c62828;font-size:12px;margin-bottom:12px"></div>
         <div style="text-align:right;margin-bottom:20px"><span style="font-size:13px;color:#E8610A;cursor:pointer;font-weight:600">Esqueceu a senha?</span></div>
-        <button class="fb" onclick="window.location.href='or-logado.html'">Entrar</button>
+        <button class="fb" onclick="doLogin()">Entrar</button>
         <div style="text-align:center;margin-top:16px;font-size:13px;color:#666">Não tem conta? <span style="color:#E8610A;cursor:pointer;font-weight:700" onclick="ir('cadastro')">Cadastre-se grátis</span></div>
       </div>
     </div>
@@ -553,15 +554,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
     <div style="width:100%;max-width:440px">
       <div style="text-align:center;margin-bottom:22px"><div style="font-size:22px;font-weight:800;color:#1a1a1a">Criar minha conta</div><div style="font-size:13px;color:#aaa;margin-top:5px">Junte-se ao Orange Rewards — gratuito</div></div>
       <div style="background:#fff;border:1px solid #e8e8e8;border-radius:var(--rl);padding:26px">
-        <div class="g2" style="margin-bottom:0"><div class="fg" style="margin-bottom:0"><label class="fl">Nome completo *</label><input class="fi" placeholder="Seu nome"></div><div class="fg" style="margin-bottom:0"><label class="fl">CPF *</label><input class="fi" placeholder="000.000.000-00"></div></div>
+        <div class="g2" style="margin-bottom:0"><div class="fg" style="margin-bottom:0"><label class="fl">Nome completo *</label><input class="fi" id="reg-name" placeholder="Seu nome"></div><div class="fg" style="margin-bottom:0"><label class="fl">CPF *</label><input class="fi" id="reg-cpf" placeholder="000.000.000-00"></div></div>
         <div style="height:14px"></div>
-        <div class="fg"><label class="fl">E-mail *</label><input class="fi" placeholder="seu@email.com"></div>
-        <div class="fg"><label class="fl">WhatsApp *</label><input class="fi" placeholder="(00) 00000-0000"></div>
-        <div class="fg"><label class="fl">Data de nascimento</label><input class="fi" type="date"></div>
-        <div class="g2" style="margin-bottom:0"><div class="fg" style="margin-bottom:0"><label class="fl">Senha *</label><input class="fi" type="password" placeholder="Mínimo 8 caracteres"></div><div class="fg" style="margin-bottom:0"><label class="fl">Confirmar senha *</label><input class="fi" type="password" placeholder="Repetir"></div></div>
+        <div class="fg"><label class="fl">E-mail *</label><input class="fi" id="reg-email" placeholder="seu@email.com"></div>
+        <div class="fg"><label class="fl">WhatsApp *</label><input class="fi" id="reg-whatsapp" placeholder="(00) 00000-0000"></div>
+        <div class="fg"><label class="fl">Data de nascimento</label><input class="fi" id="reg-birth" type="date"></div>
+        <div class="g2" style="margin-bottom:0"><div class="fg" style="margin-bottom:0"><label class="fl">Senha *</label><input class="fi" id="reg-pass" type="password" placeholder="Mínimo 8 caracteres"></div><div class="fg" style="margin-bottom:0"><label class="fl">Confirmar senha *</label><input class="fi" id="reg-pass2" type="password" placeholder="Repetir"></div></div>
         <div style="height:12px"></div>
-        <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;font-size:13px;color:#555"><input type="checkbox" style="margin-top:2px;flex-shrink:0;accent-color:#E8610A;width:15px;height:15px"><span>Li e aceito o <span style="color:#E8610A;cursor:pointer;font-weight:700" onclick="ir('regulamento')">regulamento</span> e a política de privacidade.</span></div>
-        <button class="fb" onclick="window.location.href='or-logado.html'">Criar conta e começar a acumular</button>
+        <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;font-size:13px;color:#555"><input type="checkbox" id="reg-terms" style="margin-top:2px;flex-shrink:0;accent-color:#E8610A;width:15px;height:15px"><span>Li e aceito o <span style="color:#E8610A;cursor:pointer;font-weight:700" onclick="ir('regulamento')">regulamento</span> e a política de privacidade.</span></div>
+        <div id="reg-error" style="color:#c62828;font-size:12px;margin-bottom:12px"></div>
+        <button class="fb" onclick="doSignup()">Criar conta e começar a acumular</button>
       </div>
     </div>
   </div>
@@ -655,6 +657,86 @@ async function loadLiveData() {
   } catch(e) {
     console.log('Usando dados estáticos (Supabase não configurado):', e.message);
   }
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+
+  if (!email || !pass) {
+    errEl.textContent = 'Preencha email e senha';
+    return;
+  }
+
+  const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    errEl.textContent = 'Email ou senha inválidos';
+    return;
+  }
+
+  window.location.href = 'or-logado.html';
+}
+
+async function doSignup() {
+  const name = document.getElementById('reg-name').value.trim();
+  const cpf = document.getElementById('reg-cpf').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const whatsapp = document.getElementById('reg-whatsapp').value.trim();
+  const birth = document.getElementById('reg-birth').value;
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const terms = document.getElementById('reg-terms').checked;
+  const errEl = document.getElementById('reg-error');
+  errEl.textContent = '';
+
+  if (!name || !email || !pass) {
+    errEl.textContent = 'Nome, email e senha são obrigatórios';
+    return;
+  }
+
+  if (pass.length < 8) {
+    errEl.textContent = 'Senha deve ter no mínimo 8 caracteres';
+    return;
+  }
+
+  if (pass !== pass2) {
+    errEl.textContent = 'Senhas não conferem';
+    return;
+  }
+
+  if (!terms) {
+    errEl.textContent = 'Aceite o regulamento para continuar';
+    return;
+  }
+
+  const { data, error } = await _sb.auth.signUp({ email, password: pass });
+  if (error) {
+    errEl.textContent = error.message;
+    return;
+  }
+
+  // Create customer record linked to auth user
+  const { error: custErr } = await _sb.from('customers').insert({
+    auth_user_id: data.user.id,
+    full_name: name,
+    first_name: name.split(' ')[0],
+    last_name: name.split(' ').slice(1).join(' '),
+    email: email,
+    cpf: cpf.replace(/\D/g, '') || null,
+    phone: whatsapp.replace(/\D/g, '') || null,
+    birth_date: birth || null,
+    needs_password_change: false,
+    profile_bonus_claimed: false,
+  });
+
+  if (custErr) {
+    errEl.textContent = 'Erro ao criar perfil: ' + custErr.message;
+    return;
+  }
+
+  window.location.href = 'or-logado.html';
 }
 
 // Carregar dados ao abrir

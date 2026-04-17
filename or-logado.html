@@ -146,6 +146,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 @media(min-width:769px) and (max-width:1024px){
   .nlk{padding:0 11px;font-size:12px}
 }
+
+/* MODALS */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999}
+.modal-card{background:#fff;border-radius:var(--rl);padding:36px 32px;max-width:440px;width:95%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-title{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:8px}
+.modal-subtitle{font-size:14px;color:#666;margin-bottom:28px}
+.modal-field{display:flex;flex-direction:column;margin-bottom:18px}
+.modal-label{font-size:13px;font-weight:600;color:#333;margin-bottom:6px}
+.modal-input{padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:var(--r);font-family:inherit;font-size:14px;transition:border-color .2s}
+.modal-input:focus{outline:none;border-color:#E8610A}
+.modal-btn{padding:12px 24px;border-radius:var(--r);border:none;background:#E8610A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;transition:background .2s}
+.modal-btn:hover{background:#B84D08}
+.modal-error{color:#c62828;font-size:12px;margin-top:4px}
+
+.profile-banner{background:linear-gradient(135deg, #E8610A 0%, #B84D08 100%);border-radius:var(--rl);padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;gap:16px;color:#fff}
+.profile-banner-icon{font-size:32px;flex-shrink:0}
+.profile-banner-content{flex:1}
+.profile-banner-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.profile-banner-subtitle{font-size:13px;opacity:.9}
+.profile-banner-btn{padding:8px 16px;background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s;align-self:flex-start}
+.profile-banner-btn:hover{background:rgba(255,255,255,.35)}
 </style>
 </head>
 <body>
@@ -353,7 +374,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <button class="inn" onclick="ipp('dados',this)">Meus dados</button>
       <button class="inn" onclick="ipp('senha',this)">Alterar senha</button>
       <button class="inn" onclick="ipp('indique',this)">Indique um amigo</button>
-      <button class="inn" onclick="window.location.href='or-landing.html'" style="color:#c62828;margin-left:auto">Sair</button>
+      <button class="inn" onclick="doLogout()" style="color:#c62828;margin-left:auto">Sair</button>
     </div>
 
     <div id="pp-cat" style="padding:20px 28px;background:#f5f5f5">
@@ -494,8 +515,208 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const API_BASE = SUPABASE_URL + '/functions/v1/public-api';
 
+// Auth session check
+let authUser = null;
+let customerProfile = null;
+
+async function checkAuthSession() {
+  const { data: { session } } = await _sb.auth.getSession();
+  if (!session) {
+    window.location.href = 'index.html';
+    return;
+  }
+  authUser = session.user;
+
+  // Load customer profile from DB
+  const { data: profile } = await _sb
+    .from('customers')
+    .select('*')
+    .eq('auth_user_id', authUser.id)
+    .single();
+
+  customerProfile = profile;
+
+  // Handle password change requirement
+  if (customerProfile && customerProfile.needs_password_change) {
+    showPasswordModal();
+  } else {
+    // Check profile completion
+    checkProfileCompletion();
+  }
+}
+
+function showPasswordModal() {
+  const modal = document.getElementById('modal-password');
+  if (modal) modal.classList.remove('H');
+}
+
+function showProfileModal() {
+  const modal = document.getElementById('modal-profile');
+  if (modal) {
+    // Pre-fill with existing data
+    document.getElementById('prof-first').value = customerProfile?.first_name || '';
+    document.getElementById('prof-last').value = customerProfile?.last_name || '';
+    document.getElementById('prof-cpf').value = customerProfile?.cpf || '';
+    document.getElementById('prof-email').value = customerProfile?.email || '';
+    document.getElementById('prof-phone').value = customerProfile?.phone || '';
+    document.getElementById('prof-mobile').value = customerProfile?.mobile || '';
+    document.getElementById('prof-birth').value = customerProfile?.birth_date ? customerProfile.birth_date.split('T')[0] : '';
+    document.getElementById('prof-gender').value = customerProfile?.gender || '';
+    document.getElementById('prof-address').value = customerProfile?.address || '';
+    document.getElementById('prof-number').value = customerProfile?.address_number || '';
+    document.getElementById('prof-complement').value = customerProfile?.address_complement || '';
+    document.getElementById('prof-neighborhood').value = customerProfile?.neighborhood || '';
+    document.getElementById('prof-city').value = customerProfile?.city || '';
+    document.getElementById('prof-state').value = customerProfile?.state || '';
+    document.getElementById('prof-zip').value = customerProfile?.zip_code || '';
+    modal.classList.remove('H');
+  }
+}
+
+async function submitPasswordChange(e) {
+  e.preventDefault();
+  const newPwd = document.getElementById('pwd-new').value;
+  const confirmPwd = document.getElementById('pwd-confirm').value;
+  const newErr = document.getElementById('pwd-new-error');
+  const confErr = document.getElementById('pwd-confirm-error');
+
+  newErr.textContent = '';
+  confErr.textContent = '';
+
+  if (newPwd.length < 8) {
+    newErr.textContent = 'Mínimo 8 caracteres';
+    return;
+  }
+  if (newPwd !== confirmPwd) {
+    confErr.textContent = 'Senhas não conferem';
+    return;
+  }
+
+  const { error } = await _sb.auth.updateUser({ password: newPwd });
+  if (error) {
+    newErr.textContent = error.message;
+    return;
+  }
+
+  // Update customer record
+  await _sb
+    .from('customers')
+    .update({ needs_password_change: false })
+    .eq('id', customerProfile.id);
+
+  // Close modal and check profile completion
+  document.getElementById('modal-password').classList.add('H');
+  customerProfile.needs_password_change = false;
+  checkProfileCompletion();
+}
+
+async function submitProfileCompletion(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('prof-error');
+  errEl.textContent = '';
+
+  const data = {
+    first_name: document.getElementById('prof-first').value.trim(),
+    last_name: document.getElementById('prof-last').value.trim(),
+    cpf: document.getElementById('prof-cpf').value.trim().replace(/\D/g, '') || null,
+    email: document.getElementById('prof-email').value.trim(),
+    phone: document.getElementById('prof-phone').value.trim().replace(/\D/g, '') || null,
+    mobile: document.getElementById('prof-mobile').value.trim().replace(/\D/g, '') || null,
+    birth_date: document.getElementById('prof-birth').value || null,
+    gender: document.getElementById('prof-gender').value || null,
+    address: document.getElementById('prof-address').value.trim(),
+    address_number: document.getElementById('prof-number').value.trim(),
+    address_complement: document.getElementById('prof-complement').value.trim() || null,
+    neighborhood: document.getElementById('prof-neighborhood').value.trim(),
+    city: document.getElementById('prof-city').value.trim(),
+    state: document.getElementById('prof-state').value.trim(),
+    zip_code: document.getElementById('prof-zip').value.trim(),
+  };
+
+  const { error: updateErr } = await _sb
+    .from('customers')
+    .update(data)
+    .eq('id', customerProfile.id);
+
+  if (updateErr) {
+    errEl.textContent = 'Erro ao salvar: ' + updateErr.message;
+    return;
+  }
+
+  // Credit 500 points if all fields are now filled
+  const hasAllFields = data.first_name && data.last_name && data.cpf && data.email &&
+                      data.phone && data.mobile && data.birth_date && data.gender &&
+                      data.address && data.address_number && data.neighborhood &&
+                      data.city && data.state && data.zip_code;
+
+  if (hasAllFields) {
+    try {
+      const res = await fetch(API_BASE + '/points/credit', {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_id: customerProfile.id,
+          points: 500,
+          description: 'Bônus por completar perfil'
+        })
+      });
+
+      if (res.ok) {
+        await _sb
+          .from('customers')
+          .update({ profile_bonus_claimed: true })
+          .eq('id', customerProfile.id);
+
+        customerProfile.profile_bonus_claimed = true;
+      }
+    } catch (err) {
+      console.error('Erro ao creditar pontos:', err);
+    }
+  }
+
+  // Close modal and refresh
+  document.getElementById('modal-profile').classList.add('H');
+  loadCustomerData();
+}
+
+function checkProfileCompletion() {
+  if (!customerProfile || customerProfile.profile_bonus_claimed) return;
+
+  const emptyFields = [
+    'first_name', 'last_name', 'cpf', 'email', 'phone', 'address',
+    'address_number', 'address_complement', 'neighborhood', 'city',
+    'state', 'zip_code', 'mobile', 'birth_date', 'gender'
+  ].filter(field => !customerProfile[field]);
+
+  if (emptyFields.length > 0) {
+    // Show banner
+    const banner = document.querySelector('.profile-banner');
+    if (!banner) {
+      const mainContent = document.querySelector('#content-home');
+      if (mainContent) {
+        const bannerHTML = `
+          <div class="profile-banner">
+            <div class="profile-banner-icon">🎁</div>
+            <div class="profile-banner-content">
+              <div class="profile-banner-title">Complete seu perfil e ganhe 500 Oranginos!</div>
+              <div class="profile-banner-subtitle">Preencha seus dados e os pontos são creditados automaticamente</div>
+            </div>
+            <button class="profile-banner-btn" onclick="showProfileModal()">Completar meu perfil</button>
+          </div>
+        `;
+        mainContent.insertAdjacentHTML('afterbegin', bannerHTML);
+      }
+    }
+  }
+}
+
+function doLogout() {
+  _sb.auth.signOut();
+  window.location.href = 'index.html';
+}
+
 // ID do cliente logado (virá do login ou URL param)
-let CUSTOMER_ID = new URLSearchParams(window.location.search).get('cid') || null;
+let CUSTOMER_ID = customerProfile?.id || null;
 
 async function loadCustomerData() {
   if (!CUSTOMER_ID) return;
@@ -566,9 +787,111 @@ async function redeemPrize(prizeId) {
   } catch(e) { alert('Erro: ' + e.message); }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuthSession();
   loadCustomerData();
 });
 </script>
+
+<!-- PASSWORD CHANGE MODAL -->
+<div id="modal-password" class="modal-overlay H">
+  <div class="modal-card">
+    <div class="modal-title">Bem-vindo(a) de volta!</div>
+    <div class="modal-subtitle">Para sua segurança, crie uma nova senha</div>
+    <form onsubmit="submitPasswordChange(event); return false;">
+      <div class="modal-field">
+        <label class="modal-label">Nova senha</label>
+        <input type="password" id="pwd-new" class="modal-input" placeholder="Mínimo 8 caracteres" required>
+        <div id="pwd-new-error" class="modal-error"></div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Confirmar senha</label>
+        <input type="password" id="pwd-confirm" class="modal-input" placeholder="Repetir" required>
+        <div id="pwd-confirm-error" class="modal-error"></div>
+      </div>
+      <button type="submit" class="modal-btn">Salvar nova senha</button>
+    </form>
+  </div>
+</div>
+
+<!-- PROFILE COMPLETION MODAL -->
+<div id="modal-profile" class="modal-overlay H">
+  <div class="modal-card">
+    <div class="modal-title">Complete seu perfil</div>
+    <div class="modal-subtitle">Preencha seus dados para ativar benefícios</div>
+    <form onsubmit="submitProfileCompletion(event); return false;">
+      <div class="g2">
+        <div class="modal-field">
+          <label class="modal-label">Nome</label>
+          <input type="text" id="prof-first" class="modal-input" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Sobrenome</label>
+          <input type="text" id="prof-last" class="modal-input" required>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">CPF</label>
+        <input type="text" id="prof-cpf" class="modal-input" placeholder="000.000.000-00" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">E-mail</label>
+        <input type="email" id="prof-email" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Telefone</label>
+        <input type="tel" id="prof-phone" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">WhatsApp</label>
+        <input type="tel" id="prof-mobile" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Data de nascimento</label>
+        <input type="date" id="prof-birth" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Gênero</label>
+        <select id="prof-gender" class="modal-input" required style="cursor:pointer">
+          <option value="">Selecione</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+          <option value="O">Outro</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Endereço</label>
+        <input type="text" id="prof-address" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Número</label>
+        <input type="text" id="prof-number" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Complemento</label>
+        <input type="text" id="prof-complement" class="modal-input">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Bairro</label>
+        <input type="text" id="prof-neighborhood" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Cidade</label>
+        <input type="text" id="prof-city" class="modal-input" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Estado</label>
+        <input type="text" id="prof-state" class="modal-input" placeholder="SP" required>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">CEP</label>
+        <input type="text" id="prof-zip" class="modal-input" placeholder="00000-000" required>
+      </div>
+      <div id="prof-error" class="modal-error"></div>
+      <button type="submit" class="modal-btn">Salvar e ganhar 500 Oranginos</button>
+    </form>
+  </div>
+</div>
+
 </body>
 </html>

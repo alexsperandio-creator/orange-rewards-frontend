@@ -1,3 +1,2 @@
-# Netlify redirects - clean URLs
 /admin-panel.html    /admin/    301
 /or-logado.html      /area-do-cliente/    301

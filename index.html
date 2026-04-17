@@ -1924,8 +1924,8 @@ async function doSignup(e){
   window.location.href=_base+'/area-do-cliente/';
 }
 
-// Auto-redirect if already logged in
-(async()=>{const{data:{session}}=await _sb.auth.getSession();if(session)window.location.href=_base+'/area-do-cliente/';})();
+// Se já logado, trocar botões "Entrar/Cadastrar" por "Minha Conta"
+(async()=>{const{data:{session}}=await _sb.auth.getSession();if(session){document.querySelectorAll('a[onclick*="showLoginModal"]').forEach(a=>{a.textContent='Minha Conta';a.setAttribute('onclick','');a.href=_base+'/area-do-cliente/';});document.querySelectorAll('a[onclick*="showSignupModal"]').forEach(a=>a.style.display='none');}})();
 </script>
 </body>
 </html>

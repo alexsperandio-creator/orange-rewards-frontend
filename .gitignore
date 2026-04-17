@@ -1,0 +1,15 @@
+# Configuração com credenciais (gerado no deploy)
+config.js
+.env
+.env.local
+
+# Backup temporário
+Bkp_Alex/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

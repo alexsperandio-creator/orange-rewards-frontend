@@ -1,0 +1,11 @@
+/**
+ * Orange Rewards - Configuração de Ambiente (EXEMPLO)
+ *
+ * Copie este arquivo para config.js e preencha com as credenciais do ambiente.
+ * Para deploy automatizado, o build.sh gera este arquivo a partir das
+ * variáveis de ambiente do Netlify.
+ */
+
+const SUPABASE_URL = 'https://seu-projeto.supabase.co';
+const SUPABASE_ANON_KEY = 'sua-anon-key-aqui';
+const API_BASE = SUPABASE_URL + '/functions/v1';

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orange Rewards - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1298,9 +1299,116 @@
             font-weight: 700;
             color: var(--primary);
         }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 32px;
+            max-width: 420px;
+            width: 92%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 4px;
+        }
+        .modal-header p {
+            color: #6B7280;
+            font-size: 14px;
+        }
+        .form-group-modal {
+            margin-bottom: 16px;
+        }
+        .form-group-modal label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .form-group-modal input, .form-group-modal select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #D1D5DB;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #F9FAFB;
+        }
+        .form-group-modal input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .modal-error {
+            color: #EF4444;
+            font-size: 13px;
+            min-height: 20px;
+            margin-bottom: 4px;
+        }
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background .2s;
+        }
+        .modal-btn:hover {
+            background: #B84D08;
+        }
+        .modal-footer {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #6B7280;
+        }
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
-    <script src="/config.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
     <!-- Top Navigation -->
@@ -2207,47 +2315,32 @@
             <h2 style="text-align:center; margin-bottom: 0.5rem; font-size: 1.8rem;">Fale Conosco</h2>
             <p style="text-align:center; color: var(--text-light); margin-bottom: 2rem;">Envie uma mensagem e vamos dar um retorno em seu email no próximo dia útil!</p>
 
-            <div class="contact-info-row">
-                <div class="contact-item">
-                    <div class="contact-icon">📞</div>
-                    <div><strong>Telefone</strong><br><span style="color:var(--text-light);font-size:0.9rem">15 3346 6623</span></div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">✉️</div>
-                    <div><strong>Email</strong><br><span style="color:var(--text-light);font-size:0.9rem">rewards@orangeviagens.com.br</span></div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">📍</div>
-                    <div><strong>Endereço</strong><br><span style="color:var(--text-light);font-size:0.9rem">Av São Paulo, 3445</span></div>
-                </div>
-            </div>
-
             <div class="contact-form-card">
                 <div class="form-row">
                     <div class="form-group">
                         <label>Seu nome</label>
-                        <input type="text" placeholder="ex: João Paulo">
+                        <input type="text" id="contactName" placeholder="ex: João Paulo">
                     </div>
                     <div class="form-group">
                         <label>E-mail</label>
-                        <input type="email" placeholder="ex: joao@gmail.com">
+                        <input type="email" id="contactEmail" placeholder="ex: joao@gmail.com">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Celular</label>
-                        <input type="tel" placeholder="ex: (31) 9 9999-9999">
+                        <input type="tel" id="contactPhone" placeholder="ex: (31) 9 9999-9999">
                     </div>
                     <div class="form-group">
                         <label>Assunto</label>
-                        <input type="text" placeholder="ex: Preciso falar com suporte">
+                        <input type="text" id="contactSubject" placeholder="ex: Preciso falar com suporte">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Mensagem</label>
-                    <textarea rows="5" placeholder="Digite sua mensagem"></textarea>
+                    <textarea id="contactMessage" rows="5" placeholder="Digite sua mensagem"></textarea>
                 </div>
-                <button class="submit-btn" onclick="alert('Mensagem enviada com sucesso! Retornaremos em breve.')">ENVIAR</button>
+                <button class="submit-btn" onclick="sendWhatsApp()">ENVIAR</button>
             </div>
         </div>
     </div>
@@ -2260,28 +2353,56 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="fullName">Nome Completo</label>
-                        <input type="text" id="fullName" value="Alex Sperandio" placeholder="Seu nome">
+                        <input type="text" id="fullName" placeholder="Seu nome">
                     </div>
                     <div class="form-group">
                         <label for="cpf">CPF</label>
-                        <input type="text" id="cpf" value="123.456.789-00" disabled placeholder="CPF">
+                        <input type="text" id="cpf" disabled placeholder="CPF">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" value="rewards@orangeviagens.com.br" placeholder="Seu email">
+                        <input type="email" id="email" placeholder="Seu email">
                     </div>
                     <div class="form-group">
                         <label for="phone">Telefone</label>
-                        <input type="tel" id="phone" value="15 3346 6623" placeholder="Seu telefone">
+                        <input type="tel" id="phone" placeholder="Seu telefone">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="address">Endereço</label>
-                    <input type="text" id="address" value="Av São Paulo, 3445" placeholder="Seu endereço">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="birthDate">Data de Nascimento</label>
+                        <input type="date" id="birthDate" placeholder="Data de nascimento">
+                    </div>
+                    <div class="form-group">
+                        <label for="cep">CEP</label>
+                        <input type="text" id="cep" placeholder="Seu CEP">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address">Endereço (Rua)</label>
+                        <input type="text" id="address" placeholder="Seu endereço">
+                    </div>
+                    <div class="form-group">
+                        <label for="addressNumber">Número</label>
+                        <input type="text" id="addressNumber" placeholder="Número">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">Cidade</label>
+                        <input type="text" id="city" placeholder="Sua cidade">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">Estado</label>
+                        <input type="text" id="state" placeholder="Seu estado">
+                    </div>
                 </div>
 
                 <button class="btn-primary" onclick="saveProfile()">Salvar alterações</button>
@@ -2423,18 +2544,34 @@
         }
 
         // Save profile
-        function saveProfile() {
+        async function saveProfile() {
+            if(!_customer)return;
             const name = document.getElementById('fullName').value;
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
+            const birthDate = document.getElementById('birthDate').value;
             const address = document.getElementById('address').value;
+            const addressNumber = document.getElementById('addressNumber').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const cep = document.getElementById('cep').value;
 
-            if (!name || !email || !phone || !address) {
-                alert('Por favor, preencha todos os campos!');
+            if (!name || !email || !phone) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
                 return;
             }
 
+            const{error}=await _sb.from('customers').update({
+              full_name:name,email:email,phone:phone,birth_date:birthDate||null,
+              address:address,address_number:addressNumber,city:city,state:state,cep:cep
+            }).eq('id',_customer.id);
+            if(error){alert('Erro ao salvar: '+error.message);return;}
+            _customer.full_name=name;_customer.email=email;_customer.phone=phone;
+            _customer.birth_date=birthDate;_customer.address=address;
+            _customer.address_number=addressNumber;_customer.city=city;
+            _customer.state=state;_customer.cep=cep;
             alert('Suas informações foram atualizadas com sucesso!');
+            await checkProfileCompletion();
         }
 
         // Change password
@@ -2465,16 +2602,35 @@
         }
 
         // Save notifications
-        function saveNotifications() {
-            alert('Suas preferências de notificação foram salvas!');
+        async function saveNotifications() {
+            if(!_customer)return;
+            var ne=document.getElementById('notifEmail').checked;
+            var ns=document.getElementById('notifSMS').checked;
+            var no=document.getElementById('notifOffers').checked;
+            var nx=document.getElementById('notifExpiring').checked;
+            var{error}=await _sb.from('customers').update({notify_email:ne,notify_sms:ns,notify_offers:no,notify_expiring:nx}).eq('id',_customer.id);
+            if(error){alert('Erro ao salvar: '+error.message);return;}
+            _customer.notify_email=ne;_customer.notify_sms=ns;_customer.notify_offers=no;_customer.notify_expiring=nx;
+            alert('Preferências de notificação salvas com sucesso!');
         }
 
         // Logout
         function logout() {
             if (confirm('Tem certeza que deseja sair?')) {
-                alert('Você foi desconectado com sucesso!');
-                // In a real app, this would redirect to login page
+                doLogout();
             }
+        }
+
+        // Send WhatsApp
+        function sendWhatsApp() {
+            var nome=document.getElementById('contactName').value||'';
+            var email=document.getElementById('contactEmail').value||'';
+            var cel=document.getElementById('contactPhone').value||'';
+            var assunto=document.getElementById('contactSubject').value||'';
+            var msg=document.getElementById('contactMessage').value||'';
+            if(!assunto&&!msg){alert('Por favor, preencha o assunto e a mensagem.');return;}
+            var text='*Contato Orange Rewards*\n\nNome: '+nome+'\nEmail: '+email+'\nCelular: '+cel+'\nAssunto: '+assunto+'\n\nMensagem: '+msg;
+            window.open('https://wa.me/5515991023386?text='+encodeURIComponent(text),'_blank');
         }
 
         // Filter statement
@@ -2546,5 +2702,273 @@
             if (menu) menu.classList.remove('open');
         }
     </script>
+
+<!-- PASSWORD CHANGE MODAL -->
+<div id="modal-password" class="modal" onclick="if(event.target===this)closeModal('modal-password')">
+  <div class="modal-content">
+    <button onclick="closeModal('modal-password')" class="modal-close">&times;</button>
+    <div class="modal-header">
+      <h2>Alterar Senha</h2>
+      <p>Crie uma nova senha para sua conta</p>
+    </div>
+    <form onsubmit="doChangePassword(event)">
+      <div class="form-group-modal">
+        <label>Nova Senha *</label>
+        <input type="password" id="new-pass" required minlength="8">
+      </div>
+      <div class="form-group-modal">
+        <label>Confirmar Senha *</label>
+        <input type="password" id="new-pass2" required>
+      </div>
+      <div id="pwd-error" class="modal-error"></div>
+      <button type="submit" class="modal-btn">Salvar Senha</button>
+    </form>
+  </div>
+</div>
+
+<!-- PROFILE COMPLETION BANNER -->
+<div id="profile-banner" style="display:none;background:#E8610A;color:#fff;padding:20px;margin:0;text-align:center;font-weight:600">
+  Complete seu perfil e ganhe 100 Oranginos! <a href="#" onclick="scrollToProfile();return false" style="color:#fff;text-decoration:underline;cursor:pointer">Clique aqui</a> para completar agora.
+</div>
+
+<script>
+const SUPABASE_URL='https://ttyzhuobvntfxuefaxjv.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0eXpodW9idm50Znh1ZWZheGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTYzNzUsImV4cCI6MjA5MTc3MjM3NX0.O0vvUX4bgzKIOWuSYk4GUrZ-Am9e1DDgEBqF7HpYY4k';
+const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const _base=(()=>{const p=window.location.pathname;const i=p.indexOf('/orange-rewards-frontend');return i>=0?p.substring(0,i)+'/orange-rewards-frontend':'';})();
+
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function scrollToProfile(){switchTab('meu-perfil',document.querySelector('.tab-btn[onclick*=\"meu-perfil\"]'));setTimeout(()=>document.getElementById('meu-perfil').scrollIntoView({behavior:'smooth'}),100);}
+
+async function doChangePassword(e){
+  e.preventDefault();
+  const pass=document.getElementById('new-pass').value;
+  const pass2=document.getElementById('new-pass2').value;
+  const err=document.getElementById('pwd-error');
+  err.textContent='';
+  if(pass!==pass2){err.textContent='Senhas não conferem';return;}
+  if(pass.length<8){err.textContent='Senha deve ter no mínimo 8 caracteres';return;}
+  const{error}=await _sb.auth.updateUser({password:pass});
+  if(error){err.textContent=error.message;return;}
+  closeModal('modal-password');
+  alert('Senha alterada com sucesso!');
+  const{data:{user}}=await _sb.auth.getUser();
+  if(user){
+    await _sb.from('customers').update({needs_password_change:false}).eq('auth_user_id',user.id);
+  }
+}
+
+async function doLogout(){
+  await _sb.auth.signOut();
+  window.location.href=_base+'/';
+}
+
+let _customer=null;
+
+async function loadCustomerData(){
+  const{data:{session}}=await _sb.auth.getSession();
+  if(!session){window.location.href=_base+'/';return;}
+  const{data:customer}=await _sb.from('customers').select('*').eq('auth_user_id',session.user.id).single();
+  if(!customer){window.location.href=_base+'/';return;}
+  _customer=customer;
+
+  const firstName=customer.full_name?customer.full_name.split(' ')[0]:'Cliente';
+  const initials=(customer.full_name||'').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()||'CL';
+
+  document.querySelectorAll('.balance-avatar').forEach(el=>el.textContent=initials);
+  document.querySelectorAll('.avatar').forEach(el=>{if(el.closest('.balance-info'))return;el.textContent=initials;});
+  const greeting=document.querySelector('.balance-info h2');
+  if(greeting)greeting.textContent=`Olá, ${firstName}!`;
+
+  const balanceEl=document.getElementById('balanceAmount');
+  if(balanceEl)balanceEl.textContent=(customer.available_points||0).toLocaleString('pt-BR');
+
+  document.querySelectorAll('.metric-value').forEach((el,i)=>{
+    if(i===0)el.textContent=(customer.available_points||0).toLocaleString('pt-BR');
+    else if(i===1)el.textContent=(customer.total_points_earned||0).toLocaleString('pt-BR');
+  });
+
+  if(customer.needs_password_change){
+    openModal('modal-password');
+  }
+
+  if(!customer.profile_bonus_claimed){
+    document.getElementById('profile-banner').style.display='block';
+  }
+
+  // --- 1. PREMIOS: update prize buttons based on available points ---
+  updatePrizeButtons(customer.available_points||0);
+
+  // --- 2. EXTRATO: load real transactions ---
+  await loadExtrato(customer);
+
+  // --- 3. INDIQUE AMIGOS: set real referral link and load stats ---
+  if(customer.referral_slug){
+    const refInput=document.getElementById('referralLink');
+    if(refInput) refInput.value='https://orange-rewards.netlify.app/indicar/'+customer.referral_slug;
+  }
+  await loadReferrals(customer);
+
+  // --- 4. NOTIFICACOES: load saved preferences ---
+  document.getElementById('notifEmail').checked=customer.notify_email!==false;
+  document.getElementById('notifSMS').checked=customer.notify_sms!==false;
+  document.getElementById('notifOffers').checked=customer.notify_offers!==false;
+  document.getElementById('notifExpiring').checked=customer.notify_expiring!==false;
+
+  // --- 5. FALE CONOSCO: prefill form ---
+  const contactName=document.getElementById('contactName');
+  const contactEmail=document.getElementById('contactEmail');
+  const contactPhone=document.getElementById('contactPhone');
+  if(contactName) contactName.value=customer.full_name||'';
+  if(contactEmail) contactEmail.value=customer.email||'';
+  if(contactPhone) contactPhone.value=customer.phone||'';
+
+  // --- 6. MEU PERFIL: populate fields from DB ---
+  populateProfileFields(customer);
+}
+
+// --- 1. PREMIOS ---
+function updatePrizeButtons(availablePoints){
+  document.querySelectorAll('.prize-card').forEach(function(card){
+    var btn=card.querySelector('.prize-btn');
+    if(!btn)return;
+    var amountEl=card.querySelector('.prize-amount');
+    if(!amountEl)return;
+    var cost=parseInt(amountEl.textContent.replace(/\./g,'').replace(/,/g,''),10);
+    if(isNaN(cost))return;
+    if(availablePoints>=cost){
+      btn.className='prize-btn available';
+      btn.onclick=function(){redeemPrize(card.dataset.prize,cost);};
+      btn.textContent='✓ Resgatar';
+    }else{
+      var faltam=cost-availablePoints;
+      btn.className='prize-btn unavailable';
+      btn.onclick=null;
+      btn.textContent='Faltam '+faltam.toLocaleString('pt-BR');
+    }
+  });
+}
+
+// --- 2. EXTRATO ---
+async function loadExtrato(customer){
+  const{data:txns,error}=await _sb.from('point_transactions').select('*').eq('customer_id',customer.id).order('created_at',{ascending:false});
+  const tbody=document.querySelector('#extrato .statement-table tbody');
+  if(!tbody)return;
+  tbody.innerHTML='';
+
+  let totalGanho=0, totalResgatado=0;
+  const rows=txns||[];
+
+  if(rows.length===0 && (customer.available_points||0)>0){
+    // show migrated balance entry only
+    const d=new Date(customer.created_at);
+    const dateStr=d.toLocaleDateString('pt-BR');
+    const pts=customer.available_points||0;
+    totalGanho=pts;
+    tbody.innerHTML='<tr><td class="statement-date">'+dateStr+'</td><td>Saldo migrado Donuz</td><td class="statement-amount positive">+'+pts.toLocaleString('pt-BR')+'</td><td>'+pts.toLocaleString('pt-BR')+'</td></tr>';
+  }else if(rows.length===0){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:2rem">Nenhuma transação encontrada</td></tr>';
+  }else{
+    // Calculate running balance
+    let runningBalance=customer.available_points||0;
+    rows.forEach(function(tx){
+      var pts=tx.points||0;
+      var d=new Date(tx.created_at);
+      var dateStr=d.toLocaleDateString('pt-BR');
+      var isPositive=pts>0;
+      if(isPositive) totalGanho+=pts; else totalResgatado+=Math.abs(pts);
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td class="statement-date">'+dateStr+'</td><td>'+(tx.description||'-')+'</td><td class="statement-amount '+(isPositive?'positive':'negative')+'">'+(isPositive?'+':'')+pts.toLocaleString('pt-BR')+'</td><td>'+runningBalance.toLocaleString('pt-BR')+'</td>';
+      tbody.appendChild(tr);
+      runningBalance-=pts;
+    });
+    // Add migrated balance as last row if customer has points
+    if((customer.available_points||0)>0){
+      var migPts=(customer.available_points||0);
+      rows.forEach(function(tx){migPts-=(tx.points||0);});
+      // Only show if there's a remainder
+    }
+  }
+
+  // Update summary
+  const summaryValues=document.querySelectorAll('#extrato .statement-summary-value');
+  if(summaryValues.length>=3){
+    summaryValues[0].textContent=totalGanho.toLocaleString('pt-BR');
+    summaryValues[1].textContent=totalResgatado>0?'-'+totalResgatado.toLocaleString('pt-BR'):'0';
+    summaryValues[2].textContent=(customer.available_points||0).toLocaleString('pt-BR');
+  }
+}
+
+// --- 3. INDIQUE AMIGOS ---
+async function loadReferrals(customer){
+  const{data:refs}=await _sb.from('referrals').select('*').eq('referrer_id',customer.id);
+  const referrals=refs||[];
+
+  const statValues=document.querySelectorAll('#indique-amigos .referral-stat-value');
+  const totalIndicados=referrals.length;
+  const queCompraram=referrals.filter(r=>r.status==='purchased'||r.purchased===true).length;
+  const oranginosGanhos=referrals.reduce(function(sum,r){return sum+(r.points_earned||0);},0);
+
+  if(statValues.length>=3){
+    statValues[0].textContent=totalIndicados;
+    statValues[1].textContent=queCompraram;
+    statValues[2].textContent=oranginosGanhos.toLocaleString('pt-BR');
+  }
+
+  // Replace mock referral list
+  const listContainer=document.querySelector('#indique-amigos .activity-list');
+  if(!listContainer)return;
+  listContainer.innerHTML='';
+  if(referrals.length===0){
+    listContainer.innerHTML='<li style="text-align:center;color:var(--text-light);padding:1.5rem">Nenhuma indicação ainda</li>';
+  }else{
+    referrals.forEach(function(ref){
+      var li=document.createElement('li');
+      li.className='activity-item';
+      var status=ref.status==='purchased'||ref.purchased===true?'Comprou':'Aguardando compra';
+      var pts=ref.points_earned||0;
+      var d=ref.created_at?new Date(ref.created_at).toLocaleDateString('pt-BR'):'';
+      li.innerHTML='<div class="activity-left"><div class="activity-title">'+(ref.referred_name||ref.referred_email||'Indicado')+'</div><div class="activity-date">'+d+' - '+status+'</div></div><div class="activity-points positive">+'+(pts>0?pts.toLocaleString('pt-BR'):'0')+'</div>';
+      listContainer.appendChild(li);
+    });
+  }
+}
+
+// --- 6. PROFILE FIELDS ---
+function populateProfileFields(customer){
+  var f=document.getElementById('fullName');if(f)f.value=customer.full_name||'';
+  var c=document.getElementById('cpf');if(c)c.value=customer.cpf||'';
+  var e=document.getElementById('email');if(e)e.value=customer.email||'';
+  var p=document.getElementById('phone');if(p)p.value=customer.phone||'';
+  var bd=document.getElementById('birthDate');if(bd)bd.value=customer.birth_date||'';
+  var ad=document.getElementById('address');if(ad)ad.value=customer.address||'';
+  var num=document.getElementById('addressNumber');if(num)num.value=customer.address_number||'';
+  var ci=document.getElementById('city');if(ci)ci.value=customer.city||'';
+  var st=document.getElementById('state');if(st)st.value=customer.state||'';
+  var cep=document.getElementById('cep');if(cep)cep.value=customer.cep||'';
+}
+
+async function checkProfileCompletion(){
+  if(!_customer||_customer.profile_bonus_claimed)return;
+  var fields=['fullName','cpf','email','phone','birthDate','address','addressNumber','city','state','cep'];
+  var allFilled=fields.every(function(id){var el=document.getElementById(id);return el&&el.value.trim()!=='';});
+  if(!allFilled)return;
+  // All fields filled - grant bonus
+  var newPoints=(_customer.available_points||0)+100;
+  var{error}=await _sb.from('customers').update({profile_bonus_claimed:true,available_points:newPoints}).eq('id',_customer.id);
+  if(error)return;
+  await _sb.from('point_transactions').insert({customer_id:_customer.id,points:100,type:'bonus',description:'Bônus perfil completo'});
+  _customer.profile_bonus_claimed=true;
+  _customer.available_points=newPoints;
+  document.getElementById('profile-banner').style.display='none';
+  var balanceEl=document.getElementById('balanceAmount');
+  if(balanceEl)balanceEl.textContent=newPoints.toLocaleString('pt-BR');
+  updatePrizeButtons(newPoints);
+  alert('Parabéns! Você ganhou 100 Oranginos por completar seu perfil!');
+}
+
+window.addEventListener('load',loadCustomerData);
+</script>
 </body>
 </html>

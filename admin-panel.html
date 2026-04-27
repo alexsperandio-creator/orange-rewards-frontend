@@ -667,11 +667,45 @@ class DataService {
         };
     }
 
-    async getPrizes(filters = {}) { return []; }
-    async createPrize(data) { return {}; }
-    async updatePrize(id, data) { return {}; }
-    async getPrizeCategories() { return []; }
-    async createPrizeCategory(data) { return {}; }
+    async getPrizes(filters = {}) {
+        let q = _supabase.from('prizes').select('*').order('name');
+        if (filters.category) q = q.eq('category_id', filters.category);
+        if (filters.search) q = q.ilike('name', `%${filters.search}%`);
+        const { data, error } = await q;
+        if (error) { console.warn('getPrizes:', error.message); return []; }
+        return (data || []).map(p => ({ id: p.id, name: p.name, points: p.points || 0, category: p.category_id, status: p.is_active !== false ? 'Ativo' : 'Inativo', visible: p.is_visible !== false, description: p.description || '', image_url: p.image_url || '' }));
+    }
+    async createPrize(data) {
+        const { data: r, error } = await _supabase.from('prizes').insert({ name: data.name, points: data.points, category_id: data.category || null, is_active: true, is_visible: true, description: data.description || '' }).select().single();
+        if (error) throw error;
+        return r;
+    }
+    async updatePrize(id, data) {
+        const { error } = await _supabase.from('prizes').update(data).eq('id', id);
+        if (error) throw error;
+    }
+    async deletePrize(id) {
+        const { error } = await _supabase.from('prizes').delete().eq('id', id);
+        if (error) throw error;
+    }
+    async getPrizeCategories() {
+        const { data, error } = await _supabase.from('prize_categories').select('*').order('name');
+        if (error) { console.warn('getPrizeCategories:', error.message); return []; }
+        return (data || []).map(c => ({ id: c.id, name: c.name, parent: c.parent_id || null }));
+    }
+    async createPrizeCategory(data) {
+        const { data: r, error } = await _supabase.from('prize_categories').insert({ name: data.name, parent_id: data.parent || null }).select().single();
+        if (error) throw error;
+        return r;
+    }
+    async updatePointRule(id, data) {
+        const { error } = await _supabase.from('point_rules').update(data).eq('id', id);
+        if (error) throw error;
+    }
+    async deletePointRule(id) {
+        const { error } = await _supabase.from('point_rules').update({ is_active: false }).eq('id', id);
+        if (error) throw error;
+    }
     async redeemPrize(clientId, prizeId) { return {}; }
     async getAutomations() { return []; }
     async getSurveys() { return []; }
@@ -691,9 +725,8 @@ const SIDEBAR_CONFIG = {
     clientes: [
         { id: 'clientes-list', label: 'Clientes', icon: '👥' },
         { id: 'clientes-cadastrar', label: 'Cadastrar cliente', icon: '➕' },
-        { id: 'clientes-importar', label: 'Importar clientes', icon: '📤' },
+        { id: 'clientes-importar', label: 'Importar e Exportar base de clientes', icon: '📤' },
         { id: 'clientes-aniversariantes', label: 'Aniversariantes', icon: '🎂' },
-        { id: 'clientes-relatorio', label: 'Relatório de clientes', icon: '📊' },
         { id: 'clientes-categorias', label: 'Categorias de clientes', icon: '🏷' },
         { id: 'clientes-config', label: 'Configurações de clientes', icon: '⚙', role: 'admin' },
     ],
@@ -935,7 +968,7 @@ async function renderClientes(container, subPage) {
         case 'clientes-cadastrar': renderClientesCadastrar(container); break;
         case 'clientes-importar': renderClientesImportar(container); break;
         case 'clientes-aniversariantes': await renderClientesAniversariantes(container); break;
-        case 'clientes-relatorio': await renderClientesRelatorio(container); break;
+
         case 'clientes-categorias': await renderClientesCategorias(container); break;
         case 'clientes-config': renderClientesConfig(container); break;
         default: await renderClientesList(container);
@@ -1026,8 +1059,19 @@ async function saveNewClient() {
 
 function renderClientesImportar(container) {
     container.innerHTML = `
-        <div class="page-header"><h1>Importar clientes</h1></div>
-        <div class="card"><div class="card-body">
+        <div class="page-header"><h1>Importar e Exportar base de clientes</h1></div>
+
+        <!-- EXPORTAR -->
+        <div class="card mb-2"><div class="card-header"><h3>📥 Exportar base de clientes</h3></div><div class="card-body">
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:1rem;">Exporte toda a base de clientes cadastrados no programa em formato CSV. O arquivo incluirá nome, CPF, e-mail, telefone, data de nascimento, categoria e pontos.</p>
+            <div style="display:flex; gap:0.75rem; align-items:center;">
+                <button class="btn btn-primary" onclick="doExportClients()">📥 Exportar base completa (CSV)</button>
+                <span id="exportStatus" style="color:var(--text-muted); font-size:0.8rem;"></span>
+            </div>
+        </div></div>
+
+        <!-- IMPORTAR -->
+        <div class="card"><div class="card-header"><h3>📤 Importar clientes</h3></div><div class="card-body">
             <div class="form-group"><label>Selecione o arquivo em seu computador</label>
                 <div style="display:flex; gap:0.75rem; align-items:center;">
                     <input type="file" class="form-input form-file-input" id="importFile" accept=".txt,.csv">
@@ -1067,6 +1111,45 @@ async function doImportClients() {
     });
     const result = await ds.importClients(rows);
     showToast(`${result.imported} clientes importados de ${result.total} registros!`, 'success');
+}
+
+async function doExportClients() {
+    const statusEl = document.getElementById('exportStatus');
+    statusEl.textContent = 'Exportando...';
+    try {
+        let allClients = [];
+        let offset = 0;
+        const batchSize = 1000;
+        while (true) {
+            const { data, error } = await _supabase.from('customers')
+                .select('full_name, cpf, email, phone, birth_date, tier, available_points, is_active, city, state, created_at')
+                .range(offset, offset + batchSize - 1)
+                .order('full_name');
+            if (error) throw error;
+            if (!data || data.length === 0) break;
+            allClients = allClients.concat(data);
+            statusEl.textContent = `Exportando... ${allClients.length} registros`;
+            if (data.length < batchSize) break;
+            offset += batchSize;
+        }
+        const header = 'Nome;CPF;Email;Telefone;Data Nascimento;Categoria;Pontos;Status;Cidade;Estado;Data Cadastro';
+        const lines = allClients.map(c =>
+            `${c.full_name || ''};${c.cpf || ''};${c.email || ''};${c.phone || ''};${c.birth_date || ''};${c.tier || ''};${c.available_points || 0};${c.is_active !== false ? 'Ativo' : 'Inativo'};${c.city || ''};${c.state || ''};${(c.created_at || '').slice(0,10)}`
+        );
+        const csv = [header, ...lines].join('\n');
+        const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orange-rewards-clientes-${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        statusEl.textContent = `✅ ${allClients.length} clientes exportados!`;
+        showToast(`${allClients.length} clientes exportados com sucesso!`, 'success');
+    } catch (e) {
+        statusEl.textContent = '❌ Erro ao exportar';
+        showToast('Erro ao exportar: ' + e.message, 'error');
+    }
 }
 
 async function renderClientesAniversariantes(container) {
@@ -1274,8 +1357,8 @@ async function renderPontosRegras(container) {
         <div class="card"><div class="table-wrapper"><table>
             <thead><tr><th>ID</th><th>Nome da Regra</th><th>O valor inserido equivale a</th><th>Códigos de produto</th><th>Opções</th></tr></thead>
             <tbody>${rules.map(r => `<tr>
-                <td>${r.id}</td><td>${r.name}</td><td>${r.multiplier}</td><td>${r.code}</td>
-                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td>
+                <td>${r.id}</td><td>${r.name}</td><td>${r.multiplier}</td><td>${r.code || '-'}</td>
+                <td class="table-actions"><button class="btn-icon edit btn-sm" onclick="editPointRule(${r.id}, '${(r.name||'').replace(/'/g,"\\'")}', ${r.multiplier}, '${(r.code||'').replace(/'/g,"\\'")}')">✏</button> <button class="btn-icon delete btn-sm" onclick="deletePointRule(${r.id}, '${(r.name||'').replace(/'/g,"\\'")}')">🗑</button></td>
             </tr>`).join('')}</tbody>
         </table></div>
         <div class="table-footer"><span>${rules.length} registros</span></div>
@@ -1334,7 +1417,7 @@ async function renderPremiosList(container) {
                 return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.points.toLocaleString('pt-BR')}</td>
                 <td>${cat?.name || '-'}</td><td><span class="badge badge-success">${p.status}</span></td>
                 <td>${p.visible ? 'Sim' : 'Não'}</td>
-                <td class="table-actions"><button class="btn-icon edit btn-sm">✏</button> <button class="btn-icon delete btn-sm">🗑</button></td></tr>`;
+                <td class="table-actions"><button class="btn-icon edit btn-sm" onclick="editPrize(${p.id}, '${(p.name||'').replace(/'/g,"\\'")}', ${p.points}, ${p.category||'null'}, '${p.status}', ${p.visible})">✏</button> <button class="btn-icon delete btn-sm" onclick="deletePrize(${p.id}, '${(p.name||'').replace(/'/g,"\\'")}')">🗑</button></td></tr>`;
             }).join('')}</tbody>
         </table></div></div>
     `;
@@ -1600,6 +1683,80 @@ function renderConfigIntegracao(container) {
 /* ============================================
    MODAL SYSTEM
    ============================================ */
+/* ---- EDIT / DELETE: PRÊMIOS ---- */
+function editPrize(id, name, points, categoryId, status, visible) {
+    showModal('Editar Prêmio', `
+        <div class="form-group"><label>Nome do Prêmio</label><input class="form-input" id="editPrizeName" value="${name}"></div>
+        <div class="form-group"><label>Preço em pontos</label><input class="form-input" type="number" id="editPrizePoints" value="${points}"></div>
+        <div class="form-group"><label>Status</label><select class="form-select" id="editPrizeStatus">
+            <option value="true" ${status==='Ativo'?'selected':''}>Ativo</option>
+            <option value="false" ${status!=='Ativo'?'selected':''}>Inativo</option>
+        </select></div>
+        <div class="form-group"><label>Visível na loja?</label><select class="form-select" id="editPrizeVisible">
+            <option value="true" ${visible?'selected':''}>Sim</option>
+            <option value="false" ${!visible?'selected':''}>Não</option>
+        </select></div>
+        <div style="text-align:right; margin-top:1rem;">
+            <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveEditPrize(${id})">Salvar</button>
+        </div>
+    `);
+}
+async function saveEditPrize(id) {
+    const name = document.getElementById('editPrizeName').value;
+    const points = parseInt(document.getElementById('editPrizePoints').value);
+    const is_active = document.getElementById('editPrizeStatus').value === 'true';
+    const is_visible = document.getElementById('editPrizeVisible').value === 'true';
+    if (!name || !points) { showToast('Preencha nome e pontos', 'error'); return; }
+    try {
+        await ds.updatePrize(id, { name, points, is_active, is_visible });
+        closeModal();
+        showToast('Prêmio atualizado!', 'success');
+        switchSubPage('premios-list');
+    } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+async function deletePrize(id, name) {
+    if (!confirm(`Tem certeza que deseja excluir o prêmio "${name}"?`)) return;
+    try {
+        await ds.deletePrize(id);
+        showToast('Prêmio excluído!', 'success');
+        switchSubPage('premios-list');
+    } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+/* ---- EDIT / DELETE: REGRAS DE PONTOS ---- */
+function editPointRule(id, name, multiplier, code) {
+    showModal('Editar Regra de Ponto', `
+        <div class="form-group"><label>Nome da regra</label><input class="form-input" id="editRuleName" value="${name}"></div>
+        <div class="form-group"><label>Multiplicador (valor → pontos)</label><input class="form-input" type="number" id="editRuleMultiplier" value="${multiplier}" step="0.01"></div>
+        <div class="form-group"><label>Código do produto</label><input class="form-input" id="editRuleCode" value="${code}"></div>
+        <div style="text-align:right; margin-top:1rem;">
+            <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveEditPointRule(${id})">Salvar</button>
+        </div>
+    `);
+}
+async function saveEditPointRule(id) {
+    const name = document.getElementById('editRuleName').value;
+    const multiplier = parseFloat(document.getElementById('editRuleMultiplier').value);
+    const code = document.getElementById('editRuleCode').value;
+    if (!name) { showToast('Preencha o nome da regra', 'error'); return; }
+    try {
+        await ds.updatePointRule(id, { name, multiplier, code });
+        closeModal();
+        showToast('Regra atualizada!', 'success');
+        switchSubPage('pontos-regras');
+    } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+async function deletePointRule(id, name) {
+    if (!confirm(`Tem certeza que deseja excluir a regra "${name}"?`)) return;
+    try {
+        await ds.deletePointRule(id);
+        showToast('Regra excluída!', 'success');
+        switchSubPage('pontos-regras');
+    } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
 function showModal(title, bodyHtml) {
     document.getElementById('modalContent').innerHTML = `
         <div class="modal-header"><h3>${title}</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
